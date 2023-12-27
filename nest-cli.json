@@ -1,0 +1,31 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/mayora/src",
+  "projects": {
+    "mayora": {
+      "type": "application",
+      "root": "apps/mayora",
+      "entryFile": "main",
+      "sourceRoot": "apps/mayora/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/mayora/tsconfig.app.json"
+      }
+    },
+    "readme": {
+      "type": "application",
+      "root": "apps/readme",
+      "entryFile": "main",
+      "sourceRoot": "apps/readme/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/readme/tsconfig.app.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "tsconfig.build.json",
+    "resolveJsonModule": true
+  },
+  "monorepo": true,
+  "root": "."
+}

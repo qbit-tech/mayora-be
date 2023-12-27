@@ -1,0 +1,88 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@qbit/auth": [
+        "libs/auth/src"
+      ],
+      "@qbit/auth/*": [
+        "libs/auth/src/*"
+      ],
+      "@qbit/news": [
+        "libs/news/src"
+      ],
+      "@qbit/news/*": [
+        "libs/news/src/*"
+      ],
+      "@qbit/config": [
+        "libs/config/src"
+      ],
+      "@qbit/config/*": [
+        "libs/config/src/*"
+      ],
+      "@qbit/ads": [
+        "libs/ads/src"
+      ],
+      "@qbit/ads/*": [
+        "libs/ads/src/*"
+      ],
+      "@qbit/appContract": [
+        "libs/appContract"
+      ],
+      "@qbit/appContract/*": [
+        "libs/appContract/*"
+      ],
+      "@qbit/notification": [
+        "libs/notification/src"
+      ],
+      "@qbit/notification/*": [
+        "libs/notification/src/*"
+      ],
+      "@qbit/midtrans": [
+        "libs/midtrans/src"
+      ],
+      "@qbit/midtrans/*": [
+        "libs/midtrans/src/*"
+      ],
+      "@qbit/forest-admin": [
+        "libs/forest-admin/src"
+      ],
+      "@qbit/forest-admin/*": [
+        "libs/forest-admin/src/*"
+      ],
+      "@qbit/uploader": [
+        "libs/uploader/src"
+      ],
+      "@qbit/uploader/*": [
+        "libs/uploader/src/*"
+      ],
+      "@qbit/firebase": [
+        "libs/firebase/src"
+      ],
+      "@qbit/firebase/*": [
+        "libs/firebase/src/*"
+      ],
+      "@qbit/xendit": [
+        "libs/xendit/src"
+      ],
+      "@qbit/xendit/*": [
+        "libs/xendit/src/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

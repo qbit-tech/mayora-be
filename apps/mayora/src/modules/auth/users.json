@@ -1,0 +1,12 @@
+[
+    {
+        "iUser": 1,
+        "vUsername": "Sena",
+        "vPassword": "123"
+    },
+    {
+        "iUser": 2,
+        "vUsername": "Lorem",
+        "vPassword": "123"
+    }
+]
