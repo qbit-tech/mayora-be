@@ -1933,6 +1933,21 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
+"@mapbox/node-pre-gyp@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.11.tgz#417db42b7f5323d79e93b34a6d7a2a12c0df43fa"
+  integrity sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==
+  dependencies:
+    detect-libc "^2.0.0"
+    https-proxy-agent "^5.0.0"
+    make-dir "^3.1.0"
+    node-fetch "^2.6.7"
+    nopt "^5.0.0"
+    npmlog "^5.0.1"
+    rimraf "^3.0.2"
+    semver "^7.3.5"
+    tar "^6.1.11"
+
 "@nestjs-modules/ioredis@^1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@nestjs-modules/ioredis/-/ioredis-1.0.1.tgz#bd73daf90d04047612bc93532fa177abc23186e5"
@@ -2184,6 +2199,13 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
+"@qbit-tech/libs-authv3@^1.4.1":
+  version "1.4.1"
+  resolved "https://npm.pkg.github.com/download/@qbit-tech/libs-authv3/1.4.1/d4083755a7f284f841b21d79518247e94254bb62#d4083755a7f284f841b21d79518247e94254bb62"
+  integrity sha512-5/UpPM5wPZcmfF8a129vQLRiX0SprqZGX8kSvX+r+3xGWTc16TBlRxSUPJOkasfelQls9jjz9o84Yy+/DAuC/Q==
+  dependencies:
+    bcrypt "^5.1.0"
+
 "@qbit-tech/libs-notification-scheduler@^1.0.4":
   version "1.0.4"
   resolved "https://npm.pkg.github.com/download/@qbit-tech/libs-notification-scheduler/1.0.4/e849f58554bffac8c10a482b245ca168c7e570bf#e849f58554bffac8c10a482b245ca168c7e570bf"
@@ -2213,10 +2235,10 @@
     nodemailer "^6.9.5"
     postmark "^3.0.18"
 
-"@qbit-tech/libs-notification@^1.6.5":
-  version "1.6.5"
-  resolved "https://npm.pkg.github.com/download/@qbit-tech/libs-notification/1.6.5/1f4a84cc5fc6b6cd8dac16ce781fc7d6fceeb089#1f4a84cc5fc6b6cd8dac16ce781fc7d6fceeb089"
-  integrity sha512-Qcfi5ZAViQ55wVS3WsY/xcvKXwUJiW/kYshw+UnNZxoaUhiW0u6PISLhDDPZd7WqH8+0VcrKALFE08mSGErxtA==
+"@qbit-tech/libs-notification@^1.7.0":
+  version "1.7.0"
+  resolved "https://npm.pkg.github.com/download/@qbit-tech/libs-notification/1.7.0/884416ac6687a8ffa5a7cf1a1e07dca1707c56c9#884416ac6687a8ffa5a7cf1a1e07dca1707c56c9"
+  integrity sha512-NiZSUqLiCn9cBu7RW11gUVTB5Fvca1P/jq8R2MuPON/hW5++SHQjKz5zjbmo1GUJxWIbm4m25re/u2exsCwSHw==
   dependencies:
     "@getbrevo/brevo" "^1.0.1"
     "@nestjs/axios" "^3.0.0"
@@ -2233,6 +2255,11 @@
   version "1.5.1"
   resolved "https://npm.pkg.github.com/download/@qbit-tech/libs-session/1.5.1/638d0aeda274013dc1c68b8567b8a82524d2e72d#638d0aeda274013dc1c68b8567b8a82524d2e72d"
   integrity sha512-3D5iZvQH7uJSh0SDNz7Aw6SZZ9s5sFaNOq5Vwnb9VhxbCARXD1BcbFmy6ZMqkM9KutBJFfElrgUdldD+q1Ibsw==
+
+"@qbit-tech/libs-session@^1.6.10":
+  version "1.6.10"
+  resolved "https://npm.pkg.github.com/download/@qbit-tech/libs-session/1.6.10/391e95e1fbffcfde64335534203d8cc6804cfa32#391e95e1fbffcfde64335534203d8cc6804cfa32"
+  integrity sha512-9vZozp1vRzJ6jFkH+fWFnOYzg3bxl/ADPowZgmT+/3pNfGOPUm3JdF4CEHYDHQsv45JdlirULHTy2dIPRr9nng==
 
 "@qbit-tech/libs-utils@^1.2.5":
   version "1.2.5"
@@ -3497,6 +3524,14 @@ bcrypt@^5.0.1:
   integrity sha512-RHBS7HI5N5tEnGTmtR/pppX0mmDSBpQ4aCBsj7CEQfYXDcO74A8sIBYcJMuCsis2E81zDxeENYhv66oZwLiA+Q==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.10"
+    node-addon-api "^5.0.0"
+
+bcrypt@^5.1.0:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-5.1.1.tgz#0f732c6dcb4e12e5b70a25e326a72965879ba6e2"
+  integrity sha512-AGBHOG5hPYZ5Xl9KXzU5iKq9516yEmvCKDg3ecP5kX2aB6UqTeXZxk2ELnDgDm6BQSMlLt9rDB4LoSMx0rYwww==
+  dependencies:
+    "@mapbox/node-pre-gyp" "^1.0.11"
     node-addon-api "^5.0.0"
 
 big-integer@^1.6.17:

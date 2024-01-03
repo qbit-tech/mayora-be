@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
-import { UserData } from '../../user/user.service';
-import { Gender } from '../../user/user.entity';
+// import { UserData } from '../../user/user.service';
+// import { Gender } from '../../user/user.entity';
 
 export abstract class AuthApiContract {
   abstract register(
@@ -17,27 +17,21 @@ export abstract class PhoneAuthApiContract {
   abstract sendOtp(req: PhoneSignInRequest): Promise<PhoneOTPResponse>;
 }
 
-export class DefaultRequestHeader {
-  @ApiProperty()
-  readonly sessionId: string;
-  @ApiProperty()
-  readonly guid: string;
-  @ApiProperty()
-  readonly user: UserData;
-}
+// export class DefaultRequestHeader {
+//   @ApiProperty()
+//   readonly sessionId: string;
+//   @ApiProperty()
+//   readonly guid: string;
+//   @ApiProperty()
+//   readonly user: UserData;
+// }
 
 export class SignInRequest {
   @ApiPropertyOptional()
-  readonly vEmail: string;
-
-  @ApiPropertyOptional()
-  readonly vMobile: string;
+  readonly email: string;
 
   @ApiProperty()
-  readonly vPassword: string;
-
-  @ApiProperty()
-  readonly vMobileGUID: string;
+  readonly password: string;
 }
 
 export class SignInResponse {

@@ -8,9 +8,12 @@ import { AppConfigChangesLogsModule } from './modules/appConfig/appConfigChanges
 import { FirebaseModule } from '@qbit/firebase/firebase.module';
 import * as FirebaseAdmin from 'firebase-admin';
 import { AuthModule } from './modules/auth/auth.module';
-import * as NotificationsModules from '@qbit-tech/libs-notification';
-import { NotificationModule } from '@qbit/notification';
+import { RoleModule } from './modules/role/role.module';
+import { UserModule } from './modules/user/user.module';
 
+import * as NotificationsModules from '@qbit-tech/libs-notification';
+
+import { NotificationModule } from '@qbit/notification';
 
 const notificationOptions = [
   {
@@ -72,7 +75,10 @@ export const rootImportedModules = [
     ...rootImportedModules,
     AppConfigModule,
     AppConfigChangesLogsModule,
-    NotificationsModules.NotificationModule
+    NotificationsModules.NotificationModule,
+    AuthModule,
+    RoleModule,
+    UserModule
   ],
   controllers: [AppController],
 })

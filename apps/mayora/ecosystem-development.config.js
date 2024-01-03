@@ -2,7 +2,7 @@
 module.exports = {
   apps: [
     {
-      name: 'tm-api-development',
+      name: 'mayora-api-development',
       script: './main.js',
       watch: true,
       exp_backoff_restart_delay: 100,

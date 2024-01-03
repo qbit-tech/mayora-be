@@ -43,64 +43,12 @@ export const AuthGuard = (role?: string | string[]) => {
 
         Logger.log(decodedJwt);
 
-        const user = await this.authService.verifyToken({
-          token: decodedJwt.session,
-        });
-
-        if (user === null) {
-          throw new HttpException(
-            {
-              code: 'err_unauthorized',
-              message: 'Authorization Failed',
-            },
-            HttpStatus.FORBIDDEN,
-          );
-        } else {
-
-          const tokenExpired = new Date(user.user.dTokenMobileExp);
-          const today = new Date();
-          Logger.log(tokenExpired)
-          Logger.log(today)
-          Logger.log(token == user.user.vTokenMobile)
-          Logger.log(token == user.user.vTokenWeb)
-          if (token == user.user.vTokenMobile) {
-            if (tokenExpired < today || user.user.dMobileVerified == null) {
-              if (user.user.dEmailVerified == null) {
-                throw new HttpException(
-                  {
-                    code: 'err_unauthorized',
-                    message: 'Authorization Failed',
-                  },
-                  HttpStatus.FORBIDDEN,
-                );
-              }
-            }
-          } else if (token == user.user.vTokenWeb) {
-            if (
-              new Date(user.user.dTokenWebExp).getTime() <
-                new Date().getTime() ||
-              user.user.dEmailVerified == ''
-            ) {
-              throw new HttpException(
-                {
-                  code: 'err_unauthorized',
-                  message: 'Authorization Failed',
-                },
-                HttpStatus.FORBIDDEN,
-              );
-            }
-          }
-        }
-
-        const index =
-          user.user.jMobileGUID.length == 0
-            ? 0
-            : user.user.jMobileGUID.length - 1;
         req['user'] = {
           sessionId: token,
           guid: user.user.jMobileGUID[index].vMobileGUID,
           ...user,
         };
+
         return true;
       } else {
         return false;
