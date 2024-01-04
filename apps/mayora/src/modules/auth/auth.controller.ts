@@ -1,361 +1,259 @@
 import {
   Body,
   Controller,
-  Get,
   HttpException,
-  HttpStatus,
-  Logger,
-  Post,
+  Res,
   Query,
-  Request,
+  Param,
+  Post,
+  Get,
+  Logger,
+  HttpStatus,
   UseGuards,
+  Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { getErrorStatusCode } from 'libs/utils/error';
-import { AuthGuard } from '../../core/auth.guard';
-import { cleanPhoneNumber } from '../../utils/phoneNumber';
-import { AuthService } from './auth.service';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SignInRequest, AuthService } from '@qbit-tech/libs-authv3';
+import { SessionService } from '@qbit-tech/libs-session';
+import { AppRequest, getErrorStatusCode } from '@qbit-tech/libs-utils';
 import {
-  AuthApiContract,
-  EmailVerificationRequest,
-  EmailVerificationResponse,
-  RegisterRequest,
-  RegisterResponse,
-  SignInRequest,
-  SignInResponse,
-  SignOutResponse,
-  PhoneVerificationRequest,
-  ForgotEmailPassword,
-  NewPasswordRequest,
-  ResendEmailVerificationRequest,
-  AuthWithSessionRequest,
-  AddPhoneRequest,
-  EmailOTPResponse,
-  ValidityCheckInput,
-  ValidityCheckResponse,
-} from './contract/auth.contract';
-import { PhoneAuthService } from './phone/phone.auth.service';
-import { Gender } from '../user/user.entity';
-
-@ApiTags('Auth by Username')
+  ChangePasswordUsingSessionRequest,
+  ChangePasswordUsingSessionResponse,
+  ForgotPasswordByLinkRequest,
+} from './auth.contract';
+import { UserService } from '../user/user.service';
+import { EAuthMethod } from '@qbit-tech/libs-authv3/dist/authentication.entity';
+import { AuthPermissionGuard } from '@qbit-tech/libs-session';
+import { verify } from 'jsonwebtoken';
+import { DEFAULT_HASH_TOKEN } from '@qbit-tech/libs-session/dist/session.helper';
+import { CreateUserRequest } from '../user/contract/user.contract';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UserProperties } from '../user/user.entity';
+import { async as crypt } from 'crypto-random-string';
+@ApiTags('Auth')
 @Controller('auth')
-export class AuthController implements AuthApiContract {
+export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
-    private readonly authService: AuthService,
-    private readonly phoneService: PhoneAuthService,
+    private readonly authv3Service: AuthService,
+    private readonly sessionService: SessionService,
+    private readonly userService: UserService,
   ) {}
-  @Post('signin')
-  async signIn(@Body() body: SignInRequest): Promise<SignInResponse> {
+
+  @ApiOperation({ summary: 'New admin using email authenticator' })
+  @ApiBearerAuth()
+  @Post('register-with-profile')
+  // @UseGuards(AuthPermissionGuard())
+  @UseInterceptors(FileInterceptor('image'))
+  async createUser(
+    @Req() req: AppRequest,
+    @Body() body: CreateUserRequest,
+    @UploadedFile() file,
+  ): Promise<UserProperties> {
+    this.logger.log('Create new user');
+    this.logger.verbose('Body: ' + JSON.stringify(body));
+
     try {
-      const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
-      let cleanedEmail = regexEmail.test(body.vEmail)
+      const fullName = `${body.firstName} ${
+        body.middleName ? body.middleName : '.'
+      } ${body.lastName ? body.lastName : '.'}`;
+      const name = fullName.replace(/[^a-zA-Z ]/g, '');
+      const randomPassword = await crypt({ length: 10 });
 
-      const regexPhone = /^\d+$/g
+      let result;
 
-      const cleanedPhoneNumber = cleanPhoneNumber(body.vMobile, '62');
-      let cleanedPhone = regexPhone.test(cleanedPhoneNumber)
-      Logger.log('INSIDE SIGNIN AUTH CONTROLLER');
-      const signInResult = await this.authService.signIn({
-        vEmail: cleanedEmail? body.vEmail : '',
-        vMobile: cleanedPhone ? cleanPhoneNumber(body.vMobile, '62') : '',
-        vPassword: body.vPassword,
-        vMobileGUID: body.vMobileGUID,
-        platform: 'mobile',
+      const userData = await this.userService.create({
+        ...body,
       });
 
-      Logger.log(JSON.stringify(signInResult));
-
-      if (signInResult === null) {
-        throw new HttpException(
+      if (body.email) {
+        this.logger.log('email registered');
+        const registerByEmail = await this.authv3Service.register(
+          EAuthMethod.emailPassword,
           {
-            code: 401,
-            message: 'Credentials Incorrect',
+            userId: userData.userId,
+            username: body.email,
+            password: body.password ? body.password : randomPassword,
           },
-          HttpStatus.UNAUTHORIZED,
         );
-      } else if (signInResult.tempSession === 'SUSPICIOUS') {
-        Logger.log('MASUK ELSE IF');
-        throw new HttpException(
+
+        result = {
+          ...result,
+          registerByEmailResult: {
+            ...registerByEmail,
+          },
+        };
+      }
+
+      if (body.username) {
+        this.logger.log('username registered');
+        const registerByUsername = await this.authv3Service.register(
+          EAuthMethod.usernamePassword,
           {
-            code: 401,
-            message: signInResult.status,
+            userId: userData.userId,
+            username: body.email,
+            password: body.password ? body.password : randomPassword,
           },
-          HttpStatus.UNAUTHORIZED,
         );
-      }
 
-      return signInResult;
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
+        result = {
+          ...result,
+          registerByUsernameResult: {
+            ...registerByUsername,
+          },
+        };
+
+        return result;
+      }
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException(error, getErrorStatusCode(error));
     }
   }
 
-  @Post('refresh-token')
-  async signInWithSession(
-    @Body() body: AuthWithSessionRequest,
-  ): Promise<{ token: string; expired: string; isSuccess: boolean }> {
+  @ApiOperation({ summary: 'Sign In using email auth' })
+  @Post('signin')
+  // @ApiOkResponse({ type: SignInResponse })
+  async signIn(@Body() req: SignInRequest): Promise<any> {
     try {
-      const result = await this.authService.sessionSignIn(
-        body.token,
-        body.vMobileGUID,
+      const authenticateLogin = await this.authv3Service.authenticate({
+        method: EAuthMethod.emailPassword,
+        username: req.email,
+        password: req.password,
+      });
+
+      const user = await this.userService.findOneByUserId(
+        authenticateLogin.userId,
       );
-      return result;
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
 
-  @Post('register')
-  async register(@Body() req: RegisterRequest): Promise<RegisterResponse> {
-    try {
-      Logger.log('INSIDE REGISTER CONTROLLER');
-      Logger.log(JSON.stringify(req));
-      const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
-      let cleanedEmail = regexEmail.test(req.vEmail)
-
-      const regexPhone = /^\d+$/g
-
-      const cleanedPhoneNumber = cleanPhoneNumber(req.vMobile, '62');
-      let cleanedPhone = regexPhone.test(cleanedPhoneNumber)
-
-      
-      Logger.log('CLEANED PHONE NUMBER: ' + cleanedPhoneNumber);
-
-
-
-      const username = req.vEmail ? req.vEmail : cleanedPhoneNumber;
-      Logger.log('THE USERNAME IS ' + username);
-      if(cleanedEmail || cleanedPhone){
-        const registerResult = await this.authService.register({
-          vFirstName: req.vFirstName,
-          vLastName: req.vLastName,
-          vEmail: req.vEmail,
-          vMobile: cleanedPhoneNumber,
-          vPassword: req.vPassword,
-          vUsername: username,
-          vNickName: req.vNickName,
-          verifiedEmailSessionId: req.verifiedEmailSessionId,
-          verifiedPhoneSessionId: req.verifiedPhoneSessionId,
-          iGender: req.iGender,
-          birthdate: req.birthdate,
-        });
-        if (registerResult !== null) return { isSuccess: true };
-        else return { isSuccess: false };
-      } else {
-        throw new HttpException('Register Error', 500);
-      }
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @ApiBearerAuth()
-  @Post('signout')
-  @UseGuards(AuthGuard())
-  async signOut(@Request() req): Promise<SignOutResponse> {
-    try {
-      Logger.log(JSON.stringify(req.user));
-      const accepted = await this.authService.signOut(
-        req.user.sessionId,
-        req.user.user,
-      );
-      if (!accepted.isSuccess) {
-        return { isSuccess: false };
-      } else {
-        return { isSuccess: true };
-      }
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @Post('email/otp/send')
-  async sendEmailOTP(
-    @Body() body: ResendEmailVerificationRequest,
-  ): Promise<EmailOTPResponse> {
-    try {
-      Logger.log('INSIDE SEND-EMAIL-VERIFICATION');
-      const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
-      let cleanedEmail = regexEmail.test(body.vEmail)
-      if(cleanedEmail){
-        const result = await this.authService.sendEmailOTP(
-          body.vEmail,
-          body.tempSession,
-        );
-        Logger.log(result);
-        return { vEmail: body.vEmail, OTP: result };
-      }
-      throw new HttpException('Register Error', 500);
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @Post('email/otp/resend')
-  async resendEmailOTP(
-    @Body() body: ResendEmailVerificationRequest,
-  ): Promise<EmailOTPResponse> {
-    try {
-      Logger.log('INSIDE SEND-EMAIL-VERIFICATION');
-      const result = await this.authService.resendEmailOTP(
-        body.vEmail,
-        body.tempSession,
-      );
-      Logger.log(result);
-      return { vEmail: body.vEmail, OTP: result };
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @Post('email/otp/verify')
-  async verifyEmail(
-    @Body() params: EmailVerificationRequest,
-  ): Promise<EmailVerificationResponse> {
-    try {
-      Logger.log('Inside verify-email: ' + params.vEmail);
-      const verified = await this.authService.verifyEmailToken(
-        params.otp,
-        params.vEmail,
-      );
-      if (verified != null) {
-        return { isSuccess: true, sessionId: verified.token };
-      }
-      throw new HttpException(
+      const signInResult = await this.sessionService.generateLoginToken(
         {
-          code: 'err_bad_request',
-          message: 'Invalid OTP',
+          method: EAuthMethod.emailPassword,
+          username: req.email,
+          userId: authenticateLogin.userId,
         },
-        HttpStatus.BAD_REQUEST,
+        user,
       );
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
 
-  @Post('forgot-password')
-  async forgotEmailPassword(
-    @Body() params: ForgotEmailPassword,
-  ): Promise<{ isSuccess: boolean; token: string }> {
-    try {
-      const sendEmail = await this.authService.sendForgotEmailPassword(
-        params.vEmail,
-      );
-      return sendEmail
-        ? { isSuccess: sendEmail.isSuccess, token: sendEmail.token }
-        : { isSuccess: false, token: 'failed' };
-      
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @Post('change-password/by-otp')
-  async changePassword(
-    @Body() body: NewPasswordRequest,
-  ): Promise<{ isSuccess: boolean }> {
-    try {
-      
-      Logger.log('INSIDE CHANGE PASSWORD');
-      const result = await this.authService.changeEmailPassword(
-        body.vEmail,
-        body.OTP,
-        body.newPassword,
-      );
-      return { isSuccess: result };
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @ApiBearerAuth()
-  @Post('add/phone')
-  @UseGuards(AuthGuard())
-  async addphone(
-    @Body() params: AddPhoneRequest,
-  ): Promise<{ isSuccess: boolean; message: string }> {
-    try {
-      const cleanedPhoneNumber = cleanPhoneNumber(params.vMobile, '62');
-      Logger.log('CLEANED PHONE NUMBER: ' + cleanedPhoneNumber);
-      const phoneSendOTP = await this.phoneService.sendOtp(
-        cleanedPhoneNumber,
-        '',
-      );
-      if (phoneSendOTP != null) {
-        return { isSuccess: true, message: 'Waiting for Phone 2FA' };
-      } else return { isSuccess: false, message: 'Failed to add Phone' };
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @ApiBearerAuth()
-  @Post('add/phone/verify')
-  @UseGuards(AuthGuard())
-  async addphoneVerify(
-    @Request() req,
-    @Body() params: PhoneVerificationRequest,
-  ): Promise<{ isSuccess: boolean; message: string }> {
-    try {
-      
-      const cleanedPhoneNumber = cleanPhoneNumber(params.vMobile, '62');
-      const verification = await this.phoneService.verifyOTP(
-        cleanedPhoneNumber,
-        params.otp,
-      );
-  
-      if (verification.token != '') {
-        await this.authService.updateUserPhone(req.user.user, cleanedPhoneNumber);
-        return { isSuccess: true, message: 'Add Phone is successful' };
-      } else return { isSuccess: false, message: 'Failed to assign Phone' };
-    } catch (err) {
-      Logger.error(err);
-      throw new HttpException(err, getErrorStatusCode(err));
-    }
-  }
-
-  @Get('check-validity')
-  async checkValidity(
-    @Query() params: ValidityCheckInput,
-  ): Promise<ValidityCheckResponse> {
-    try {
-      
-      const cleanedPhoneNumber = cleanPhoneNumber(params.vMobile, '62');
-      const res: boolean[] = await this.authService.validityCheck(
-        params.vUsername,
-        params.vEmail,
-        cleanedPhoneNumber,
-      );
-  
-      const finalRes = {
-        vMobile: false,
-        vUsername: false,
-        vEmail: false,
-      };
-  
-      for (let i = 0; i < res.length; i++) {
-        if (i == 0 && res[0] == true) {
-          finalRes.vMobile = true;
-        } else if (i == 1 && res[1] == true) {
-          finalRes.vUsername = true;
-        } else if (i == 2 && res[2] == true) {
-          finalRes.vEmail = true;
-        }
+      if (signInResult.access_token === null) {
+        throw new HttpException(
+          {
+            code: 401,
+            message: 'Failed to sign in',
+          },
+          HttpStatus.UNAUTHORIZED,
+        );
       }
-      return finalRes;
+
+      return {
+        access_token: signInResult.access_token,
+        refresh_token: signInResult.refresh_token,
+        userId: authenticateLogin.userId,
+        isVerified: authenticateLogin.isVerified,
+        isPasswordExpired: authenticateLogin.isPasswordExpired,
+        passwordExpiredAt: authenticateLogin.passwordExpiredAt,
+        isBlocked: authenticateLogin.isBlocked,
+        blockedAt: authenticateLogin.blockedAt,
+      };
     } catch (err) {
-      Logger.error(err);
       throw new HttpException(err, getErrorStatusCode(err));
     }
   }
+
+  @ApiOperation({ summary: 'Refresh token' })
+  @Post('refresh-token')
+  @ApiBearerAuth()
+  @UseGuards(AuthPermissionGuard(null, null, true))
+  async refreshToken(@Req() req: any): Promise<any> {
+    try {
+      const token = req.headers.authorization.substr(7);
+
+      const decodedToken = verify(
+        token,
+        process.env.SESSION_HASH_TOKEN || DEFAULT_HASH_TOKEN,
+        {
+          algorithms: ['HS256'],
+        },
+      ) as any;
+      const user = await this.userService.findOneByUserId(decodedToken.sub);
+      return this.sessionService.refreshToken(token, user);
+    } catch (err) {
+      throw new HttpException(err, getErrorStatusCode(err));
+    }
+  }
+
+  // @ApiOperation({ summary: 'User will get link for reset password via email' })
+  // @Post('forgot-password/link')
+  // async forgotPasswordByLink(
+  //   @Body() params: ForgotPasswordByLinkRequest,
+  // ): Promise<any> {
+  //   try {
+  //     Logger.log('--ENTER FORGOT PASSWORD BY LINK, AUTH CONTROLLER--');
+  //     Logger.log('auth : ' + JSON.stringify(params), 'auth.controller');
+  //     const { sessionId } = await this.authv3Service.forgotPasswordByLink({
+  //       email: params.email,
+  //     });
+
+  //     return {
+  //       link: process.env.BASE_URL_CMS + '/reset-password' + '/' + sessionId,
+  //     };
+  //   } catch (err) {
+  //     throw new HttpException(err, getErrorStatusCode(err));
+  //   }
+  // }
+
+  // @Get('/reset-password/:sessionId')
+  // async pageResetPassword(
+  //   @Query() query: { page_url: string },
+  //   @Param('sessionId') sessionId: string,
+  //   @Res() res: any,
+  // ): Promise<any> {
+  //   Logger.log(
+  //     'pageResetPassword: ' + JSON.stringify(sessionId),
+  //     'auth.controller',
+  //   );
+  //   const result: any = await this.sessionService.getSession(sessionId);
+  //   Logger.log(
+  //     'pageResetPassword::: getSession() => ' + JSON.stringify(result),
+  //     'auth.controller',
+  //   );
+  //   if (
+  //     result
+  //     // && result.action && result.action.includes('reset_password')
+  //   ) {
+  //     Logger.log('pageResetPassword::: before redirect()', 'auth.controller');
+  //     if (query && query.page_url) {
+  //       res.redirect(query.page_url + '/' + sessionId);
+  //     } else {
+  //       res.send({
+  //         isSuccess: true,
+  //       });
+  //     }
+  //   } else {
+  //     throw new HttpException(
+  //       {
+  //         code: 'session_invalid',
+  //         message: 'Invalid session',
+  //       },
+  //       400,
+  //     );
+  //   }
+  // }
+
+  // @ApiOperation({
+  //   summary: 'User can reset password after got reset password link via email',
+  // })
+  // @Post('change-password/session')
+  // //   @ApiOkResponse({ type: ChangePasswordUsingSessionResponse })
+  // async changePasswordUsingSession(
+  //   @Body() params: ChangePasswordUsingSessionRequest,
+  // ): Promise<ChangePasswordUsingSessionResponse> {
+  //   return this.authv3Service.changePasswordUsingSession({
+  //     sessionId: params.sessionId,
+  //     newPassword: params.newPassword,
+  //   });
+  // }
 }

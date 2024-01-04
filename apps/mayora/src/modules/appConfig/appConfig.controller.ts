@@ -23,7 +23,7 @@ import { UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { getAllAdminRoles } from 'libs/utils/role';
 import { AppConfigService } from 'libs/appConfig/src/appConfig/appConfig.service';
-import { AuthGuard } from '../../core/auth.guard';
+import { AuthPermissionGuard } from '../../core/auth.guard';
 import { ERoles } from '../../core/roles';
 import { getErrorStatusCode } from 'libs/utils/error';
 import { AppConfigProperties } from 'libs/appConfig/src/appConfig/appConfig.entity';
@@ -87,7 +87,7 @@ export class AppConfigController implements AppConfigApiContract {
 
   // @ApiBearerAuth()
   @Patch(':key')
-  // @UseGuards(AuthGuard(getAllAdminRoles(ERoles)))
+  // @UseGuards(AuthPermissionGuard(getAllAdminRoles(ERoles)))
   async update(
     @Param('key') key: string,
     @Body() params: AppConfigUpdateRequest,
@@ -117,7 +117,7 @@ export class AppConfigController implements AppConfigApiContract {
 
   // @ApiBearerAuth()
   @Put('custom/bulk')
-  // @UseGuards(AuthGuard(getAllAdminRoles(ERoles)))
+  // @UseGuards(AuthPermissionGuard(getAllAdminRoles(ERoles)))
   async bulkUpdate(
     @Body() body: AppConfigBulkUpdateRequest,
   ): Promise<AppConfigProperties[]> {
@@ -166,7 +166,7 @@ export class AppConfigController implements AppConfigApiContract {
 
   // @ApiBearerAuth()
   @Put('custom/as-object')
-  // @UseGuards(AuthGuard(getAllAdminRoles(ERoles)))
+  // @UseGuards(AuthPermissionGuard(getAllAdminRoles(ERoles)))
   async bulkUpdateByObject(@Body() body: any): Promise<any> {
     try {
       Logger.log('--ENTER BULK UPDATE BY OBJECT, APP CONFIG CONTROLLER--');
