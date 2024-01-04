@@ -36,7 +36,7 @@ export class AppConfigController implements AppConfigApiContract {
   constructor(
     private readonly configService: AppConfigService,
     private readonly configChangeLogsService: AppConfigChangesLogsService,
-  ) {}
+  ) { }
 
   @Get()
   async findAll(

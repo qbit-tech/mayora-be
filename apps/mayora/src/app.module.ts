@@ -16,6 +16,7 @@ import { RoleModule } from '@qbit-tech/libs-role';
 import { SessionModule } from '@qbit-tech/libs-session';
 import { NotificationScheduleModule } from '@qbit-tech/libs-notification-scheduler';
 import { InitDataModule } from './modules/initData/initData.module';
+import { CategoryModule } from './modules/category/category.module';
 
 const notificationOptions = [
   {
@@ -80,7 +81,7 @@ const sessionOption = {
   ),
 };
 
-const redisOption:RedisModuleOptions = {
+const redisOption: RedisModuleOptions = {
   config: {
     url: process.env.REDIS_URL,
   },
@@ -151,8 +152,9 @@ export const rootImportedModules = [
     UserModule,
     PermissionModule,
     RoleModule,
-    InitDataModule
+    InitDataModule,
+    CategoryModule
   ],
   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule { }
