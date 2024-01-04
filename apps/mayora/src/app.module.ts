@@ -1,16 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { RedisModule } from '@nestjs-modules/ioredis';
 import { AppController } from './app.controller';
 import { AppConfigModule } from './modules/appConfig/appConfig.module';
 import { AppConfigChangesLogsModule } from './modules/appConfig/appConfigChangesLogs.module';
-import { FirebaseModule } from '@qbit/firebase/firebase.module';
-import * as FirebaseAdmin from 'firebase-admin';
-import { AuthModule } from './modules/auth/auth.module';
-import * as NotificationsModules from '@qbit-tech/libs-notification';
-import { NotificationModule } from '@qbit/notification';
-
+import { CategoryModule } from './modules/category/category.module';
 
 const notificationOptions = [
   {
@@ -40,15 +34,15 @@ export const rootImportedModules = [
     isGlobal: true,
     envFilePath: process.env.ENV_PATH,
   }),
-  RedisModule.forRoot({
-    config: {
-      url: process.env.REDIS_URL,
-    },
-  }),
+  // RedisModule.forRoot({
+  //   config: {
+  //     url: process.env.REDIS_URL,
+  //   },
+  // }),
   SequelizeModule.forRoot({
     username: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASS || 'letmein',
-    database: process.env.DB_NAME || 'tm_development',
+    password: process.env.DB_PASS || 'inne1349',
+    database: process.env.DB_NAME || 'mayora',
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
     define: {
@@ -59,20 +53,19 @@ export const rootImportedModules = [
     logging: true,
     synchronize: false,
   }),
-  NotificationsModules.NotificationModule.forRoot(notificationOptions),
-  FirebaseModule.forRoot({
-    credential: process.env.FIREBASE_CERT
-      ? FirebaseAdmin.credential.cert(process.env.FIREBASE_CERT)
-      : FirebaseAdmin.credential.applicationDefault(),
-  }),
+  // NotificationsModules.NotificationModule.forRoot(notificationOptions),
+  // FirebaseModule.forRoot({
+  //   credential: process.env.FIREBASE_CERT
+  //     ? FirebaseAdmin.credential.cert(process.env.FIREBASE_CERT)
+  //     : FirebaseAdmin.credential.applicationDefault(),
+  // }),
 ];
 
 @Module({
   imports: [
     ...rootImportedModules,
-    AppConfigModule,
-    AppConfigChangesLogsModule,
-    NotificationsModules.NotificationModule
+    CategoryModule
+    // NotificationsModules.NotificationModule
   ],
   controllers: [AppController],
 })

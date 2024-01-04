@@ -23,7 +23,6 @@ import { UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { getAllAdminRoles } from 'libs/utils/role';
 import { AppConfigService } from 'libs/appConfig/src/appConfig/appConfig.service';
-import { AuthGuard } from '../../core/auth.guard';
 import { ERoles } from '../../core/roles';
 import { getErrorStatusCode } from 'libs/utils/error';
 import { AppConfigProperties } from 'libs/appConfig/src/appConfig/appConfig.entity';

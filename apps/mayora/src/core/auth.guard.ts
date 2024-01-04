@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-import { AuthService } from '../modules/auth/auth.service';
 import * as jwt from 'jsonwebtoken';
 
 export const DEFAULT_HASH_TOKEN = '58n4984u0n98ur3';
@@ -17,7 +16,7 @@ export const DEFAULT_HASH_TOKEN = '58n4984u0n98ur3';
 export const AuthGuard = (role?: string | string[]) => {
   @Injectable()
   class AuthGuardMixin implements CanActivate {
-    constructor(readonly authService: AuthService) {}
+    // constructor(readonly authService: AuthService) {}
 
     canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
@@ -43,9 +42,11 @@ export const AuthGuard = (role?: string | string[]) => {
 
         Logger.log(decodedJwt);
 
-        const user = await this.authService.verifyToken({
-          token: decodedJwt.session,
-        });
+        // const user = await this.authService.verifyToken({
+        //   token: decodedJwt.session,
+        // });
+
+        const user = null
 
         if (user === null) {
           throw new HttpException(
