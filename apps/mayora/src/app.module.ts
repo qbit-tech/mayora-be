@@ -18,6 +18,7 @@ import { NotificationScheduleModule } from '@qbit-tech/libs-notification-schedul
 import { InitDataModule } from './modules/initData/initData.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CategoryParentModule } from './modules/categoryParent/categoryParent.module';
+import { ManualCollectionModule } from './modules/manualCollection/manualCollection.module';
 
 const notificationOptions = [
   {
@@ -155,7 +156,8 @@ export const rootImportedModules = [
     RoleModule,
     InitDataModule,
     CategoryModule,
-    CategoryParentModule
+    CategoryParentModule,
+    ManualCollectionModule
   ],
   controllers: [AppController],
 })

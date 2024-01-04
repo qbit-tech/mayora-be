@@ -1,5 +1,6 @@
 import {
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -9,6 +10,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { CategoryModel } from '../category/category.entity';
 
 @Table({
   tableName: 'TrxManualCollection',
@@ -24,16 +26,19 @@ export class ManualCollectionModel extends Model {
   machineId: string;
 
   @Column
-  categoryId  : string;
+  categoryId: string;
+
+  @BelongsTo(() => CategoryModel, 'categoryId')
+  categoryParent: CategoryModel;
 
   @Column
-  value  : string;
+  value: string;
 
   @Column
-  shift  : string;
+  shift: string;
 
   @Column
-  remark  : string;
+  remark: string;
 
   @CreatedAt
   createdAt: Date;
