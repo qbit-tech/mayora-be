@@ -1,156 +1,592 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { UserModel, UserProperties } from './user.entity';
 import { InjectModel } from '@nestjs/sequelize';
-import { generateResultPagination } from '../../utils/generateResultPagination';
-import * as crypto from 'crypto';
-import { UserModel } from './user.entity';
-import { NewUserRequest, UserProperties } from './user.contract';
+import { Op } from 'sequelize';
+import { ulid } from 'ulid';
+import { RoleModel, RoleProperties, RoleService } from '@qbit-tech/libs-role';
+import {
+  generateResultPagination,
+  cleanPhoneNumber,
+  generateFullName,
+} from '@qbit-tech/libs-utils';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
     @InjectModel(UserModel)
     private readonly userRepositories: typeof UserModel,
+    private readonly roleService: RoleService,
   ) {}
 
-  async create(user: UserProperties): Promise<UserProperties> {
-    try {
-      const result = await this.userRepositories.create(user);
-      return result ? result.get() : null;
-    } catch (error) {
-      Logger.error(error)
-      return Promise.reject(error)
-    }
-  }
-
-  async update({
-    SLALevels,
-    id,
-  }: {
-    SLALevels: any;
-    id: string;
-  }): Promise<boolean> {
-    try {
-      const [num, result]  = await this.userRepositories.update(
-        SLALevels,
-        {
-          where: {
-            id : id,
-          },
-        },
-      );
-      if (result !== null) return true;
-      else return false;
-    } catch (error) {
-      Logger.error(error)
-      return Promise.reject(error)
-    }
-  }
-
-  async delete({
-    id,
-  }: {
-    id: string;
-  }): Promise<number> {
-    try {
-      const result = await this.userRepositories.destroy(
-        {
-          where: {
-            id : id,
-          },
-        },
-      );
-      return result;
-    } catch (error) {
-      Logger.error(error)
-      return Promise.reject(error)
-    }
-  }
-
-  async findAll(params: { offset?: number; limit?: number }): Promise<{
+  async findAll(params: {
+    offset?: number;
+    limit?: number;
+    search?: string;
+    filterStatus?: string;
+    filterGender?: string;
+    filterCustomerCode?: string;
+    startDate?: Date;
+    endDate?: Date;
+  }): Promise<{
     count: number;
     prev: string;
     next: string;
-    results: UserProperties[];
+    results: any[];
   }> {
     try {
-      const count = await this.userRepositories.count();
-      const results = await this.userRepositories.findAll({
+      this.logger.log('Find all user...');
+      this.logger.log('Params: ' + JSON.stringify(params));
+
+      let where = {};
+
+      if (params.startDate && params.endDate) {
+        where = {
+          ...where,
+          createdAt: {
+            [Op.and]: {
+              [Op.gte]: params.startDate,
+              [Op.lte]: params.endDate,
+            },
+          },
+        };
+      }
+
+      params.search &&
+        (where = {
+          ...where,
+          [Op.or]: [
+            { name: { [Op.iLike]: `%${params.search}%` } },
+            { email: { [Op.iLike]: `%${params.search}%` } },
+            { phone: { [Op.iLike]: `%${params.search}%` } },
+            { username: params.search },
+          ],
+        });
+
+      // if (
+      //   params.hasOwnProperty('filterStatus') &&
+      //   typeof params.filterStatus === 'boolean'
+      // ) {
+      //   where = {
+      //     ...where,
+      //     status: params.filterStatus ? 'active' : 'inactive',
+      //   };
+      // }
+
+      if (
+        params.hasOwnProperty('filterStatus') &&
+        typeof params.filterStatus === 'string'
+      ) {
+        where = {
+          ...where,
+          // status: {
+          //   [Op.iLike]: `%${params.filterStatus}%`,
+          // },
+          status: params.filterStatus,
+        };
+      }
+
+      if (
+        params.hasOwnProperty('filterGender') &&
+        typeof params.filterGender === 'string'
+      ) {
+        where = {
+          ...where,
+          gender: params.filterGender === 'male' ? 'male' : 'female',
+        };
+      }
+
+      if (
+        params.hasOwnProperty('filterCustomerCode') &&
+        typeof params.filterCustomerCode === 'string'
+      ) {
+        where = {
+          ...where,
+          userCode: {
+            [Op.iLike]: `%${params.filterCustomerCode}%`,
+          },
+        };
+      }
+
+      const options: any = {
+        where,
+        include: [
+          // {
+          //   model: RoleModel,
+          //   as: 'roles',
+          // },
+          //   {
+          //     model: EventModel,
+          //     as: 'events',
+          //   },
+          //   {
+          //     model: UserRelativeModel,
+          //     as: 'relatives',
+          //   },
+          //   {
+          //     model: EventReviewModel,
+          //     as: 'reviews',
+          //   },
+          //   {
+          //     model: VoucherModel,
+          //     as: 'vouchers',
+          //   },
+          //   {
+          //     model: TicketModel,
+          //     as: 'tickets',
+          //   },
+          //   {
+          //     model: EventFavouriteModel,
+          //     as: 'favourites',
+          //   },
+        ],
+        distinct: true,
+        col: 'userId',
+      };
+
+      const count = await this.userRepositories.count({ ...options });
+
+      const users = await this.userRepositories.findAll({
+        ...options,
         limit: params.limit,
         offset: params.offset,
+        order: [['createdAt', 'desc']],
       });
 
-      Logger.log('findAll : ' + JSON.stringify(results), 'SLA Levels.service');
+      const results = [];
+
+      for (const user of users.map((row) => row.get())) {
+        if (user.roleId) {
+          const getRole = await this.roleService.findOne(user.roleId);
+
+          if (getRole) {
+            results.push({
+              ...user,
+              role: getRole,
+            });
+          } else {
+            results.push({
+              ...user,
+            });
+          }
+        }
+      }
 
       return {
         ...generateResultPagination(count, params),
-        results: results.map((row) => row.get()),
+        // results: results.map((row) => row.get()),
+        results: results,
       };
     } catch (error) {
       Logger.error(
-        'findAll SLA Levels::: error: ' + JSON.stringify(error),
-        'SLA Levels.service',
-        'SLA Levels.service',
+        'findAll user::: error: ' + JSON.stringify(error),
+        'user.service',
+        'user.service',
       );
       return Promise.reject(error);
     }
   }
 
-  async findOneUser(id: string): Promise<UserProperties> {
-    try {
-      const result = await this.userRepositories.findOne({
-        where: {
-          id: id,
-        },
-      });
-      return result ? result.get() : null;  
-    } catch (error) {
-      Logger.error(error)
-      return Promise.reject(error)
+  async create(user: {
+    userId?: string;
+    name?: string;
+    email?: string;
+    gender?: string;
+    address?: string;
+    status?: 'active' | 'inactive';
+    phone?: string;
+    firstName?: string;
+    middleName?: string;
+    lastName?: string;
+    nickName?: string;
+    roleId?: string;
+    // roles?: Omit<RoleProperties, 'createdAt' | 'updatedAt'>[];
+  }): Promise<UserProperties> {
+    if (!user.email && !user.phone) {
+      return Promise.reject('Email and phone number is empty!');
     }
-  }
+    // if (!user.phoneCountryCode) {
+    //   user.phoneCountryCode = '62';
+    // }
+    if (!user.userId) {
+      user.userId = ulid();
+    }
+    if (user.firstName || user.middleName || user.lastName) {
+      user.name = generateFullName({
+        firstName: user.firstName,
+        middleName: user.middleName,
+        lastName: user.lastName,
+      });
+    } else if (user.name) {
+      user.firstName = user.name;
+    }
+    this.logger.log('Create new user: ' + user.userId);
+    // this.logger.verbose('Params: ' + JSON.stringify(user.roles));
 
-  async generateNewSession(
-    user: UserProperties,
-    platform: string,
-  ): Promise<{
-    expired: Date;
-    session: string;
-  }> {
     try {
-      const today = new Date();
-      const expDate = new Date(new Date().setDate(today.getDate() + 30));
-      if (platform == 'web') {
-        const sessionId = crypto.createHmac('sha256', process.env.RANDOM_SESSION_KEY || '2r8u32niejf')
-          .update(`${user.id}-${Date.now}-web`)
-          .digest('hex');
-        return { expired: expDate, session: sessionId };
-      } else if (platform == 'mobile') {
-        const sessionId = crypto
-          .createHmac('sha256', process.env.RANDOM_SESSION_KEY || '2r8u32niejf')
-          .update(`${user.id}-${Date.now}-mobile`)
-          .digest('hex');
-        return { expired: expDate, session: sessionId };
-      } else {
-        return null;
+      if (user.email) {
+        const findUserByEmail = await this.findOneByEmail(user.email);
+
+        if (findUserByEmail) {
+          return Promise.reject({
+            statusCode: 400,
+            code: 'failed_to_create',
+            message: 'Email already exist',
+          });
+        }
       }
+
+      if (user.phone) {
+        const cleanPhone = cleanPhoneNumber(user.phone);
+        const findUserByPhone = await this.findOneByPhone(cleanPhone);
+
+        if (findUserByPhone) {
+          return Promise.reject({
+            statusCode: 400,
+            code: 'failed_to_create',
+            message: 'Phone Number already exist',
+          });
+        }
+      }
+
+      const result = await this.userRepositories.create({
+        ...user,
+        // gender: user.gender || 'male',
+        status: user.status || 'active',
+      });
+
+      return {
+        ...result.get(),
+      };
     } catch (error) {
-      Logger.error(error)
-      return Promise.reject(error)
+      this.logger.error('Failed create new user');
+      this.logger.error(error);
+      return Promise.reject(error);
     }
   }
 
+  async findOneByEmail(email: string): Promise<UserProperties> {
+    this.logger.log('Find user by email: ' + email);
 
-  async findOneUserByEmail(email: string): Promise<UserProperties> {
     try {
-      const result = await this.userRepositories.findOne({
+      let result: any = await this.userRepositories.findOne({
         where: {
-          email: email,
+          email,
         },
       });
-      return result ? result.get() : null;  
-    } catch (error) {
-      Logger.error(error)
-      return Promise.reject(error)
+
+      if (result && result.roleId) {
+        const getRole = await this.roleService.findOne(result.roleId);
+
+        if (getRole) {
+          result = {
+            ...result.get(),
+            role: getRole,
+          };
+        } else {
+          result = result.get();
+        }
+      }
+
+      return result ? result : null;
+    } catch (err) {
+      this.logger.error('Failed find user by email!');
+      this.logger.error(err);
+      return Promise.reject(err);
     }
+  }
+
+  async findOneByUserId(userId: string): Promise<UserProperties> {
+    let result: any = await this.userRepositories.findOne({
+      where: { userId },
+    });
+
+    if (result && result.roleId) {
+      const getRole = await this.roleService.findOne(result.roleId);
+
+      if (getRole) {
+        result = {
+          ...result.get(),
+          role: getRole,
+        };
+      } else {
+        result = result.get();
+      }
+    } else {
+      result = result.get();
+    }
+
+    return result ? result : null;
+  }
+
+  async update(
+    user: Partial<Omit<UserProperties, 'createdAt' | 'updatedAt'>>,
+    userId: string,
+  ): Promise<UserProperties> {
+    this.logger.log('Update user: ' + userId);
+    this.logger.verbose('New Data: ' + user);
+
+    try {
+      const findUser = await this.findOneByUserId(userId);
+
+      if (user.email) {
+        if (findUser.email && findUser.email !== user.email) {
+          const findUserByEmail = await this.findOneByEmail(user.email);
+
+          if (findUserByEmail) {
+            return Promise.reject({
+              statusCode: 400,
+              code: 'failed_to_create',
+              message: 'Email already exist',
+            });
+          }
+        } else if (!findUser.email) {
+          const findUserByEmail = await this.findOneByEmail(user.email);
+
+          if (findUserByEmail) {
+            return Promise.reject({
+              statusCode: 400,
+              code: 'failed_to_create',
+              message: 'Email already exist',
+            });
+          }
+        }
+      }
+
+      if (user.phone) {
+        const cleanPhoneUser = cleanPhoneNumber(user.phone);
+        if (findUser.phone) {
+          const cleanPhoneFoundUser = cleanPhoneNumber(findUser.phone);
+
+          if (cleanPhoneFoundUser !== cleanPhoneUser) {
+            const findUserByPhone = await this.findOneByPhone(cleanPhoneUser);
+
+            if (findUserByPhone) {
+              return Promise.reject({
+                statusCode: 400,
+                code: 'failed_to_create',
+                message: 'Phone Number already exist',
+              });
+            }
+          }
+        } else if (!findUser.phone) {
+          const findUserByPhone = await this.findOneByPhone(cleanPhoneUser);
+
+          if (findUserByPhone) {
+            return Promise.reject({
+              statusCode: 400,
+              code: 'failed_to_create',
+              message: 'Phone Number already exist',
+            });
+          }
+        }
+      }
+
+      const [numberOfAffectedRows, [updatedUser]] =
+        await this.userRepositories.update(
+          {
+            ...user,
+          },
+          {
+            where: {
+              userId,
+            },
+            returning: true,
+          },
+        );
+      // await this.userRoleService.update(user.userId, roleIds);
+
+      return numberOfAffectedRows ? updatedUser.get() : null;
+    } catch (error) {
+      this.logger.error('Failed update user!');
+      this.logger.error(error);
+      return Promise.reject(error);
+    }
+  }
+
+  async updateEmail(userId: string, newEmail: string) {
+    // check existing email
+    const userData = await this.findOneByUserId(userId);
+    if (!userData) {
+      return Promise.reject({
+        code: 'user_not_found',
+        message: 'User not found',
+      });
+    }
+
+    // check is email has been used by other user?
+    const findNewUserPropertiesByEmail = await this.findOneByEmail(newEmail);
+    if (
+      findNewUserPropertiesByEmail &&
+      findNewUserPropertiesByEmail.userId !== userId
+    ) {
+      return Promise.reject({
+        code: 'email_has_been_used',
+        message: 'Email has been used by other user',
+      });
+    }
+
+    await this.userRepositories.update(
+      {
+        email: newEmail,
+      },
+      {
+        where: {
+          userId,
+        },
+      },
+    );
+
+    return this.findOneByUserId(userId);
+  }
+
+  async updatePhone(
+    userId: string,
+    newPhone: string,
+    phoneCountryCode: string,
+  ) {
+    // check existing email
+    const userData = await this.findOneByUserId(userId);
+    if (!userData) {
+      return Promise.reject({
+        code: 'user_not_found',
+        message: 'User not found',
+      });
+    }
+
+    // check is email has been used by other user?
+    const findNewUserPropertiesByPhone = await this.findOneByPhone(newPhone);
+    if (
+      findNewUserPropertiesByPhone &&
+      findNewUserPropertiesByPhone.userId !== userId
+    ) {
+      return Promise.reject({
+        code: 'phone_number_has_been_used',
+        message: 'Phone number has been used by other user',
+      });
+    }
+
+    await this.userRepositories.update(
+      {
+        phone: newPhone,
+        phoneCountryCode: phoneCountryCode,
+      },
+      {
+        where: {
+          userId,
+        },
+      },
+    );
+
+    return this.findOneByUserId(userId);
+  }
+
+  async findOneByPhone(phoneNumber: string): Promise<UserProperties> {
+    let result: any = await this.userRepositories.findOne({
+      where: {
+        phone: phoneNumber,
+      },
+      // include: [
+      //   {
+      //     model: RoleModel,
+      //     as: 'roles',
+      //   },
+      //   {
+      //     model: EventModel,
+      //     as: 'events',
+      //   },
+      //   {
+      //     model: UserRelativeModel,
+      //     as: 'relatives',
+      //   },
+      //   {
+      //     model: EventReviewModel,
+      //     as: 'reviews',
+      //   },
+      //   {
+      //     model: VoucherModel,
+      //     as: 'vouchers',
+      //   },
+      //   {
+      //     model: TicketModel,
+      //     as: 'tickets',
+      //   },
+      //   {
+      //     model: EventFavouriteModel,
+      //     as: 'favourites',
+      //   },
+      // ],
+    });
+
+    if (result && result.roleId) {
+      const getRole = await this.roleService.findOne(result.roleId);
+
+      if (getRole) {
+        result = {
+          ...result.get(),
+          role: getRole,
+        };
+      } else {
+        result = result.get();
+      }
+    }
+
+    return result ? result : null;
+  }
+
+  async updateUserImage(params: {
+    userId: string;
+    imageLink?: string;
+  }): Promise<any> {
+    Logger.log('--ENTER UPDATE ARTICLE IMAGE, USER SERVICE--');
+    const result = await this.userRepositories.update(
+      { profilePic: params.imageLink ? params.imageLink : '' },
+      {
+        where: { userId: params.userId },
+      },
+    );
+    Logger.log(
+      'file updated user image: ' + JSON.stringify(result),
+      'user.service',
+    );
+    return this.findOneByUserId(params.userId);
+  }
+
+  async delete(userId: string): Promise<boolean> {
+    this.logger.log('Delete user: ' + userId);
+
+    try {
+      // const userResult = await this.findOneByUserId(userId);
+
+      // if (userResult.roles.length > 0) {
+      //   await this.userRoleService.deleteByUserId(userId);
+      // }
+
+      const result = await this.userRepositories.destroy({
+        where: { userId },
+      });
+
+      Logger.log('file deleted: ' + JSON.stringify(result), 'role.service');
+
+      return true;
+    } catch (error) {
+      this.logger.error('Failed delete user');
+      this.logger.error(error);
+
+      return Promise.reject(error);
+    }
+  }
+
+  async getUserMetadata(userId: string): Promise<{
+    userId: string;
+    name: string;
+  }> {
+    const user = await this.findOneByUserId(userId);
+    const metadata = {
+      userId: user.userId,
+      name: user.name,
+    };
+    return metadata;
   }
 }

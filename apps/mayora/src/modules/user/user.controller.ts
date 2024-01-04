@@ -1,100 +1,462 @@
 import {
   Body,
   Controller,
-  Delete,
+  Put,
+  UseInterceptors,
+  UploadedFile,
+  Req,
+  UseGuards,
   Get,
-  HttpException,
-  Logger,
+  Query,
+  Delete,
   Param,
   Patch,
+  Logger,
   Post,
-  Query,
-  Request,
-  UseGuards,
+  HttpException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../../core/auth.guard';
 import { UserService } from './user.service';
-import { getErrorStatusCode } from 'libs/utils/error';
-import { NewUserRequest, NewUserResponse, UserFindAllRequest, UserFindAllResponse, UserProperties } from './user.contract';
+import {
+  UpdateRequest,
+  UserApiContract,
+  UpdatePhotoResponse,
+  CheckUserRequest,
+  UserFindAllRequest,
+  UserFindAllResponse,
+  CreateUserRequest,
+  UpdateUserRequest,
+} from './contract/user.contract';
+import { FileInterceptor } from '@nestjs/platform-express';
+// import { AuthPermissionGuard } from '../../core/authPermission.guard';
+import { AppRequest, SimpleResponse } from '@qbit-tech/libs-utils';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiBody,
+  ApiConsumes,
+} from '@nestjs/swagger';
+import { UserProperties } from './user.entity';
+// import { AuthService } from '../auth/auth.service';
+import { async as crypt } from 'crypto-random-string';
+import { AuthService } from '@qbit-tech/libs-authv3';
+import { cleanPhoneNumber, getErrorStatusCode } from '@qbit-tech/libs-utils';
+import {
+  FEATURE_PERMISSIONS,
+  AuthPermissionGuard,
+  SessionService,
+} from '@qbit-tech/libs-session';
+import { NotificationService } from '@qbit-tech/libs-notification';
+import { EAuthMethod } from '@qbit-tech/libs-authv3/dist/authentication.entity';
+// import { UploaderService } from '@qbit-tech/libs-uploader';
 
-@ApiTags('User')
-@Controller('user')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+@ApiTags('Users')
+@Controller('users')
+export class UserController implements UserApiContract {
+  private readonly logger = new Logger(UserController.name);
+
+  constructor(
+    private userService: UserService,
+    private authenticatorService: AuthService,
+    private notificationService: NotificationService,
+    private sessionService: SessionService,
+  ) {}
+
+  @ApiOperation({ summary: 'New admin using email authenticator' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
-  @Get()
-  async findAll(
-    @Query() query: UserFindAllRequest,
-    @Request() req,
-  ): Promise<UserFindAllResponse> {
+  @Post()
+  // @UseGuards(AuthPermissionGuard())
+  @UseInterceptors(FileInterceptor('image'))
+  async createUser(
+    @Req() req: AppRequest,
+    @Body() body: CreateUserRequest,
+    @UploadedFile() file,
+  ): Promise<UserProperties> {
+    this.logger.log('Create new user');
+    this.logger.verbose('Body: ' + JSON.stringify(body));
+
     try {
-      Logger.log(req)
-      Logger.log('findAll : ' + JSON.stringify(query), 'User.controller');
-      const res = await this.userService.findAll(query);
-      return res;
+      const fullName = `${body.firstName} ${
+        body.middleName ? body.middleName : '.'
+      } ${body.lastName ? body.lastName : '.'}`;
+      const name = fullName.replace(/[^a-zA-Z ]/g, '');
+      const randomPassword = await crypt({ length: 10 });
+
+      let result;
+
+      const userData = await this.userService.create({
+        ...body,
+      });
+
+      if (body.email) {
+        this.logger.log('email registered');
+        const registerByEmail = await this.authenticatorService.register(
+          EAuthMethod.emailPassword,
+          {
+            userId: userData.userId,
+            username: body.email,
+            password: body.password ? body.password : randomPassword,
+          },
+        );
+
+        result = {
+          ...result,
+          registerByEmailResult: {
+            ...registerByEmail,
+          },
+        };
+        // if (res) {
+        //   await this.sibService.sendTemplate({
+        //     to: [
+        //       {
+        //         email: body.email,
+        //       },
+        //     ],
+        //     templateId: parseInt(
+        //       process.env.SENDINBLUE_TEMPLATE_ID_SEND_PASSWORD_TO_NEW_USER,
+        //     ),
+        //     params: {
+        //       name: name,
+        //       email: body.email,
+        //       password: body.password ? body.password : randomPassword,
+        //     },
+        //   });
+        // }
+      }
+      // await this.authService.generateSessionForVerifyEmail({
+      //   email: body.email,
+      //   platform:
+      //     body.platform === 'cms' ? EPlatform.CMS : EPlatform.MOBILE_APP,
+      // });
+
+      if (body.username) {
+        this.logger.log('username registered');
+        const registerByUsername = await this.authenticatorService.register(
+          EAuthMethod.usernamePassword,
+          {
+            userId: userData.userId,
+            username: body.email,
+            password: body.password ? body.password : randomPassword,
+          },
+        );
+
+        result = {
+          ...result,
+          registerByUsernameResult: {
+            ...registerByUsername,
+          },
+        };
+
+        return result;
+      }
     } catch (error) {
-      Logger.error('findAll error ::: ' + error, 'User.controller');
+      this.logger.error(error);
       throw new HttpException(error, getErrorStatusCode(error));
     }
   }
 
+  @Post('/check')
+  // @ApiBearerAuth()
+  async checkUser(@Body() body: CheckUserRequest): Promise<{
+    isEmailExist: boolean;
+    isUsernameExist: boolean;
+    isPhoneExist: boolean;
+  }> {
+    try {
+      let res;
+      if (body.email) {
+        const findUser = await this.userService.findOneByEmail(body.email);
+        if (findUser) {
+          res = {
+            ...res,
+            isEmailExist: true,
+          };
+        } else {
+          res = {
+            ...res,
+            isEmailExist: false,
+          };
+        }
+      }
+
+      if (body.phone) {
+        const phone = cleanPhoneNumber(body.phone);
+        const findUser = await this.userService.findOneByPhone(phone);
+        if (findUser) {
+          res = {
+            ...res,
+            isPhoneExist: true,
+          };
+        } else {
+          res = {
+            ...res,
+            isPhoneExist: false,
+          };
+        }
+      }
+
+      return res;
+    } catch (err) {
+      throw new HttpException(
+        {
+          code: 'failed_find_user',
+          message: err.errors[0].message,
+        },
+        422,
+      );
+      // return Promise.reject(error.message);
+    }
+  }
+
+  @ApiOperation({ summary: 'List all user' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
-  @Get(':id')
-  async getOneUser(
-    @Param('id') id: string,
+  @Get()
+  @UseGuards()
+  // AuthPermissionGuard(
+  //   FEATURE_PERMISSIONS.USER.__type,
+  //   FEATURE_PERMISSIONS.USER.LIST.__type,
+  // ),
+  @ApiOkResponse({ type: UserFindAllResponse })
+  async findAll(
+    @Query() params: UserFindAllRequest,
+  ): Promise<UserFindAllResponse> {
+    const res = await this.userService.findAll({
+      ...params,
+      // filterStatus: convertStringToBoolean(params.filterStatus),
+    });
+
+    for (const result of res.results) {
+      const verifiedStatus = await this.getVerifiedStatus({
+        email: result.email,
+        phone: result.phone,
+      });
+      res.results = res.results.map((item) => {
+        if (result.userId === item.userId) {
+          item = {
+            ...item,
+            ...verifiedStatus,
+          };
+        }
+        return item;
+      });
+    }
+
+    return res;
+  }
+
+  @ApiOperation({
+    summary:
+      'Update user profile by userId, set userid to "me" to change current login user profile',
+  })
+  @ApiBearerAuth()
+  @Patch(':userId')
+  @UseGuards(AuthPermissionGuard())
+  @ApiOkResponse({ type: UserProperties })
+  async updateUserProfile(
+    @Param('userId') userId: string,
+    @Body() body: UpdateUserRequest,
+    @Req() req: AppRequest,
   ): Promise<UserProperties> {
     try {
-      const result = this.userService.findOneUser(id);
-      return result ? result : null;
-      
+      let uid = userId;
+      if (userId === 'me') {
+        uid = req.user.userId;
+      }
+
+      if (userId !== 'me') {
+        // only for admin
+
+        if (body.email && body.isEmailVerified !== undefined) {
+          // await this.authenticatorService.updateDataByUserId(uid, {
+          //   email: body.email,
+          //   isConfirmed: body.isEmailVerified,
+          // });
+        }
+      }
+
+      const res = await this.update({
+        ...body,
+        userId: uid,
+      });
+
+      return res;
     } catch (error) {
+      this.logger.error(error);
       throw new HttpException(error, getErrorStatusCode(error));
     }
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard())
-  @Delete(':id')
-  async deleteUser(
-    @Param('id') id: string,
-  ): Promise<{ isSuccess: boolean, rowsDeleted: number }> {
+  async update(request: UpdateRequest): Promise<any> {
     try {
-      const result = await this.userService.delete({ id });
-      return { isSuccess: result == 1, rowsDeleted: result };
-    } catch (error) {
-      throw new HttpException(error, getErrorStatusCode(error));
+      await this.userService.update(request, request.userId);
+      return this.getProfile(request.userId);
+    } catch (err) {
+      this.logger.error(err);
+      throw new HttpException(err, getErrorStatusCode(err));
+      // return Promise.reject(error.message);
     }
   }
 
+  @ApiOperation({
+    summary:
+      'Get user data by userId, set userId to "me" to get current login user data',
+  })
+  @ApiBearerAuth()
+  @Get(':userId')
+  @UseGuards(AuthPermissionGuard())
+  @ApiOkResponse({ type: UserProperties })
+  async getMyProfile(
+    @Param('userId') userId: string,
+    @Req() req: AppRequest,
+  ): Promise<UserProperties> {
+    let uid = userId;
+    if (userId === 'me') {
+      Logger.log('get my profile');
+      console.log(req.user);
+      uid = req.user.userId;
+    }
+    Logger.log('req.user', req.user);
+    Logger.log('userId', userId);
+    Logger.log('uid', uid);
+    return this.getProfile(uid);
+  }
 
-  // @ApiBearerAuth()
-  // @Patch(':id')
-  // @UseGuards(AuthGuard())
-  // async update(
-  //   @Body() SLALevels: UpdateSLALevelsRequest,
-  //   @Request() req,
-  //   @Param('id') id: string,
-  // ): Promise<{ isSuccess: boolean }> {
+  @ApiOperation({
+    summary:
+      'Change user photo by userId, set userId to "me" to change current login user data',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+
+  // async updatePhoto(request: UpdatePhotoRequest): Promise<any> {
   //   try {
-  //     if (req.user) {
-  //       Logger.log('INSIDE USER UPDATE');
-  //       const slaLevelsResult = await this.userService.update({
-  //         SLALevels,
-  //         id,
-  //       });
-  //       return slaLevelsResult ? { isSuccess: true } : null;
-  //     } else {
-  //       return Promise.reject({
-  //         statusCode: 401,
-  //         code: 'Unauthorized',
-  //         message: 'Sign in to update User',
-  //       });
+  //     const fileSearchResult = await this.uploaderService.fileSearchByTable(
+  //       'users',
+  //       [request.userId],
+  //     );
+
+  //     const uploadResult = await this.uploaderService.fileUploaded({
+  //       tableName: 'users',
+  //       tableId: request.userId,
+  //       filePath: request.file['key'],
+  //       metadata: {},
+  //     });
+
+  //     if (fileSearchResult.has(request.userId)) {
+  //       await this.uploaderService.deleteFileById(
+  //         fileSearchResult.get(request.userId)[0].fileId,
+  //       );
   //     }
-  //   } catch (error) {
-  //     throw new HttpException(error, getErrorStatusCode(error));
+
+  //     await this.userService.update(
+  //       {
+  //         profilePic: uploadResult.fileLinkCache,
+  //       },
+  //       request.userId,
+  //     );
+
+  //     return { isSuccess: true };
+  //   } catch (err) {
+  //     console.info('gagal update: controller ');
+  //     return err;
   //   }
   // }
+
+  async getProfile(userId: string): Promise<UserProperties> {
+    const userData = await this.userService.findOneByUserId(userId);
+    const verifiedStatus = await this.getVerifiedStatus({
+      email: userData.email,
+    });
+
+    const res: UserProperties = {
+      ...userData,
+      ...verifiedStatus,
+    };
+
+    return res;
+  }
+
+  async getVerifiedStatus(data: { email: string; phone?: string }) {
+    let res = {
+      isEmailVerified: false,
+      isPhoneVerified: false,
+    };
+    if (data.email) {
+      // const emailAuthData = await this.authenticatorService.findOneByEmail(
+      //   data.email,
+      // );
+      // if (emailAuthData) {
+      //   res = {
+      //     ...res,
+      //     isEmailVerified: emailAuthData.isConfirmed,
+      //   };
+      // }
+    }
+    if (data.phone) {
+      // const phoneAuthData = await this.authService.findOneByPhoneNumberAuthDataByPhone(
+      //   data.phone,
+      // );
+      // if (phoneAuthData) {
+      //   res = {
+      //     ...res,
+      //     isPhoneVerified: true,
+      //   };
+      // }
+    }
+
+    return res;
+  }
+
+  @ApiOperation({ summary: 'Delete user by userId' })
+  @ApiBearerAuth()
+  @Delete(':userId')
+  @UseGuards(
+    AuthPermissionGuard(
+      FEATURE_PERMISSIONS.USER.__type,
+      FEATURE_PERMISSIONS.USER.FORCE_DELETE_OTHER_USER.__type,
+    ),
+  )
+  @ApiOkResponse({ type: SimpleResponse })
+  async delete(
+    @Req() req: AppRequest,
+    @Param('userId') userId: string,
+  ): Promise<{ isSuccess: boolean }> {
+    const isSuccess = await this.userService.delete(userId);
+    if (isSuccess) {
+      // await Promise.all([
+      //   this.authenticatorService.deleteByUserId(userId),
+      //   this.phoneAuthenticatorService.deleteByUserId(userId),
+      // ]);
+    }
+
+    return {
+      isSuccess,
+    };
+  }
+  @Get('me')
+  @ApiBearerAuth()
+  async getMe(@Req() req: AppRequest): Promise<any> {
+    try {
+      Logger.log(req);
+      return req;
+    } catch (err) {
+      Logger.error(
+        'update:::ERROR: ' + JSON.stringify(err),
+        'users.controller',
+        'users.controller',
+      );
+      throw new HttpException(err, 500);
+    }
+  }
 }

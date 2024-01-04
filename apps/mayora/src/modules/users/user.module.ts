@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from '../auth/auth.module';
-import { RoleModel } from './role.entity';
-import { RoleService } from './role.service';
-// import { RoleController } from './role.controller';
+import { UserModel } from './user.entity';
+import { UserService } from './user.service';
+// import { UserController } from './user.controller';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([RoleModel]),
+    SequelizeModule.forFeature([UserModel]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.ENV_PATH,
@@ -16,7 +16,7 @@ import { RoleService } from './role.service';
     AuthModule,
   ],
   controllers: [],
-  providers: [RoleService],
-  exports: [RoleService],
+  providers: [UserService],
+  exports: [UserService],
 })
-export class RoleModule {}
+export class UserModule {}

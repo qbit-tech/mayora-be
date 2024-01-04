@@ -1,19 +1,16 @@
-import { forwardRef, Module } from '@nestjs/common';
-// import { GoSMSGatewayModule } from "libs/goSMSgateway/src";
-import { AuthService } from './auth.service';
+import { Module } from '@nestjs/common';
+// import { Authv3Service } from './authv3.service';
+import { AuthenticationModule, SessionModule } from '@qbit-tech/libs-authv3';
 import { AuthController } from './auth.controller';
-import { EmailAuthService } from './email.auth.service';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { UserService } from '../user/user.service';
-import { UserModel } from '../user/user.entity';
+import { UserModule } from '../user/user.module';
 
+// import { AuthService } from '@qbit-tech/libs-authv3';
+import { AuthEmailOTPController } from './authEmailOTP.controller';
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([UserModel]),  
-  ],
-  controllers: [AuthController],
-  providers: [AuthService, EmailAuthService, UserService],
-  exports: [AuthService, EmailAuthService, UserService],
+  imports: [AuthenticationModule, UserModule, SessionModule],
+  // providers: [Authv3Service],
+  controllers: [AuthEmailOTPController, AuthController],
+  // exports: [Authv3Service],
 })
 export class AuthModule {}
