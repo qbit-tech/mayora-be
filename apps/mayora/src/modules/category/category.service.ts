@@ -22,11 +22,12 @@ export class CategoryService {
   constructor(
     @InjectModel(CategoryModel)
     private readonly companyRepositories: typeof CategoryModel,
-  ) {}
+  ) { }
 
   async findAll(params: FindAllRequest): Promise<FindAllResponse> {
     try {
       const where = {};
+      console.log('hgftyuijkhgft')
 
       const result = await this.companyRepositories.findAll({
         where,
@@ -100,8 +101,8 @@ export class CategoryService {
         name: params.name,
         categoryParentId: params.categoryParentId,
         categoryType: params.categoryType,
-        status: 'active',
         createdBy: params.createdBy,
+        status: "active"
       });
 
       return { isSuccess: result ? true : false };
@@ -117,10 +118,10 @@ export class CategoryService {
     }
   }
 
-  async update(params: UpdateRequest): Promise<UpdateResponse> {
+  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
     try {
       const category = await this.companyRepositories.findOne({
-        where: { id: params.id },
+        where: { id: id },
       });
 
       if (category === null) {
@@ -153,12 +154,10 @@ export class CategoryService {
     }
   }
 
-  async remove(
-    body: RemoveRequest,
-  ): Promise<RemoveResponse> {
+  async remove(id: string): Promise<RemoveResponse> {
     try {
       const shipment = await this.companyRepositories.findOne({
-        where: { id: body.id },
+        where: { id: id },
       });
 
       if (shipment === null) {

@@ -26,14 +26,14 @@ import {
   RemoveResponse,
 } from './contract';
 import { CategoryParentService } from './categoryParent.service';
-import { AuthGuard } from '../../core/auth.guard';
+import { AuthPermissionGuard } from '../../core/auth.guard';
 
-@Controller('category-parent')
+@Controller('categoryParent')
 export class CategoryParentController implements CompanyApiContract {
-  constructor(private companyService: CategoryParentService) {}
+  constructor(private companyService: CategoryParentService) { }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
+  //  @UseGuards(AuthPermissionGuard)
   async getDetailCompany(
     @Param() param: { id: string },
   ): Promise<ICompanyListItem> {
@@ -45,13 +45,13 @@ export class CategoryParentController implements CompanyApiContract {
   }
 
   @Post()
-  // @UseGuards(AuthGuard)
+  //  @UseGuards(AuthPermissionGuard)
   async createCompany(
     @Req() request: any,
     @Body() body: Omit<CreateRequest, 'createdBy'>,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8"});
+    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
   }
 
   async create(params: CreateRequest): Promise<CreateResponse> {
@@ -59,7 +59,7 @@ export class CategoryParentController implements CompanyApiContract {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
+  //  @UseGuards(AuthPermissionGuard)
   async updateCompany(
     @Param() param: { id: string },
     @Req() request: any,
@@ -76,7 +76,7 @@ export class CategoryParentController implements CompanyApiContract {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  //  @UseGuards(AuthPermissionGuard)
   async deleteItem(
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,

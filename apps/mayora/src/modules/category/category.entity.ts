@@ -25,14 +25,14 @@ export class CategoryModel extends Model {
   })
   id: string;
 
-  // @Column
-  // categoryParentId: string;
+  @Column
+  categoryParentId: string;
 
-  @BelongsTo(() => CategoryParentModel, 'id')
-  categoryParentId: CategoryParentModel;
+  @BelongsTo(() => CategoryParentModel, 'categoryParentId')
+  categoryParent: CategoryParentModel;
 
   @Column
-  name  : string;
+  name: string;
 
   @Column
   categoryType: string;

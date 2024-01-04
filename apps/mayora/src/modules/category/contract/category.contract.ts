@@ -2,8 +2,8 @@ export abstract class CompanyApiContract {
   abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequest): Promise<CreateResponse>;
-  abstract update(params: UpdateRequest): Promise<UpdateResponse>;
-  abstract remove(params: RemoveRequest): Promise<RemoveResponse>;
+  abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
+  abstract remove(id: string): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 
