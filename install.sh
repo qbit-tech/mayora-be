@@ -1,7 +1,12 @@
+echo "> INSTALL ROOT"
 yarn install
 
-yarn add @qbit-tech/libs-notification
+echo "> INSTALL LIBS"
+yarn add @qbit-tech/libs-session
+yarn add @qbit-tech/libs-authv3
+yarn add @qbit-tech/libs-role
 
-yarn add @qbit-tech/libs-notification-scheduler
+echo "> RUN MIGRATION"
+./run_migration.sh mayora local
 
-./run_migration.sh tm local
+echo "==== Install End Successfully ===="
