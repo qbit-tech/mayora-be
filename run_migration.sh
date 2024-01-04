@@ -44,6 +44,23 @@ cd ./node_modules/@qbit-tech/libs-role/dist
 ENV_PATH=../../../../apps/$PROJECT/.env.$MODE npx sequelize-cli db:migrate --env $MODE
 cd ../../../..
 
+echo -ne '\n'
+echo "=== MIGRATE DB @qbit-tech/libs-notification ==="
+cd ./node_modules/@qbit-tech/libs-notification/dist
+ENV_PATH=../../../../apps/$PROJECT/.env.$MODE npx sequelize-cli db:migrate --env $MODE
+cd ../../../..
+
+echo -ne '\n'
+echo "=== MIGRATE DB @qbit-tech/libs-notification-scheduler ==="
+cd ./node_modules/@qbit-tech/libs-notification-scheduler/dist
+ENV_PATH=../../../../apps/$PROJECT/.env.$MODE npx sequelize-cli db:migrate --env $MODE
+cd ../../../..
+
+echo -ne '\n'
+echo "=== MIGRATE DB Project ==="
+cd apps/$PROJECT
+ENV_PATH=.env.$MODE npx sequelize-cli db:migrate --env $MODE
+cd ../..
 
 echo -ne '\n'
 echo "--- Migration: Finished ---"
