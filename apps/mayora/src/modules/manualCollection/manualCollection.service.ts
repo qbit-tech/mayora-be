@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CategoryModel } from './category.entity';
+import { ManualCollectionModel } from './manualCollection.entity';
 import {
   FindAllRequest,
   FindAllResponse,
@@ -18,51 +18,51 @@ import { getLikeOp } from '../../helpers/db';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class CategoryService {
+export class ManualCollectionService {
   constructor(
-    @InjectModel(CategoryModel)
-    private readonly companyRepositories: typeof CategoryModel,
+    @InjectModel(ManualCollectionModel)
+    private readonly companyRepositories: typeof ManualCollectionModel,
   ) { }
 
-  async findAll(params: FindAllRequest): Promise<FindAllResponse> {
-    try {
-      const where = {};
-      console.log('hgftyuijkhgft')
+  // async findAll(params: FindAllRequest): Promise<FindAllResponse> {
+  //   try {
+  //     const where = {};
+  //     console.log('hgftyuijkhgft')
 
-      const result = await this.companyRepositories.findAll({
-        where,
-        attributes: [
-          'id',
-          'name',
-          'categoryParentId',
-          'categoryType',
-          'updatedBy',
-          'status',
-          'createdBy',
-          'createdAt',
-          'updatedAt',
-        ],
-        offset: params.offset,
-        limit: params.limit,
-      });
-      const count = await this.companyRepositories.count({ where });
-      return {
-        count: count,
-        next: '',
-        prev: '',
-        results: result.map(item => item.get()),
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: 'ERR_COMPANY_REQUEST',
-          message: error.message,
-          payload: null,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
+  //     const result = await this.companyRepositories.findAll({
+  //       where,
+  //       attributes: [
+  //         'id',
+  //         'name',
+  //         'manualCollectionParentId',
+  //         'manualCollectionType',
+  //         'updatedBy',
+  //         'status',
+  //         'createdBy',
+  //         'createdAt',
+  //         'updatedAt',
+  //       ],
+  //       offset: params.offset,
+  //       limit: params.limit,
+  //     });
+  //     const count = await this.companyRepositories.count({ where });
+  //     return {
+  //       count: count,
+  //       next: '',
+  //       prev: '',
+  //       results: result.map(item => item.get()),
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       {
+  //         status: 'ERR_COMPANY_REQUEST',
+  //         message: error.message,
+  //         payload: null,
+  //       },
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  // }
 
   async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
     try {
@@ -71,8 +71,8 @@ export class CategoryService {
         attributes: [
           'id',
           'name',
-          'categoryParentId',
-          'categoryType',
+          'manualCollectionParentId',
+          'manualCollectionType',
           'updatedBy',
           'status',
           'createdBy',
@@ -98,11 +98,12 @@ export class CategoryService {
     try {
       const result = await this.companyRepositories.create({
         id: uuidv4(),
-        name: params.name,
-        categoryParentId: params.categoryParentId,
-        categoryType: params.categoryType,
+        machineId: 'hgyui87yui8765ertfghjui',
+        categoryId: params.categoryId,
         createdBy: params.createdBy,
-        status: "active"
+        value: params.value,
+        shift: params.shift,
+        remark: params.remark
       });
 
       return { isSuccess: result ? true : false };
@@ -120,11 +121,11 @@ export class CategoryService {
 
   async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
     try {
-      const category = await this.companyRepositories.findOne({
+      const manualCollection = await this.companyRepositories.findOne({
         where: { id: id },
       });
 
-      if (category === null) {
+      if (manualCollection === null) {
         throw new HttpException(
           {
             code: 'ERR_COMPANY_NOT_FOUND',
@@ -135,11 +136,13 @@ export class CategoryService {
         );
       }
 
-      category.name = params.name;
-      category.status = params.status;
-      category.categoryType = params.categoryType;
-      category.updatedBy = params.updatedBy;
-      await category.save();
+      manualCollection.machineId = params.machineId;
+      manualCollection.categoryId = params.categoryId;
+      manualCollection.value = params.value;
+      manualCollection.shift = params.shift;
+      manualCollection.remark = params.remark;
+      manualCollection.updatedBy = params.updatedBy;
+      await manualCollection.save();
 
       return { isSuccess: true };
     } catch (error) {

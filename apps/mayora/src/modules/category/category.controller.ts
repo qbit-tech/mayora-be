@@ -26,14 +26,14 @@ import {
   RemoveResponse,
 } from './contract';
 import { CategoryService } from './category.service';
-import { AuthGuard } from '../../core/auth.guard';
+import { AuthPermissionGuard } from '../../core/auth.guard';
 
 @Controller('category')
 export class CategoryController implements CompanyApiContract {
-  constructor(private companyService: CategoryService) {}
+  constructor(private companyService: CategoryService) { }
 
   @Get()
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthPermissionGuard())
   async getCompanyList(
     @Query() query: FindAllRequest,
   ): Promise<FindAllResponse> {
@@ -51,7 +51,7 @@ export class CategoryController implements CompanyApiContract {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthPermissionGuard())//
   async getDetailCompany(
     @Param() param: { id: string },
   ): Promise<ICompanyListItem> {
@@ -63,13 +63,13 @@ export class CategoryController implements CompanyApiContract {
   }
 
   @Post()
-  // @UseGuards(AuthGuard)
+  // //@UseGuards(AuthPermissionGuard())//
   async createCompany(
     @Req() request: any,
     @Body() body: Omit<CreateRequest, 'createdBy'>,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8"});
+    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
   }
 
   async create(params: CreateRequest): Promise<CreateResponse> {
@@ -77,7 +77,7 @@ export class CategoryController implements CompanyApiContract {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthPermissionGuard())
   async updateCompany(
     @Param() param: { id: string },
     @Req() request: any,
@@ -86,25 +86,26 @@ export class CategoryController implements CompanyApiContract {
     // const localEmployee: IMe = request.user;
     return await this.update({
       ...body,
-      updatedBy: "ju489eikjnjhgytr"
-    });
+      updatedBy: "ju489eikjnjhgytr",
+    }, param.id);
   }
-  async update(params: UpdateRequest): Promise<UpdateResponse> {
-    return await this.companyService.update(params);
+  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+    return await this.companyService.update(params, id);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthPermissionGuard())//
   async deleteItem(
+    @Param() param: { id: string },
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
-    return await this.remove(body);
+    return await this.remove(param.id);
   }
 
   async remove(
-    body: RemoveRequest,
+    id: string,
   ): Promise<RemoveResponse> {
-    return await this.companyService.remove(body);
+    return await this.companyService.remove(id);
   }
 }

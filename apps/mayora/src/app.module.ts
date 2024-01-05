@@ -17,6 +17,8 @@ import { SessionModule } from '@qbit-tech/libs-session';
 import { NotificationScheduleModule } from '@qbit-tech/libs-notification-scheduler';
 import { InitDataModule } from './modules/initData/initData.module';
 import { CategoryModule } from './modules/category/category.module';
+import { CategoryParentModule } from './modules/categoryParent/categoryParent.module';
+import { ManualCollectionModule } from './modules/manualCollection/manualCollection.module';
 
 const notificationOptions = [
   {
@@ -95,8 +97,8 @@ export const rootImportedModules = [
   RedisModule.forRoot(redisOption),
   SequelizeModule.forRoot({
     username: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASS || 'letmein',
-    database: process.env.DB_NAME || 'App',
+    password: process.env.DB_PASS || '134907',
+    database: process.env.DB_NAME || 'mayora',
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
     // dialectOptions: {
@@ -123,7 +125,7 @@ export const rootImportedModules = [
       {
         name: 'google',
         setting: {
-          appId: process.env.GOOGLE_CLIENT_ID.split(','),
+          appId: '833872597745-4pbbes9c7vpsn52v4gp34ktfog92udvr.apps.googleusercontent.com',
           appSecret: process.env.GOOGLE_CLIENT_SECRET,
         },
       },
@@ -153,7 +155,9 @@ export const rootImportedModules = [
     PermissionModule,
     RoleModule,
     InitDataModule,
-    CategoryModule
+    CategoryModule,
+    CategoryParentModule,
+    ManualCollectionModule
   ],
   controllers: [AppController],
 })

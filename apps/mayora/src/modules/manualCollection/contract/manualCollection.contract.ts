@@ -1,5 +1,5 @@
 export abstract class CompanyApiContract {
-  abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  // abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequest): Promise<CreateResponse>;
   abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
@@ -9,11 +9,12 @@ export abstract class CompanyApiContract {
 
 export interface ICompanyListItem {
   id: string;
-  name: string;
-  categoryParentId: string;
+  machineId: string;
+  categoryId: string;
   categoryType: string;
-  updatedBy: string;
-  createdBy: string;
+  value: string;
+  shift: string;
+  remark: string;
   updatedAt: Date;
   createdAt: Date;
   status: string;
@@ -49,9 +50,12 @@ export interface FindOneRequest {
 }
 
 export interface CreateRequest {
-  name: string;
-  categoryParentId: string;
+  machineId: string;
+  categoryId: string;
   categoryType: string;
+  value: string;
+  shift: string;
+  remark: string;
   createdBy: string;
 }
 
@@ -61,11 +65,14 @@ export interface CreateResponse {
 
 export interface UpdateRequest {
   id: string;
-  name: string;
-  categoryParentId: string;
+  machineId: string;
+  categoryId: string;
   categoryType: string;
+  value: string;
+  shift: string;
+  remark: string;
+  createdBy: string;
   updatedBy: string;
-  status: string;
 }
 
 export interface UpdateResponse {

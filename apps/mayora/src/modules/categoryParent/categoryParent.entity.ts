@@ -27,7 +27,7 @@ export class CategoryParentModel extends Model {
   categoryParentId: string;
 
   @Column
-  name  : string;
+  name: string;
 
   @Column
   categoryLevel: string;
