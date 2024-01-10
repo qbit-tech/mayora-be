@@ -48,7 +48,7 @@ module.exports = {
       'categoryParentId', // new field name
       {
         allowNull: true,
-        type: Sequelize.DATE,
+        type: Sequelize.STRING(100),
       },
     )
   },

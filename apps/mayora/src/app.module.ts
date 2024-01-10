@@ -19,6 +19,7 @@ import { InitDataModule } from './modules/initData/initData.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CategoryParentModule } from './modules/categoryParent/categoryParent.module';
 import { ManualCollectionModule } from './modules/manualCollection/manualCollection.module';
+import { TroubleModule } from './modules/trouble/trouble.module';
 
 const notificationOptions = [
   {
@@ -157,7 +158,8 @@ export const rootImportedModules = [
     InitDataModule,
     CategoryModule,
     CategoryParentModule,
-    ManualCollectionModule
+    ManualCollectionModule,
+    TroubleModule
   ],
   controllers: [AppController],
 })
