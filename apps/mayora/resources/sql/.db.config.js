@@ -21,9 +21,9 @@ module.exports = {
     },
   },
   local: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
+    username: 'postgres',
+    password: process.env.DB_PASS || '12345',
+    database: process.env.DB_NAME || 'mayora',
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
     dialect: 'postgres',
