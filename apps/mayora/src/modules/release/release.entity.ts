@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'TrxRelease',
+  tableName: 'Releases',
 })
 export class ReleaseModel extends Model {
   @PrimaryKey
@@ -28,6 +28,9 @@ export class ReleaseModel extends Model {
 
   @Column
   time: Date;
+
+  @Column
+  shift: number;
 
   @CreatedAt
   createdAt: Date;
