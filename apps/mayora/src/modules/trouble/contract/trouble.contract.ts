@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { AppRequest } from "@qbit/appContract/app.contract";
 import { IsNotEmpty } from "class-validator";
 
-export abstract class CompanyApiContract {
+export abstract class TroubleApiContract {
   abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequest): Promise<CreateResponse>;

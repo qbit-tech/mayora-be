@@ -5,9 +5,9 @@ import {
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestCategory,
   CreateResponse,
-  UpdateRequest,
+  UpdateRequestCategory,
   UpdateResponse,
   EditStatusProps,
   ICompanyListItem,
@@ -94,7 +94,7 @@ export class CategoryService {
     }
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestCategory): Promise<CreateResponse> {
     try {
       const result = await this.companyRepositories.create({
         id: uuidv4(),
@@ -118,7 +118,7 @@ export class CategoryService {
     }
   }
 
-  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse> {
     try {
       const category = await this.companyRepositories.findOne({
         where: { id: id },

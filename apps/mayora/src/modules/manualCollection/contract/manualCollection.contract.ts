@@ -1,8 +1,11 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
+
 export abstract class CompanyApiContract {
-  // abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  // abstract findAll(): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract create(params: CreateRequest): Promise<CreateResponse>;
-  abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
+  abstract create(params: CreateRequestManualCollection): Promise<CreateResponse>;
+  abstract update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse>;
   abstract remove(id: string): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
@@ -49,13 +52,25 @@ export interface FindOneRequest {
   id: string;
 }
 
-export interface CreateRequest {
+export class CreateRequestManualCollection {
+  @IsNotEmpty()
+  @ApiProperty()
   machineId: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   categoryId: string;
-  categoryType: string;
+
+  @ApiPropertyOptional()
   value: string;
+
+  @ApiPropertyOptional()
   shift: string;
+
+  @ApiPropertyOptional()
   remark: string;
+
+  @ApiProperty()
   createdBy: string;
 }
 
@@ -63,15 +78,25 @@ export interface CreateResponse {
   isSuccess: boolean;
 }
 
-export interface UpdateRequest {
-  id: string;
+export class UpdateRequestManualCollection {
+  @IsNotEmpty()
+  @ApiProperty()
   machineId: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   categoryId: string;
-  categoryType: string;
+
+  @ApiPropertyOptional()
   value: string;
+
+  @ApiPropertyOptional()
   shift: string;
+
+  @ApiPropertyOptional()
   remark: string;
-  createdBy: string;
+
+  @ApiPropertyOptional()
   updatedBy: string;
 }
 
