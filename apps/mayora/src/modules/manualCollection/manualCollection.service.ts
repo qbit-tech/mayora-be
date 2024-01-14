@@ -5,9 +5,9 @@ import {
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestManualCollection,
   CreateResponse,
-  UpdateRequest,
+  UpdateRequestManualCollection,
   UpdateResponse,
   EditStatusProps,
   ICompanyListItem,
@@ -16,53 +16,18 @@ import {
 } from './contract';
 import { getLikeOp } from '../../helpers/db';
 import { v4 as uuidv4 } from 'uuid';
+import { CategoryService } from '../category/category.service';
+import { CategoryParentModel } from '../categoryParent/categoryParent.entity';
+import { CategoryModel } from '../category/category.entity';
 
 @Injectable()
 export class ManualCollectionService {
   constructor(
     @InjectModel(ManualCollectionModel)
     private readonly companyRepositories: typeof ManualCollectionModel,
+    private readonly categoryService: CategoryService,
   ) { }
 
-  // async findAll(params: FindAllRequest): Promise<FindAllResponse> {
-  //   try {
-  //     const where = {};
-  //     console.log('hgftyuijkhgft')
-
-  //     const result = await this.companyRepositories.findAll({
-  //       where,
-  //       attributes: [
-  //         'id',
-  //         'name',
-  //         'manualCollectionParentId',
-  //         'manualCollectionType',
-  //         'updatedBy',
-  //         'status',
-  //         'createdBy',
-  //         'createdAt',
-  //         'updatedAt',
-  //       ],
-  //       offset: params.offset,
-  //       limit: params.limit,
-  //     });
-  //     const count = await this.companyRepositories.count({ where });
-  //     return {
-  //       count: count,
-  //       next: '',
-  //       prev: '',
-  //       results: result.map(item => item.get()),
-  //     };
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       {
-  //         status: 'ERR_COMPANY_REQUEST',
-  //         message: error.message,
-  //         payload: null,
-  //       },
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-  // }
 
   async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
     try {
@@ -70,11 +35,12 @@ export class ManualCollectionService {
         where: { id: params.id },
         attributes: [
           'id',
-          'name',
-          'manualCollectionParentId',
-          'manualCollectionType',
+          'machineId',
+          'categoryId',
+          'shift',
+          'value',
+          'remark',
           'updatedBy',
-          'status',
           'createdBy',
           'createdAt',
           'updatedAt',
@@ -94,8 +60,23 @@ export class ManualCollectionService {
     }
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestManualCollection): Promise<CreateResponse> {
     try {
+      const category = await this.categoryService.findOne({ id: params.categoryId });
+
+      if (
+        category === null || category.categoryType !== 'manualcollection'
+      ) {
+        throw new HttpException(
+          {
+            status: 'ERR_COMPANY_REQUEST',
+            message: 'This category do not have type manual collection',
+            payload: null,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       const result = await this.companyRepositories.create({
         id: uuidv4(),
         machineId: 'hgyui87yui8765ertfghjui',
@@ -119,7 +100,7 @@ export class ManualCollectionService {
     }
   }
 
-  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse> {
     try {
       const manualCollection = await this.companyRepositories.findOne({
         where: { id: id },
@@ -133,6 +114,21 @@ export class ManualCollectionService {
             payload: null,
           },
           HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const category = await this.categoryService.findOne({ id: params.categoryId });
+
+      if (
+        category === null || category.categoryType !== 'manualcollection'
+      ) {
+        throw new HttpException(
+          {
+            status: 'ERR_COMPANY_REQUEST',
+            message: 'This category do not have type manual collection',
+            payload: null,
+          },
+          HttpStatus.BAD_REQUEST,
         );
       }
 

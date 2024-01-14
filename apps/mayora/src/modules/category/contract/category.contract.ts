@@ -1,8 +1,11 @@
-export abstract class CompanyApiContract {
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
+
+export abstract class CategoryApiContract {
   abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract create(params: CreateRequest): Promise<CreateResponse>;
-  abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
+  abstract create(params: CreateRequestCategory): Promise<CreateResponse>;
+  abstract update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse>;
   abstract remove(id: string): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
@@ -16,7 +19,7 @@ export interface ICompanyListItem {
   createdBy: string;
   updatedAt: Date;
   createdAt: Date;
-  status: string;
+  unit: string;
 }
 
 
@@ -48,10 +51,24 @@ export interface FindOneRequest {
   id: string;
 }
 
-export interface CreateRequest {
+export class CreateRequestCategory {
+  @IsNotEmpty()
+  @ApiProperty({ example: 'Trial Product (NDP)' })
   name: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   categoryParentId: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  unit: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: 'manualcollection' })
   categoryType: string;
+
+  @ApiProperty()
   createdBy: string;
 }
 
@@ -59,13 +76,25 @@ export interface CreateResponse {
   isSuccess: boolean;
 }
 
-export interface UpdateRequest {
-  id: string;
+export class UpdateRequestCategory {
+  @IsNotEmpty()
+  @ApiProperty({ example: 'Trial Product (NDP)' })
   name: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   categoryParentId: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: 'manualcollection' })
   categoryType: string;
+
+  @ApiProperty()
   updatedBy: string;
-  status: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  unit: string;
 }
 
 export interface UpdateResponse {

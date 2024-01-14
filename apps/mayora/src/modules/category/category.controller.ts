@@ -12,13 +12,13 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  CompanyApiContract,
+  CategoryApiContract,
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestCategory,
   CreateResponse,
-  UpdateRequest,
+  UpdateRequestCategory,
   UpdateResponse,
   EditStatusProps,
   ICompanyListItem,
@@ -27,9 +27,11 @@ import {
 } from './contract';
 import { CategoryService } from './category.service';
 import { AuthPermissionGuard } from '../../core/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Category')
 @Controller('category')
-export class CategoryController implements CompanyApiContract {
+export class CategoryController implements CategoryApiContract {
   constructor(private companyService: CategoryService) { }
 
   @Get()
@@ -53,9 +55,9 @@ export class CategoryController implements CompanyApiContract {
   @Get(':id')
   //@UseGuards(AuthPermissionGuard())//
   async getDetailCompany(
-    @Param() param: { id: string },
+    @Param('id') id: string,
   ): Promise<ICompanyListItem> {
-    return this.findOne({ id: param.id });
+    return this.findOne({ id: id });
   }
 
   async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
@@ -66,41 +68,41 @@ export class CategoryController implements CompanyApiContract {
   // //@UseGuards(AuthPermissionGuard())//
   async createCompany(
     @Req() request: any,
-    @Body() body: Omit<CreateRequest, 'createdBy'>,
+    @Body() body: CreateRequestCategory,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
     return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestCategory): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
-  @Put(':id')
+  @Patch(':id')
   //@UseGuards(AuthPermissionGuard())
   async updateCompany(
-    @Param() param: { id: string },
+    @Param('id') id: string,
     @Req() request: any,
-    @Body() body: Omit<UpdateRequest, 'updatedAt'>,
+    @Body() body: UpdateRequestCategory,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
     return await this.update({
       ...body,
       updatedBy: "ju489eikjnjhgytr",
-    }, param.id);
+    }, id);
   }
-  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
   @Delete(':id')
   //@UseGuards(AuthPermissionGuard())//
   async deleteItem(
-    @Param() param: { id: string },
+    @Param('id') id: string,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
-    return await this.remove(param.id);
+    return await this.remove(id);
   }
 
   async remove(

@@ -6,6 +6,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -14,6 +15,7 @@ import {
 import { CategoryParentModel } from '../categoryParent/categoryParent.entity';
 import { handleTimeZone } from '../../helpers/date';
 import moment from 'moment';
+import { ManualCollectionModel } from '../manualCollection/manualCollection.entity';
 
 @Table({
   tableName: 'MstCategory',
@@ -38,7 +40,7 @@ export class CategoryModel extends Model {
   categoryType: string;
 
   @Column
-  status: string;
+  unit: string;
 
   // @CreatedAt
   // createdAt: Date;
@@ -67,6 +69,9 @@ export class CategoryModel extends Model {
 
   @Column
   updatedBy: string;
+
+  @HasMany(() => ManualCollectionModel, 'categoryId')
+  manualCollection: ManualCollectionModel[];
 
   @BeforeCreate
   static beforeCreateHook(instance: CategoryModel) {

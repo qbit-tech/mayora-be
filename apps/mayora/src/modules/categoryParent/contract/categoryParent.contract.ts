@@ -1,9 +1,14 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
+
 export abstract class CompanyApiContract {
-  // abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  abstract findAll(): Promise<FindAllResponse>;
+  abstract findAllManualCollection(): Promise<FindAllResponse>;
+  // abstract findAllManualTrouble(): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract create(params: CreateRequest): Promise<CreateResponse>;
-  abstract update(params: UpdateRequest): Promise<UpdateResponse>;
-  abstract remove(params: RemoveRequest): Promise<RemoveResponse>;
+  abstract create(params: CreateRequestCategoryParent): Promise<CreateResponse>;
+  abstract update(params: UpdateRequestCategoryParent, id: string): Promise<UpdateResponse>;
+  abstract remove(id: string): Promise<RemoveResponse>;
 }
 
 export interface ICompanyListItem {
@@ -46,10 +51,19 @@ export interface FindOneRequest {
   id: string;
 }
 
-export interface CreateRequest {
-  name: string;
+export class CreateRequestCategoryParent {
+  @IsNotEmpty()
+  @ApiProperty({ example: 'Down Time Losses' })
+  readonly name: string;
+
+  @ApiPropertyOptional()
   categoryParentId: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: 'level1' })
   categoryLevel: string;
+
+  @ApiProperty()
   createdBy: string;
 }
 
@@ -57,11 +71,19 @@ export interface CreateResponse {
   isSuccess: boolean;
 }
 
-export interface UpdateRequest {
-  id: string;
+export class UpdateRequestCategoryParent {
+  @IsNotEmpty()
+  @ApiProperty({ example: 'Down Time Losses' })
   name: string;
+
+  @ApiPropertyOptional()
   categoryParentId: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   categoryLevel: string;
+
+  @ApiProperty()
   updatedBy: string;
 }
 

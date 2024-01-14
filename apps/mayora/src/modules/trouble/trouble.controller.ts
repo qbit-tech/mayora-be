@@ -12,7 +12,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  CompanyApiContract,
+  TroubleApiContract,
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
@@ -34,7 +34,7 @@ import {
 
 @ApiTags('Trouble')
 @Controller('trouble')
-export class TroubleController implements CompanyApiContract {
+export class TroubleController implements TroubleApiContract {
   constructor(private companyService: TroubleService) { }
 
   @Get()

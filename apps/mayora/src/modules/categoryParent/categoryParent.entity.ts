@@ -2,16 +2,19 @@ import moment from 'moment';
 import {
   AutoIncrement,
   BeforeCreate,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
 import { handleTimeZone } from '../../helpers/date';
+import { CategoryModel } from '../category/category.entity';
 
 @Table({
   tableName: 'MstCategoryParent',
@@ -23,8 +26,12 @@ export class CategoryParentModel extends Model {
   })
   id: string;
 
+  @ForeignKey(() => CategoryParentModel)
   @Column
   categoryParentId: string;
+
+  @BelongsTo(() => CategoryParentModel, 'categoryParentId')
+  categoryParent: CategoryParentModel;
 
   @Column
   name: string;
@@ -54,6 +61,12 @@ export class CategoryParentModel extends Model {
 
   @Column
   updatedBy: string;
+
+  @HasMany(() => CategoryParentModel, 'categoryParentId')
+  level2: CategoryParentModel[];
+
+  @HasMany(() => CategoryModel, 'categoryParentId')
+  level3: CategoryModel[];
 
   @BeforeCreate
   static beforeCreateHook(instance: CategoryParentModel) {
