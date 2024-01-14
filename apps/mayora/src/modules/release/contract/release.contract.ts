@@ -33,6 +33,8 @@ export abstract class CompanyApiContract {
     limit?: number;
     offset?: number;
     order?: string;
+    machineId?: string;
+    createdAt?: Date;
   }
   
   export interface FindAllResponse {
