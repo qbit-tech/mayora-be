@@ -66,14 +66,23 @@ export class CategoryParentService {
                   'categoryParentId',
                   'categoryType',
                   'updatedBy',
-                  'status',
+                  'unit',
                   'createdBy',
                   'createdAt',
                   'updatedAt',
                 ],
+                order: [
+                  ['createdAt', 'desc'],
+                ],
               },
-            ]
+            ],
+            order: [
+              ['createdAt', 'desc'],
+            ],
           },
+        ],
+        order: [
+          ['createdAt', 'desc'],
         ],
       });
       const count = await this.companyRepositories.count({ where });
@@ -135,7 +144,7 @@ export class CategoryParentService {
                   'categoryParentId',
                   'categoryType',
                   'updatedBy',
-                  'status',
+                  'unit',
                   'createdBy',
                   'createdAt',
                   'updatedAt',

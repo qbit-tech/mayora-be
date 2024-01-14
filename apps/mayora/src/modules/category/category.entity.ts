@@ -40,7 +40,7 @@ export class CategoryModel extends Model {
   categoryType: string;
 
   @Column
-  status: string;
+  unit: string;
 
   // @CreatedAt
   // createdAt: Date;

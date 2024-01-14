@@ -19,7 +19,7 @@ export interface ICompanyListItem {
   createdBy: string;
   updatedAt: Date;
   createdAt: Date;
-  status: string;
+  unit: string;
 }
 
 
@@ -61,6 +61,10 @@ export class CreateRequestCategory {
   categoryParentId: string;
 
   @IsNotEmpty()
+  @ApiProperty()
+  unit: string;
+
+  @IsNotEmpty()
   @ApiProperty({ example: 'manualcollection' })
   categoryType: string;
 
@@ -89,8 +93,8 @@ export class UpdateRequestCategory {
   updatedBy: string;
 
   @IsNotEmpty()
-  @ApiProperty({ example: 'active' })
-  status: string;
+  @ApiProperty()
+  unit: string;
 }
 
 export interface UpdateResponse {

@@ -37,7 +37,7 @@ export class CategoryService {
           'categoryParentId',
           'categoryType',
           'updatedBy',
-          'status',
+          'unit',
           'createdBy',
           'createdAt',
           'updatedAt',
@@ -74,7 +74,7 @@ export class CategoryService {
           'categoryParentId',
           'categoryType',
           'updatedBy',
-          'status',
+          'unit',
           'createdBy',
           'createdAt',
           'updatedAt',
@@ -96,17 +96,19 @@ export class CategoryService {
 
   async create(params: CreateRequestCategory): Promise<CreateResponse> {
     try {
+      console.log('categeiugrkj', params)
       const result = await this.companyRepositories.create({
         id: uuidv4(),
         name: params.name,
         categoryParentId: params.categoryParentId,
         categoryType: params.categoryType,
         createdBy: params.createdBy,
-        status: "active"
+        unit: params.unit
       });
 
       return { isSuccess: result ? true : false };
     } catch (error) {
+      console.log("eroererj", error)
       throw new HttpException(
         {
           status: 'ERR_COMPANY_REQUEST',
@@ -136,7 +138,7 @@ export class CategoryService {
       }
 
       category.name = params.name;
-      category.status = params.status;
+      category.unit = params.unit;
       category.categoryType = params.categoryType;
       category.updatedBy = params.updatedBy;
       await category.save();
