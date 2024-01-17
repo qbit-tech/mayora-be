@@ -25,7 +25,7 @@ module.exports = {
     password: process.env.DB_PASS || '12345',
     database: process.env.DB_NAME || 'mayora',
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5433'),
+    port: parseInt(process.env.DB_PORT || '5432'),
     dialect: 'postgres',
 
     dialectOptions: {
