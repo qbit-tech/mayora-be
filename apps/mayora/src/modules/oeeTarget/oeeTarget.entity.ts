@@ -24,7 +24,7 @@ export class OEETargetModel extends Model {
   machineId: string;
 
   @Column
-  target  : string;
+  target  : number;
 
   @CreatedAt
   createdAt: Date;

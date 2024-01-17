@@ -31,7 +31,7 @@ export class ReleaseService {
     try {
       let whereCondition;
       moment.locale('id')
-      if(params.machineId) {
+      if (params.machineId) {
         whereCondition = {
           [Op.and]: [
             { machineId: params.machineId ? params.machineId : "" },
@@ -41,13 +41,13 @@ export class ReleaseService {
                   new Date(params.createdAt),
                   new Date(params.createdAt + 'T23:59:59.999Z'),
                 ]
-              } : 
-              {
-                [Op.between]: [
-                  new Date('2021-01-01T00:00:00.000Z'),
-                  new Date(moment().utc().format())
-                ]
-              }
+              } :
+                {
+                  [Op.between]: [
+                    new Date('2021-01-01T00:00:00.000Z'),
+                    new Date(moment().utc().format())
+                  ]
+                }
             }
           ],
         }
@@ -61,31 +61,19 @@ export class ReleaseService {
                   new Date(params.createdAt),
                   new Date(params.createdAt + 'T23:59:59.999Z'),
                 ]
-              } : 
-              {
-                [Op.between]: [
-                  new Date('2021-01-01T00:00:00.000Z'),
-                  new Date(moment().utc().format())
-                ]
-              }
+              } :
+                {
+                  [Op.between]: [
+                    new Date('2021-01-01T00:00:00.000Z'),
+                    new Date(moment().utc().format())
+                  ]
+                }
             }
           ],
         }
       }
-     
 
-      // console.log(new Date('2021-01-01T00:00:00.000Z'))
-      // console.log(new Date(moment().utc().format()))
 
-      // console.log("Moment JS " + moment().utc().format())
-      // console.log(new Date('2021-01-01T00:00:00.000Z'))
-
-      // let today = new Date().toLocaleDateString()
-      // console.log(today)
-  
-      // console.info(whereCondition);
-      // console.log(params.createdAt);
-      
       const result = await this.companyRepositories.findAll({
         where: whereCondition,
         attributes: [
