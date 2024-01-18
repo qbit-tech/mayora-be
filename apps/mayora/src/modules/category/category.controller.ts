@@ -28,6 +28,7 @@ import {
 import { CategoryService } from './category.service';
 import { AuthPermissionGuard } from '../../core/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { DefaultFindAllRequest } from '@qbit-tech/libs-utils';
 
 @ApiTags('Category')
 @Controller('category')
@@ -37,7 +38,7 @@ export class CategoryController implements CategoryApiContract {
   @Get()
   //@UseGuards(AuthPermissionGuard())
   async getCompanyList(
-    @Query() query: FindAllRequest,
+    @Query() query: DefaultFindAllRequest,
   ): Promise<FindAllResponse> {
     const params: FindAllRequest = {
       limit: Number(query.limit) ?? 10,

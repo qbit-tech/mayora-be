@@ -18,6 +18,8 @@ import { getLikeOp } from '../../helpers/db';
 import { v4 as uuidv4 } from 'uuid';
 import { CategoryModel } from '../category/category.entity';
 import { ManualCollectionModel } from '../manualCollection/manualCollection.entity';
+import { Op } from 'sequelize';
+import { TroubleModel } from '../trouble/trouble.entity';
 
 @Injectable()
 export class CategoryParentService {
@@ -124,6 +126,7 @@ export class CategoryParentService {
           {
             model: CategoryParentModel,
             as: 'level2',
+            where: { categoryParentId: { [Op.not]: null } },
             attributes: [
               'id',
               'name',
@@ -138,6 +141,7 @@ export class CategoryParentService {
               {
                 model: CategoryModel,
                 as: 'level3',
+                where: { categoryType: 'manualcollection' },
                 attributes: [
                   'id',
                   'name',
@@ -161,6 +165,96 @@ export class CategoryParentService {
                       'value',
                       'remark',
                       'updatedBy',
+                      'createdBy',
+                      'createdAt',
+                      'updatedAt',
+                    ],
+                  },
+                ]
+              },
+            ]
+          },
+        ],
+      });
+      const count = await this.companyRepositories.count({ where });
+      return {
+        count: count,
+        next: '',
+        prev: '',
+        results: result.map(item => item.get()),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'ERR_COMPANY_REQUEST',
+          message: error.message,
+          payload: null,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findAllTrouble(): Promise<FindAllResponse> {
+    try {
+      const where = { categoryLevel: 'level1' };
+
+      const result = await this.companyRepositories.findAll({
+        where,
+        attributes: [
+          'id',
+          'name',
+          'categoryParentId',
+          'categoryLevel',
+          'updatedBy',
+          'createdBy',
+          'createdAt',
+          'updatedAt',
+        ],
+        include: [
+          {
+            model: CategoryParentModel,
+            as: 'level2',
+            where: { categoryParentId: { [Op.not]: null } },
+            attributes: [
+              'id',
+              'name',
+              'categoryParentId',
+              'categoryLevel',
+              'updatedBy',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+            include: [
+              {
+                model: CategoryModel,
+                as: 'level3',
+                where: { categoryType: 'trouble' },
+                attributes: [
+                  'id',
+                  'name',
+                  'categoryParentId',
+                  'categoryType',
+                  'updatedBy',
+                  'unit',
+                  'createdBy',
+                  'createdAt',
+                  'updatedAt',
+                ],
+                include: [
+                  {
+                    model: TroubleModel,
+                    as: 'trouble',
+                    attributes: [
+                      'id',
+                      'machineId',
+                      'categoryId',
+                      'startTime',
+                      'endTime',
+                      'remark',
+                      'updatedBy',
+                      'status',
                       'createdBy',
                       'createdAt',
                       'updatedAt',

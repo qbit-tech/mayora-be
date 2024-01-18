@@ -27,7 +27,6 @@ export class CategoryService {
   async findAll(params: FindAllRequest): Promise<FindAllResponse> {
     try {
       const where = {};
-      console.log('hgftyuijkhgft')
 
       const result = await this.companyRepositories.findAll({
         where,

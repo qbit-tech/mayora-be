@@ -58,6 +58,18 @@ export class CategoryParentController implements CompanyApiContract {
     return await this.companyService.findAllManualCollection();
   }
 
+  @ApiOperation({ summary: 'Get list of category nested 3 level with trouble list' })
+  @Get('/trouble')
+  //@UseGuards(AuthPermissionGuard())
+  async getTrouble(
+  ): Promise<FindAllResponse> {
+    return this.findAllTrouble();
+  }
+
+  async findAllTrouble(): Promise<FindAllResponse> {
+    return await this.companyService.findAllTrouble();
+  }
+
   @Get(':id')
   //  @UseGuards(AuthPermissionGuard)
   async getDetailCompany(
