@@ -10,13 +10,13 @@ export abstract class CompanyApiContract {
   export interface ICompanyListItem {
     id: string;
     machineId: string;
-    amount  : number;
-    time: Date;
-    shift: number;
+    target  : number;
+    activeTarget: Date;
+    createdBy: string;
+    updatedBy: string;
     updatedAt: Date;
     createdAt: Date;
   }
-  
   
   export interface ICompanyAssociate {
     iCompany: number;
@@ -50,9 +50,8 @@ export abstract class CompanyApiContract {
   
   export interface CreateRequest {
     machineId: string;
-    amount  : number;
-    time: Date;
-    shift: number;
+    target  : number;
+    activeTarget: Date;
     updatedBy: string;
     createdBy: string;
   }
@@ -64,9 +63,8 @@ export abstract class CompanyApiContract {
   export interface UpdateRequest {
     id: string;
     machineId: string;
-    amount: number;
-    time: Date;
-    shift: number;
+    target  : number;
+    activeTarget: Date;
     createdBy: string;
     updatedBy: string;
   }

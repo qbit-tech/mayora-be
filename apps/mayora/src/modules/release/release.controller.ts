@@ -47,7 +47,8 @@ export class ReleaseController {
       keyword: query.keyword ? query.keyword : "",
       limit: query.limit ? Number(query.limit) : 10,
       offset: query.offset ? Number(query.offset) : 0,
-      order: 'desc',
+      machineId: query.machineId ? query.machineId : "",
+      createdAt: query.createdAt ? query.createdAt : null
     };
 
     return this.findAll(params);

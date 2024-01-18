@@ -18,6 +18,7 @@ import { getLikeOp } from '../../helpers/db';
 import { v4 as uuidv4 } from 'uuid';
 import { generateResultPagination } from '@qbit-tech/libs-utils';
 import { Op } from 'sequelize';
+import moment from 'moment';
 
 @Injectable()
 export class ReleaseService {
@@ -28,7 +29,53 @@ export class ReleaseService {
 
   async findAll(params: FindAllRequest): Promise<FindAllResponse> {
     try {
+      let whereCondition;
+      moment.locale('id')
+      if (params.machineId) {
+        whereCondition = {
+          [Op.and]: [
+            { machineId: params.machineId ? params.machineId : "" },
+            {
+              createdAt: params.createdAt ? {
+                [Op.between]: [
+                  new Date(params.createdAt),
+                  new Date(params.createdAt + 'T23:59:59.999Z'),
+                ]
+              } :
+                {
+                  [Op.between]: [
+                    new Date('2021-01-01T00:00:00.000Z'),
+                    new Date(moment().utc().format())
+                  ]
+                }
+            }
+          ],
+        }
+      } else {
+        whereCondition = {
+          [Op.or]: [
+            { machineId: params.machineId ? params.machineId : "" },
+            {
+              createdAt: params.createdAt ? {
+                [Op.between]: [
+                  new Date(params.createdAt),
+                  new Date(params.createdAt + 'T23:59:59.999Z'),
+                ]
+              } :
+                {
+                  [Op.between]: [
+                    new Date('2021-01-01T00:00:00.000Z'),
+                    new Date(moment().utc().format())
+                  ]
+                }
+            }
+          ],
+        }
+      }
+
+
       const result = await this.companyRepositories.findAll({
+        where: whereCondition,
         attributes: [
           'id',
           'machineId',
@@ -42,7 +89,7 @@ export class ReleaseService {
         limit: params.limit,
       });
 
-      const count = await this.companyRepositories.count({ distinct: true });
+      const count = await this.companyRepositories.count({ where: whereCondition, distinct: true });
 
       return {
         ...generateResultPagination(count, params),
