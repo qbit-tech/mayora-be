@@ -16,6 +16,7 @@ import { CategoryParentModel } from '../categoryParent/categoryParent.entity';
 import { handleTimeZone } from '../../helpers/date';
 import moment from 'moment';
 import { ManualCollectionModel } from '../manualCollection/manualCollection.entity';
+import { TroubleModel } from '../trouble/trouble.entity';
 
 @Table({
   tableName: 'MstCategory',
@@ -72,6 +73,9 @@ export class CategoryModel extends Model {
 
   @HasMany(() => ManualCollectionModel, 'categoryId')
   manualCollection: ManualCollectionModel[];
+
+  @HasMany(() => TroubleModel, 'categoryId')
+  trouble: TroubleModel[];
 
   @BeforeCreate
   static beforeCreateHook(instance: CategoryModel) {
