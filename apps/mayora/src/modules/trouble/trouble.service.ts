@@ -24,7 +24,6 @@ export class TroubleService {
   async findAll(params: FindAllRequest): Promise<FindAllResponse> {
     try {
       const where = {};
-      console.log("parammsms",params)
 
       const result = await this.companyRepositories.findAll({
         where,
