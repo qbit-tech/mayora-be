@@ -68,6 +68,10 @@ jobs:
         run: |
           ./run_migration.sh mayora development
 
+      - name: run seeder
+        run: |
+          ./run_seeder.sh mayora development
+
       # - name: run migration (libs/auth)
       #   run: |
       #     cd libs/auth
