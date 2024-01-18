@@ -3,7 +3,7 @@ name: 'Deploy Api mayora development'
 on:
   push:
     branches:
-      - main
+      - development
     paths:
       - apps/mayora/**
   workflow_dispatch:
