@@ -181,7 +181,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            🏡 mayora (SAMPLE) API development v${{ steps.package-json.outputs.version }} 🏡
+            🏡 MAYORA API development v${{ steps.package-json.outputs.version }} 🏡
             Has been deployed by ${{ github.actor }}
 
             Ready for test. Thanks
