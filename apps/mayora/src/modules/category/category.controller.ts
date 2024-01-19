@@ -26,17 +26,24 @@ import {
   RemoveResponse,
 } from './contract';
 import { CategoryService } from './category.service';
-import { AuthPermissionGuard } from '../../core/auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  AuthPermissionGuard, FEATURE_PERMISSIONS,
+} from '@qbit-tech/libs-session';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DefaultFindAllRequest } from '@qbit-tech/libs-utils';
 
 @ApiTags('Category')
-@Controller('category')
+@Controller('categories')
 export class CategoryController implements CategoryApiContract {
   constructor(private companyService: CategoryService) { }
 
   @Get()
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(
+    AuthPermissionGuard(
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
+    ),
+  )
   async getCompanyList(
     @Query() query: DefaultFindAllRequest,
   ): Promise<FindAllResponse> {
@@ -54,7 +61,12 @@ export class CategoryController implements CategoryApiContract {
   }
 
   @Get(':id')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(
+    AuthPermissionGuard(
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
+    ),
+  )
   async getDetailCompany(
     @Param('id') id: string,
   ): Promise<ICompanyListItem> {
@@ -65,13 +77,20 @@ export class CategoryController implements CategoryApiContract {
     return await this.companyService.findOne(params);
   }
 
+  @ApiBearerAuth()
   @Post()
-  // //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(
+    AuthPermissionGuard(
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
+    ),
+  )
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestCategory,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
+    console.log("hbgytu", request.user)
     return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
   }
 
@@ -80,7 +99,12 @@ export class CategoryController implements CategoryApiContract {
   }
 
   @Patch(':id')
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(
+    AuthPermissionGuard(
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
+    ),
+  )
   async updateCompany(
     @Param('id') id: string,
     @Req() request: any,
@@ -97,7 +121,12 @@ export class CategoryController implements CategoryApiContract {
   }
 
   @Delete(':id')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(
+    AuthPermissionGuard(
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
+      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
+    ),
+  )
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,

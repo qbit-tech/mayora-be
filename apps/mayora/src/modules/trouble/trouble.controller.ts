@@ -33,7 +33,7 @@ import {
 } from '@qbit-tech/libs-utils';
 
 @ApiTags('Trouble')
-@Controller('trouble')
+@Controller('troubles')
 export class TroubleController implements TroubleApiContract {
   constructor(private companyService: TroubleService) { }
 

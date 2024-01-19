@@ -81,7 +81,7 @@ export class TroubleModel extends Model {
   updatedBy: string;
 
   @BeforeCreate
-  static beforeCreateHook(instance: CategoryModel) {
+  static beforeCreateHook(instance: TroubleModel) {
     // this will be called when an instance is created or updated
     const { DATE } = DataType;
     DATE.prototype._stringify = function _stringify(date: any, options: any) {

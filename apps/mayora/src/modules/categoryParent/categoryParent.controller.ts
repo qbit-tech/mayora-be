@@ -30,7 +30,7 @@ import { AuthPermissionGuard } from '../../core/auth.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Category Parent')
-@Controller('categoryParent')
+@Controller('category-parents')
 export class CategoryParentController implements CompanyApiContract {
   constructor(private companyService: CategoryParentService) { }
 
