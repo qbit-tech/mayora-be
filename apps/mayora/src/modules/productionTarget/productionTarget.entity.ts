@@ -1,5 +1,6 @@
 import {
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -9,6 +10,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { UserModel } from '../user/user.entity';
+import { RoleModel } from '../role/role.entity';
 
 @Table({
   tableName: 'TrxProductionTarget',
@@ -38,6 +41,14 @@ export class ProductionTargetModel extends Model {
   @Column
   createdBy: string;
 
+  // @Column
+  // updatedBy: string;
+
+  @ForeignKey(() => UserModel)
   @Column
   updatedBy: string;
+
+  @BelongsTo(() => UserModel, 'updatedBy')
+  createdByUser: UserModel;
+
 }

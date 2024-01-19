@@ -20,6 +20,7 @@ import { generateResultPagination } from '@qbit-tech/libs-utils';
 import { Op } from 'sequelize';
 import moment from 'moment';
 import { AuthPermissionGuard } from '../../core/auth.guard';
+import { UserModel } from '../user/user.entity';
 
 @Injectable()
 export class oeeTargetService {
@@ -88,14 +89,36 @@ export class oeeTargetService {
                 ],
                 offset: params.offset,
                 limit: params.limit,
+                include: [{
+                    model: UserModel,
+                    attributes: ['userId', 'name', 'roleId'],
+                    as: 'createdByUser',
+                }],
             });
 
             const count = await this.companyRepositories.count({ where: whereCondition, distinct: true });
 
+            const mappedResult = result.map(item => {
+                const productionTarget = item.get();
+                const createdByUser = productionTarget.createdByUser ? productionTarget.createdByUser.get() : null;
+
+                // Exclude the createdByUser field and directly include its properties
+                delete productionTarget.createdByUser;
+
+                // Combine the properties into a new object
+                return {
+                    ...productionTarget,
+                    userId: createdByUser ? createdByUser.userId : null,
+                    name: createdByUser ? createdByUser.name : null,
+                    role: createdByUser ? createdByUser.roleId : null,
+                };
+            });
+
             return {
                 ...generateResultPagination(count, params),
-                results: result.map(item => item.get()),
+                results: mappedResult,
             };
+
         } catch (error) {
             throw new HttpException(
                 {
@@ -148,7 +171,7 @@ export class oeeTargetService {
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
-            console.log("1",result)
+            console.log("1", result)
 
             return { isSuccess: result ? true : false };
         } catch (error) {

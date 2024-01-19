@@ -1,6 +1,7 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, ConsoleLogger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ProductionTargetModel } from './productionTarget.entity';
+import { UserModel } from '../user/user.entity';
 import {
     FindAllRequest,
     FindAllResponse,
@@ -74,34 +75,72 @@ export class ProductionTargetService {
                 }
             }
 
+            // let result = await UserModel.findAll({
+            //     attributes: [
+            //         'userId',
+            //         'name',
+            //         'roleId',
+            //     ],
+            //     offset: params.offset,
+            //     limit: params.limit,
+            //     include: [{
+            //         where: whereCondition,
+            //         model: this.companyRepositories,
+            //     }]
+            // })
+
+
 
             const result = await this.companyRepositories.findAll({
                 where: whereCondition,
                 attributes: [
-                    'id',
-                    'machineId',
-                    'target',
-                    'activeTarget',
-                    'createdBy',
-                    'updatedBy',
-                    'createdAt',
-                    'updatedAt',
+                  'id',
+                  'machineId',
+                  'target',
+                  'activeTarget',
+                  'createdBy',
+                  'updatedBy',
+                  'createdAt',
+                  'updatedAt',
                 ],
                 offset: params.offset,
                 limit: params.limit,
-            });
+                include: [{
+                    model: UserModel,
+                    attributes: ['userId', 'name', 'roleId'],
+                    as: 'createdByUser',                
+                }],
+              });
+              
 
             const count = await this.companyRepositories.count({ where: whereCondition, distinct: true });
 
-            return {
+            const mappedResult = result.map(item => {
+                const productionTarget = item.get();
+                const createdByUser = productionTarget.createdByUser ? productionTarget.createdByUser.get() : null;
+              
+                // Exclude the createdByUser field and directly include its properties
+                delete productionTarget.createdByUser;
+              
+                // Combine the properties into a new object
+                return {
+                  ...productionTarget,
+                  userId: createdByUser ? createdByUser.userId : null,
+                  name: createdByUser ? createdByUser.name : null,
+                  role: createdByUser ? createdByUser.roleId : null,
+                };
+              });
+              
+              return {
                 ...generateResultPagination(count, params),
-                results: result.map(item => item.get()),
-            };
+                results: mappedResult,
+              };
+
         } catch (error) {
             throw new HttpException(
                 {
                     status: 'ERR_COMPANY_REQUEST',
-                    message: error.message,
+                    message: [error, error.message],
                     payload: null,
                 },
                 HttpStatus.BAD_REQUEST,
