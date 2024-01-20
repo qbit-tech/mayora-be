@@ -103,6 +103,9 @@ export class ProductionTargetService {
                   'createdAt',
                   'updatedAt',
                 ],
+                order : [
+                    [ 'createdAt' , 'DESC' ]
+                ],
                 offset: params.offset,
                 limit: params.limit,
                 include: [{
