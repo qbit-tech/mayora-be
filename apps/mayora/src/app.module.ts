@@ -23,6 +23,9 @@ import { ReleaseModule } from './modules/release/release.module';
 import { TroubleModule } from './modules/trouble/trouble.module';
 import { MachineModule } from './modules/machine/machine.module';
 import { UserDetailModule } from './modules/userDetail/userDetail.module';
+import { ProductionTargetModule } from './modules/productionTarget/productionTarget.module';
+import { OeeTargetModule } from './modules/oeeTarget/oeeTarget.module';
+import { DefaultTargetModule } from './modules/defaultTarget/defaultTarget.module';
 
 const notificationOptions = [
   {
@@ -104,7 +107,7 @@ export const rootImportedModules = [
     password: process.env.DB_PASS || '12345',
     database: process.env.DB_NAME || 'mayora',
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
+    port: parseInt(process.env.DB_PORT || '5433' || '5432'),
     // dialectOptions: {
     //   statement_timeout: 600000
     // },
@@ -166,6 +169,9 @@ export const rootImportedModules = [
     TroubleModule,
     MachineModule,
     UserDetailModule
+    ProductionTargetModule,
+    OeeTargetModule,
+    DefaultTargetModule
   ],
   controllers: [AppController],
 })

@@ -67,6 +67,7 @@
     "js-md5": "^0.7.3",
     "js-sha512": "^0.8.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.30.1",
     "multer-s3": "^2.10.0",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
