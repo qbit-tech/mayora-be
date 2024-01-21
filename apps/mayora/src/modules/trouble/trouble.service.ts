@@ -5,7 +5,7 @@ import {
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestTrouble,
   CreateResponse,
   UpdateRequest,
   UpdateResponse,
@@ -94,7 +94,7 @@ export class TroubleService {
     }
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestTrouble): Promise<CreateResponse> {
     try {
       const result = await this.companyRepositories.create({
         id: uuidv4(),

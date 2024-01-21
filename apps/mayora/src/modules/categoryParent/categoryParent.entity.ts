@@ -63,10 +63,10 @@ export class CategoryParentModel extends Model {
   updatedBy: string;
 
   @HasMany(() => CategoryParentModel, 'categoryParentId')
-  level2: CategoryParentModel[];
+  children: CategoryParentModel[];
 
   @HasMany(() => CategoryModel, 'categoryParentId')
-  level3: CategoryModel[];
+  level5: CategoryModel[];
 
   @BeforeCreate
   static beforeCreateHook(instance: CategoryParentModel) {

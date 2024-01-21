@@ -35,7 +35,7 @@ echo "--- Seeding: Started ---"
 echo -ne '\n'
 echo "=== SEEDING DB Project ==="
 cd apps/$PROJECT
-ENV_PATH=.env.$MODE npx sequelize-cli db:seed --seed 20240114153007-seeder-category.js --env $MODE
+ENV_PATH=.env.$MODE npx sequelize-cli db:seed --seed 20240121111914-seeder-category-2.js --env $MODE
 cd ../..
 
 echo -ne '\n'

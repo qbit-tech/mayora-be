@@ -29,8 +29,9 @@ import { CategoryService } from './category.service';
 import {
   AuthPermissionGuard, FEATURE_PERMISSIONS,
 } from '@qbit-tech/libs-session';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { DefaultFindAllRequest } from '@qbit-tech/libs-utils';
+import { AppRequest } from '@qbit/appContract/app.contract';
 
 @ApiTags('Category')
 @Controller('categories')
@@ -38,12 +39,7 @@ export class CategoryController implements CategoryApiContract {
   constructor(private companyService: CategoryService) { }
 
   @Get()
-  @UseGuards(
-    AuthPermissionGuard(
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
-    ),
-  )
+  @UseGuards(AuthPermissionGuard())
   async getCompanyList(
     @Query() query: DefaultFindAllRequest,
   ): Promise<FindAllResponse> {
@@ -60,12 +56,10 @@ export class CategoryController implements CategoryApiContract {
     return await this.companyService.findAll(params);
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @UseGuards(
-    AuthPermissionGuard(
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
-    ),
+    AuthPermissionGuard(),
   )
   async getDetailCompany(
     @Param('id') id: string,
@@ -79,12 +73,7 @@ export class CategoryController implements CategoryApiContract {
 
   @ApiBearerAuth()
   @Post()
-  @UseGuards(
-    AuthPermissionGuard(
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
-    ),
-  )
+  // @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestCategory,
@@ -99,12 +88,7 @@ export class CategoryController implements CategoryApiContract {
   }
 
   @Patch(':id')
-  @UseGuards(
-    AuthPermissionGuard(
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
-    ),
-  )
+  @UseGuards(AuthPermissionGuard())
   async updateCompany(
     @Param('id') id: string,
     @Req() request: any,
@@ -121,12 +105,7 @@ export class CategoryController implements CategoryApiContract {
   }
 
   @Delete(':id')
-  @UseGuards(
-    AuthPermissionGuard(
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.__type,
-      FEATURE_PERMISSIONS.PRODUCT_CATEGORY.CREATE.__type,
-    ),
-  )
+  @UseGuards(AuthPermissionGuard())
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,

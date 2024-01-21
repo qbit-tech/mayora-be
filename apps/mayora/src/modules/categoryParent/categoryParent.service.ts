@@ -47,7 +47,10 @@ export class CategoryParentService {
         include: [
           {
             model: CategoryParentModel,
-            as: 'level2',
+            as: 'children',
+            order: [
+              ['createdAt', 'desc'],
+            ],
             attributes: [
               'id',
               'name',
@@ -60,8 +63,85 @@ export class CategoryParentService {
             ],
             include: [
               {
+                model: CategoryParentModel,
+                as: 'children',
+                order: [
+                  ['createdAt', 'desc'],
+                ],
+                attributes: [
+                  'id',
+                  'name',
+                  'categoryParentId',
+                  'categoryLevel',
+                  'updatedBy',
+                  'createdBy',
+                  'createdAt',
+                  'updatedAt',
+                ],
+                include: [
+                  {
+                    model: CategoryParentModel,
+                    as: 'children',
+                    order: [
+                      ['createdAt', 'desc'],
+                    ],
+                    attributes: [
+                      'id',
+                      'name',
+                      'categoryParentId',
+                      'categoryLevel',
+                      'updatedBy',
+                      'createdBy',
+                      'createdAt',
+                      'updatedAt',
+                    ],
+                    include: [
+                      {
+                        model: CategoryModel,
+                        as: 'level5',
+                        order: [
+                          ['createdAt', 'desc'],
+                        ],
+                        attributes: [
+                          'id',
+                          'name',
+                          'categoryParentId',
+                          'categoryType',
+                          'updatedBy',
+                          'unit',
+                          'createdBy',
+                          'createdAt',
+                          'updatedAt',
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    model: CategoryModel,
+                    as: 'level5',
+                    order: [
+                      ['createdAt', 'desc'],
+                    ],
+                    attributes: [
+                      'id',
+                      'name',
+                      'categoryParentId',
+                      'categoryType',
+                      'updatedBy',
+                      'unit',
+                      'createdBy',
+                      'createdAt',
+                      'updatedAt',
+                    ],
+                  },
+                ],
+              },
+              {
                 model: CategoryModel,
-                as: 'level3',
+                as: 'level5',
+                order: [
+                  ['createdAt', 'desc'],
+                ],
                 attributes: [
                   'id',
                   'name',
@@ -73,13 +153,25 @@ export class CategoryParentService {
                   'createdAt',
                   'updatedAt',
                 ],
-                order: [
-                  ['createdAt', 'desc'],
-                ],
               },
             ],
+          },
+          {
+            model: CategoryModel,
+            as: 'level5',
             order: [
               ['createdAt', 'desc'],
+            ],
+            attributes: [
+              'id',
+              'name',
+              'categoryParentId',
+              'categoryType',
+              'updatedBy',
+              'unit',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
             ],
           },
         ],
@@ -125,8 +217,10 @@ export class CategoryParentService {
         include: [
           {
             model: CategoryParentModel,
-            as: 'level2',
-            where: { categoryParentId: { [Op.not]: null } },
+            as: 'children',
+            order: [
+              ['createdAt', 'desc'],
+            ],
             attributes: [
               'id',
               'name',
@@ -139,9 +233,121 @@ export class CategoryParentService {
             ],
             include: [
               {
+                model: CategoryParentModel,
+                as: 'children',
+                order: [
+                  ['createdAt', 'desc'],
+                ],
+                attributes: [
+                  'id',
+                  'name',
+                  'categoryParentId',
+                  'categoryLevel',
+                  'updatedBy',
+                  'createdBy',
+                  'createdAt',
+                  'updatedAt',
+                ],
+                include: [
+                  {
+                    model: CategoryParentModel,
+                    as: 'children',
+                    order: [
+                      ['createdAt', 'desc'],
+                    ],
+                    attributes: [
+                      'id',
+                      'name',
+                      'categoryParentId',
+                      'categoryLevel',
+                      'updatedBy',
+                      'createdBy',
+                      'createdAt',
+                      'updatedAt',
+                    ],
+                    include: [
+                      {
+                        model: CategoryModel,
+                        as: 'level5',
+                        order: [
+                          ['createdAt', 'desc'],
+                        ],
+                        attributes: [
+                          'id',
+                          'name',
+                          'categoryParentId',
+                          'categoryType',
+                          'updatedBy',
+                          'unit',
+                          'createdBy',
+                          'createdAt',
+                          'updatedAt',
+                        ],
+                        include: [
+                          {
+                            model: ManualCollectionModel,
+                            as: 'manualCollection',
+                            attributes: [
+                              'id',
+                              'machineId',
+                              'categoryId',
+                              'shift',
+                              'value',
+                              'remark',
+                              'updatedBy',
+                              'createdBy',
+                              'createdAt',
+                              'updatedAt',
+                            ],
+                          },
+                        ]
+                      },
+                    ],
+                  },
+                  {
+                    model: CategoryModel,
+                    as: 'level5',
+                    order: [
+                      ['createdAt', 'desc'],
+                    ],
+                    attributes: [
+                      'id',
+                      'name',
+                      'categoryParentId',
+                      'categoryType',
+                      'updatedBy',
+                      'unit',
+                      'createdBy',
+                      'createdAt',
+                      'updatedAt',
+                    ],
+                    include: [
+                      {
+                        model: ManualCollectionModel,
+                        as: 'manualCollection',
+                        attributes: [
+                          'id',
+                          'machineId',
+                          'categoryId',
+                          'shift',
+                          'value',
+                          'remark',
+                          'updatedBy',
+                          'createdBy',
+                          'createdAt',
+                          'updatedAt',
+                        ],
+                      },
+                    ]
+                  },
+                ],
+              },
+              {
                 model: CategoryModel,
-                as: 'level3',
-                where: { categoryType: 'manualcollection' },
+                as: 'level5',
+                order: [
+                  ['createdAt', 'desc'],
+                ],
                 attributes: [
                   'id',
                   'name',
@@ -172,8 +378,47 @@ export class CategoryParentService {
                   },
                 ]
               },
+            ],
+          },
+          {
+            model: CategoryModel,
+            as: 'level5',
+            order: [
+              ['createdAt', 'desc'],
+            ],
+            attributes: [
+              'id',
+              'name',
+              'categoryParentId',
+              'categoryType',
+              'updatedBy',
+              'unit',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+            include: [
+              {
+                model: ManualCollectionModel,
+                as: 'manualCollection',
+                attributes: [
+                  'id',
+                  'machineId',
+                  'categoryId',
+                  'shift',
+                  'value',
+                  'remark',
+                  'updatedBy',
+                  'createdBy',
+                  'createdAt',
+                  'updatedAt',
+                ],
+              },
             ]
           },
+        ],
+        order: [
+          ['createdAt', 'desc'],
         ],
       });
       const count = await this.companyRepositories.count({ where });
@@ -214,8 +459,10 @@ export class CategoryParentService {
         include: [
           {
             model: CategoryParentModel,
-            as: 'level2',
-            where: { categoryParentId: { [Op.not]: null } },
+            as: 'children',
+            order: [
+              ['createdAt', 'desc'],
+            ],
             attributes: [
               'id',
               'name',
@@ -228,9 +475,123 @@ export class CategoryParentService {
             ],
             include: [
               {
+                model: CategoryParentModel,
+                as: 'children',
+                order: [
+                  ['createdAt', 'desc'],
+                ],
+                attributes: [
+                  'id',
+                  'name',
+                  'categoryParentId',
+                  'categoryLevel',
+                  'updatedBy',
+                  'createdBy',
+                  'createdAt',
+                  'updatedAt',
+                ],
+                include: [
+                  {
+                    model: CategoryParentModel,
+                    as: 'children',
+                    order: [
+                      ['createdAt', 'desc'],
+                    ],
+                    attributes: [
+                      'id',
+                      'name',
+                      'categoryParentId',
+                      'categoryLevel',
+                      'updatedBy',
+                      'createdBy',
+                      'createdAt',
+                      'updatedAt',
+                    ],
+                    include: [
+                      {
+                        model: CategoryModel,
+                        as: 'level5',
+                        order: [
+                          ['createdAt', 'desc'],
+                        ],
+                        attributes: [
+                          'id',
+                          'name',
+                          'categoryParentId',
+                          'categoryType',
+                          'updatedBy',
+                          'unit',
+                          'createdBy',
+                          'createdAt',
+                          'updatedAt',
+                        ],
+                        include: [
+                          {
+                            model: TroubleModel,
+                            as: 'trouble',
+                            attributes: [
+                              'id',
+                              'machineId',
+                              'categoryId',
+                              'startTime',
+                              'endTime',
+                              'remark',
+                              'updatedBy',
+                              'status',
+                              'createdBy',
+                              'createdAt',
+                              'updatedAt',
+                            ],
+                          },
+                        ]
+                      },
+                    ],
+                  },
+                  {
+                    model: CategoryModel,
+                    as: 'level5',
+                    order: [
+                      ['createdAt', 'desc'],
+                    ],
+                    attributes: [
+                      'id',
+                      'name',
+                      'categoryParentId',
+                      'categoryType',
+                      'updatedBy',
+                      'unit',
+                      'createdBy',
+                      'createdAt',
+                      'updatedAt',
+                    ],
+                    include: [
+                      {
+                        model: TroubleModel,
+                        as: 'trouble',
+                        attributes: [
+                          'id',
+                          'machineId',
+                          'categoryId',
+                          'startTime',
+                          'endTime',
+                          'remark',
+                          'updatedBy',
+                          'status',
+                          'createdBy',
+                          'createdAt',
+                          'updatedAt',
+                        ],
+                      },
+                    ]
+                  },
+                ],
+              },
+              {
                 model: CategoryModel,
-                as: 'level3',
-                where: { categoryType: 'trouble' },
+                as: 'level5',
+                order: [
+                  ['createdAt', 'desc'],
+                ],
                 attributes: [
                   'id',
                   'name',
@@ -262,8 +623,48 @@ export class CategoryParentService {
                   },
                 ]
               },
+            ],
+          },
+          {
+            model: CategoryModel,
+            as: 'level5',
+            order: [
+              ['createdAt', 'desc'],
+            ],
+            attributes: [
+              'id',
+              'name',
+              'categoryParentId',
+              'categoryType',
+              'updatedBy',
+              'unit',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+            include: [
+              {
+                model: TroubleModel,
+                as: 'trouble',
+                attributes: [
+                  'id',
+                  'machineId',
+                  'categoryId',
+                  'startTime',
+                  'endTime',
+                  'remark',
+                  'updatedBy',
+                  'status',
+                  'createdBy',
+                  'createdAt',
+                  'updatedAt',
+                ],
+              },
             ]
           },
+        ],
+        order: [
+          ['createdAt', 'desc'],
         ],
       });
       const count = await this.companyRepositories.count({ where });

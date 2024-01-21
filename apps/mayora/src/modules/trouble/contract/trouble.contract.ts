@@ -5,7 +5,7 @@ import { IsNotEmpty } from "class-validator";
 export abstract class TroubleApiContract {
   abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract create(params: CreateRequest): Promise<CreateResponse>;
+  abstract create(params: CreateRequestTrouble): Promise<CreateResponse>;
   abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
   abstract remove(id: string): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
@@ -54,7 +54,7 @@ export interface FindOneRequest {
   id: string;
 }
 
-export class CreateRequest {
+export class CreateRequestTrouble {
   @IsNotEmpty()
   @ApiProperty({ example: 'active' })
   readonly machineId: string;
