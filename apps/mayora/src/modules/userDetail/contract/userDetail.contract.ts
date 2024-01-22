@@ -63,6 +63,9 @@ export class CreateRequestDetailUser {
 
   @ApiProperty()
   createdBy: string;
+
+  @ApiProperty()
+  updatedBy: string;
 }
 
 export interface CreateResponse {

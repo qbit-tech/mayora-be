@@ -21,6 +21,9 @@ export class OEETargetLogModel extends Model {
   id: string;
 
   @Column
+  ORRTargetId: string;
+
+  @Column
   machineId: string;
 
   @Column
@@ -38,6 +41,6 @@ export class OEETargetLogModel extends Model {
   @Column
   updatedBy: string;
 
-  @Column
-  OEETargetId: string;
+  // @Column
+  // OEETargetId: string;
 }

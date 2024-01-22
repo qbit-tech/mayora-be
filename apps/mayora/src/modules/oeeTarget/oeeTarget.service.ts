@@ -21,6 +21,7 @@ import { Op } from 'sequelize';
 import moment from 'moment';
 import { AuthPermissionGuard } from '../../core/auth.guard';
 import { UserModel } from '../user/user.entity';
+import { OEETargetLogModel } from './oeeTargetLog.entity';
 
 @Injectable()
 export class oeeTargetService {
@@ -166,15 +167,24 @@ export class oeeTargetService {
 
     async create(params: CreateRequest): Promise<CreateResponse> {
         try {
-
+            const generateId = uuidv4();
             const result = await this.companyRepositories.create({
-                id: uuidv4(),
-                machineId: 'hgyui87yui8765ertfghjui',
+                id: generateId,
+                machineId: params.machineId,
                 target: params.target,
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
-            console.log("1", result)
+            console.log("1",result)
+            const resultLog = await OEETargetLogModel.create({
+                id: uuidv4(),
+                ORRTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+            console.log("2",resultLog)
 
             return { isSuccess: result ? true : false };
         } catch (error) {
@@ -206,9 +216,32 @@ export class oeeTargetService {
                 );
             }
 
-            OeeTarget.machineId = params.machineId;
-            OeeTarget.target = params.target;
-            await OeeTarget.save();
+            // OeeTarget.machineId = params.machineId;
+            // OeeTarget.target = params.target;
+            // await OeeTarget.save();
+
+            await OeeTarget.destroy();
+
+            const generateId = uuidv4();
+            const result = await this.companyRepositories.create({
+                id: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            const resultLog = await OEETargetLogModel.create({
+                id: uuidv4(),
+                ORRTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            console.log("1",result)
+            console.log("2",resultLog)
 
             return { isSuccess: true };
 

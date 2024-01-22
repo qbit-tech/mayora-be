@@ -21,6 +21,8 @@ import { generateResultPagination } from '@qbit-tech/libs-utils';
 import { Op } from 'sequelize';
 import moment from 'moment';
 import { AuthPermissionGuard } from '../../core/auth.guard';
+import { ProductionTargetLogModel } from './productionTargetLog.entity';
+import { RoleModel } from '@qbit-tech/libs-role';
 
 @Injectable()
 export class ProductionTargetService {
@@ -75,21 +77,6 @@ export class ProductionTargetService {
                 }
             }
 
-            // let result = await UserModel.findAll({
-            //     attributes: [
-            //         'userId',
-            //         'name',
-            //         'roleId',
-            //     ],
-            //     offset: params.offset,
-            //     limit: params.limit,
-            //     include: [{
-            //         where: whereCondition,
-            //         model: this.companyRepositories,
-            //     }]
-            // })
-
-
 
             const result = await this.companyRepositories.findAll({
                 where: whereCondition,
@@ -111,26 +98,33 @@ export class ProductionTargetService {
                 include: [{
                     model: UserModel,
                     attributes: ['userId', 'name', 'roleId'],
-                    as: 'createdByUser',                
+                    as: 'updatedByUser',   
+                    include: [{
+                        model: RoleModel,
+                        attributes: ['roleName'],
+                        as: 'role',   
+                    }],             
                 }],
               });
+
+            console.log("result",result[0].updatedByUser)
               
 
             const count = await this.companyRepositories.count({ where: whereCondition, distinct: true });
 
             const mappedResult = result.map(item => {
                 const productionTarget = item.get();
-                const createdByUser = productionTarget.createdByUser ? productionTarget.createdByUser.get() : null;
+                const updatedByUser = productionTarget.updatedByUser ? productionTarget.updatedByUser.get() : null;
               
                 // Exclude the createdByUser field and directly include its properties
-                delete productionTarget.createdByUser;
+                delete productionTarget.updatedByUser;
               
                 // Combine the properties into a new object
                 return {
                   ...productionTarget,
-                  userId: createdByUser ? createdByUser.userId : null,
-                  name: createdByUser ? createdByUser.name : null,
-                  role: createdByUser ? createdByUser.roleId : null,
+                  userId: updatedByUser ? updatedByUser.userId : null,
+                  name: updatedByUser ? updatedByUser.name : null,
+                  role: updatedByUser ? updatedByUser.roleId : null,
                 };
               });
               
@@ -183,16 +177,26 @@ export class ProductionTargetService {
 
     async create(params: CreateRequest): Promise<CreateResponse> {
         try {
-
+            const generateId = uuidv4();
             const result = await this.companyRepositories.create({
-                id: uuidv4(),
-                machineId: 'hgyui87yui8765ertfghjui',
+                id: generateId,
+                machineId: params.machineId,
                 target: params.target,
                 activeTarget: params.activeTarget,
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
             console.log("1",result)
+            const resultLog = await ProductionTargetLogModel.create({
+                id: uuidv4(),
+                productionTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                activeTarget: params.activeTarget,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+            console.log("2",resultLog)
 
             return { isSuccess: result ? true : false };
         } catch (error) {
@@ -224,10 +228,35 @@ export class ProductionTargetService {
                 );
             }
 
-            ProductionTarget.machineId = params.machineId;
-            ProductionTarget.target = params.target;
-            ProductionTarget.activeTarget = params.activeTarget;
-            await ProductionTarget.save();
+            // ProductionTarget.machineId = params.machineId;
+            // ProductionTarget.target = params.target;
+            // ProductionTarget.activeTarget = params.activeTarget;
+            // await ProductionTarget.save();
+
+            await ProductionTarget.destroy();
+
+            const generateId = uuidv4();
+            const result = await this.companyRepositories.create({
+                id: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                activeTarget: params.activeTarget,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            const resultLog = await ProductionTargetLogModel.create({
+                id: uuidv4(),
+                productionTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                activeTarget: params.activeTarget,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            console.log("1",result)
+            console.log("2",resultLog)
 
             return { isSuccess: true };
 

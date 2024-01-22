@@ -74,7 +74,7 @@ export class UserDetailController implements UserDetailApiContract {
     @Body() body: CreateRequestDetailUser,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+    return await this.create({ ...body });
   }
 
   async create(params: CreateRequestDetailUser): Promise<CreateResponse> {

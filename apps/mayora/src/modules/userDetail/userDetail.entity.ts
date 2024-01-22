@@ -13,7 +13,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { MachineModel } from '../defaultTarget/defaultTargetLog.entity';
+import { MachineModel } from '../machine/machine.entity';
 import { UserModel } from '../user/user.entity';
 
 @Table({

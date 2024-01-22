@@ -102,12 +102,13 @@ export class UserDetailService {
         userId: params.userId,
         machineId: params.machineId,
         createdBy: params.createdBy,
+        updatedBy: params.updatedBy,
       });
       console.log("resultjktm", result)
 
       return { isSuccess: result ? true : false };
     } catch (error) {
-      console.log("erorrjdcmd s", error)
+      console.log("erorr", error)
       throw new HttpException(
         {
           status: 'ERR_COMPANY_REQUEST',

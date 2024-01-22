@@ -20,6 +20,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { generateResultPagination } from '@qbit-tech/libs-utils';
 import { Op } from 'sequelize';
 import moment from 'moment';
+import { DefaultTargetModelLog } from './defaultTargetLog.entity';
 
 
 @Injectable()
@@ -144,15 +145,25 @@ export class defaultTargetService {
 
     async create(params: CreateRequest): Promise<CreateResponse> {
         try {
-
+            const generateId = uuidv4();
             const result = await this.companyRepositories.create({
-                id: uuidv4(),
-                machineId: 'hgyui87yui8765ertfghjui',
+                id: generateId,
+                machineId: params.machineId,
                 target: params.target,
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
             console.log("1",result)
+
+            const resultLog = await DefaultTargetModelLog.create({
+                id: uuidv4(),
+                defaultTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+            console.log("2",resultLog)
 
             return { isSuccess: result ? true : false };
         } catch (error) {
@@ -184,9 +195,32 @@ export class defaultTargetService {
                 );
             }
 
-            DefaultTarget.machineId = params.machineId;
-            DefaultTarget.target = params.target;
-            await DefaultTarget.save();
+            // DefaultTarget.machineId = params.machineId;
+            // DefaultTarget.target = params.target;
+            // await DefaultTarget.save();
+
+            await DefaultTarget.destroy();
+
+            const generateId = uuidv4();
+            const result = await this.companyRepositories.create({
+                id: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            const resultLog = await DefaultTargetModelLog.create({
+                id: uuidv4(),
+                defaultTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            console.log("1",result)
+            console.log("2",resultLog)
 
             return { isSuccess: true };
 
