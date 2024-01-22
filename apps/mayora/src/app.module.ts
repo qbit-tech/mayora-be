@@ -168,7 +168,7 @@ export const rootImportedModules = [
     ReleaseModule,
     TroubleModule,
     MachineModule,
-    UserDetailModule
+    UserDetailModule,
     ProductionTargetModule,
     OeeTargetModule,
     DefaultTargetModule
