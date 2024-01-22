@@ -16,9 +16,9 @@ import {
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestManualCollection,
   CreateResponse,
-  UpdateRequest,
+  UpdateRequestManualCollection,
   UpdateResponse,
   EditStatusProps,
   ICompanyListItem,
@@ -27,35 +27,19 @@ import {
 } from './contract';
 import { ManualCollectionService } from './manualCollection.service';
 import { AuthPermissionGuard } from '../../core/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('manual-collection')
+@ApiTags('Manual Collection')
+@Controller('manual-collections')
 export class ManualCollectionController implements CompanyApiContract {
   constructor(private companyService: ManualCollectionService) { }
-
-  // @Get()
-  // //@UseGuards(AuthPermissionGuard())
-  // async getCompanyList(
-  //   @Query() query: FindAllRequest,
-  // ): Promise<FindAllResponse> {
-  //   const params: FindAllRequest = {
-  //     limit: Number(query.limit) ?? 10,
-  //     offset: Number(query.offset) ?? 0,
-  //     order: 'desc',
-  //   };
-
-  //   return this.findAll(params);
-  // }
-
-  // async findAll(params: FindAllRequest): Promise<FindAllResponse> {
-  //   return await this.companyService.findAll(params);
-  // }
 
   @Get(':id')
   //@UseGuards(AuthPermissionGuard())//
   async getDetailCompany(
-    @Param() param: { id: string },
+    @Param('id') id: string,
   ): Promise<ICompanyListItem> {
-    return this.findOne({ id: param.id });
+    return this.findOne({ id: id });
   }
 
   async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
@@ -66,41 +50,41 @@ export class ManualCollectionController implements CompanyApiContract {
   // //@UseGuards(AuthPermissionGuard())//
   async createCompany(
     @Req() request: any,
-    @Body() body: Omit<CreateRequest, 'createdBy'>,
+    @Body() body: CreateRequestManualCollection,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
     return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestManualCollection): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
-  @Put(':id')
+  @Patch(':id')
   //@UseGuards(AuthPermissionGuard())
   async updateCompany(
-    @Param() param: { id: string },
+    @Param('id') id: string,
     @Req() request: any,
-    @Body() body: Omit<UpdateRequest, 'updatedAt'>,
+    @Body() body: UpdateRequestManualCollection,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
     return await this.update({
       ...body,
       updatedBy: "ju489eikjnjhgytr",
-    }, param.id);
+    }, id);
   }
-  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
   @Delete(':id')
   //@UseGuards(AuthPermissionGuard())//
   async deleteItem(
-    @Param() param: { id: string },
+    @Param('id') id: string,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
-    return await this.remove(param.id);
+    return await this.remove(id);
   }
 
   async remove(

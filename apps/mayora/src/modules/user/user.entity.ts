@@ -16,6 +16,7 @@ import {
 import { RoleProperties } from '@qbit-tech/libs-role';
 import { ProductionTargetModel } from '../productionTarget/productionTarget.entity';
 import { OEETargetModel } from '../oeeTarget/oeeTarget.entity';
+import { UserDetailModel } from '../userDetail/userDetail.entity';
 
 export enum Gender {
   MALE = 'male',
@@ -162,6 +163,8 @@ export class UserModel extends Model {
   @HasMany(() => OEETargetModel, 'updatedBy')
   OEETargets: OEETargetModel[];
 
+  @HasMany(() => UserDetailModel, 'userId')
+  machines: UserDetailModel[];
 
   @BeforeUpdate
   @BeforeCreate

@@ -5,9 +5,9 @@ import {
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestCategory,
   CreateResponse,
-  UpdateRequest,
+  UpdateRequestCategory,
   UpdateResponse,
   EditStatusProps,
   ICompanyListItem,
@@ -27,7 +27,6 @@ export class CategoryService {
   async findAll(params: FindAllRequest): Promise<FindAllResponse> {
     try {
       const where = {};
-      console.log('hgftyuijkhgft')
 
       const result = await this.companyRepositories.findAll({
         where,
@@ -37,7 +36,7 @@ export class CategoryService {
           'categoryParentId',
           'categoryType',
           'updatedBy',
-          'status',
+          'unit',
           'createdBy',
           'createdAt',
           'updatedAt',
@@ -74,7 +73,7 @@ export class CategoryService {
           'categoryParentId',
           'categoryType',
           'updatedBy',
-          'status',
+          'unit',
           'createdBy',
           'createdAt',
           'updatedAt',
@@ -94,19 +93,21 @@ export class CategoryService {
     }
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestCategory): Promise<CreateResponse> {
     try {
+      console.log('categeiugrkj', params)
       const result = await this.companyRepositories.create({
         id: uuidv4(),
         name: params.name,
         categoryParentId: params.categoryParentId,
         categoryType: params.categoryType,
         createdBy: params.createdBy,
-        status: "active"
+        unit: params.unit
       });
 
       return { isSuccess: result ? true : false };
     } catch (error) {
+      console.log("eroererj", error)
       throw new HttpException(
         {
           status: 'ERR_COMPANY_REQUEST',
@@ -118,7 +119,7 @@ export class CategoryService {
     }
   }
 
-  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse> {
     try {
       const category = await this.companyRepositories.findOne({
         where: { id: id },
@@ -136,7 +137,7 @@ export class CategoryService {
       }
 
       category.name = params.name;
-      category.status = params.status;
+      category.unit = params.unit;
       category.categoryType = params.categoryType;
       category.updatedBy = params.updatedBy;
       await category.save();

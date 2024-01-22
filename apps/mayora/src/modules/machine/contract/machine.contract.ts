@@ -1,26 +1,26 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { AppRequest } from "@qbit/appContract/app.contract";
 import { IsNotEmpty } from "class-validator";
 
-export abstract class CompanyApiContract {
-  // abstract findAll(): Promise<FindAllResponse>;
-  abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract create(params: CreateRequestManualCollection): Promise<CreateResponse>;
-  abstract update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse>;
+export abstract class MachineApiContract {
+  // abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  // abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
+  abstract create(params: CreateRequest): Promise<CreateResponse>;
+  // abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
   abstract remove(id: string): Promise<RemoveResponse>;
-  // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 
 export interface ICompanyListItem {
   id: string;
+  remark: string;
   machineId: string;
   categoryId: string;
-  categoryType: string;
-  value: string;
-  shift: string;
-  remark: string;
-  updatedAt: Date;
-  createdAt: Date;
-  status: string;
+  startTime: string;
+  endTime: string;
+  updatedBy: string;
+  createdBy: string;
+  updatedAt: string;
+  createdAt: string;
 }
 
 
@@ -52,23 +52,10 @@ export interface FindOneRequest {
   id: string;
 }
 
-export class CreateRequestManualCollection {
+export class CreateRequest {
   @IsNotEmpty()
   @ApiProperty()
-  machineId: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  categoryId: string;
-
-  @ApiPropertyOptional()
-  value: string;
-
-  @ApiPropertyOptional()
-  shift: string;
-
-  @ApiPropertyOptional()
-  remark: string;
+  readonly name: string;
 
   @ApiProperty()
   createdBy: string;
@@ -78,25 +65,31 @@ export interface CreateResponse {
   isSuccess: boolean;
 }
 
-export class UpdateRequestManualCollection {
+// export interface UpdateRequest {
+//   id: string;
+//   name: string;
+//   categoryParentId: string;
+//   categoryType: string;
+//   updatedBy: string;
+//   status: string;
+// }
+
+export class UpdateRequest {
   @IsNotEmpty()
-  @ApiProperty()
-  machineId: string;
+  @ApiProperty({ example: 'active' })
+  readonly machineId: string;
 
   @IsNotEmpty()
   @ApiProperty()
   categoryId: string;
 
   @ApiPropertyOptional()
-  value: string;
+  startTime?: Date;
 
   @ApiPropertyOptional()
-  shift: string;
+  endTime?: Date;
 
-  @ApiPropertyOptional()
-  remark: string;
-
-  @ApiPropertyOptional()
+  @ApiProperty()
   updatedBy: string;
 }
 
