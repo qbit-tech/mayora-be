@@ -107,7 +107,7 @@ export class ProductionTargetService {
                 }],
               });
 
-            console.log("result",result[0].updatedByUser)
+            // console.log("result",result[0].updatedByUser.role)
               
 
             const count = await this.companyRepositories.count({ where: whereCondition, distinct: true });
@@ -124,7 +124,7 @@ export class ProductionTargetService {
                   ...productionTarget,
                   userId: updatedByUser ? updatedByUser.userId : null,
                   name: updatedByUser ? updatedByUser.name : null,
-                  role: updatedByUser ? updatedByUser.roleId : null,
+                  role: updatedByUser ? updatedByUser.role ? updatedByUser.role.roleName : null : null,
                 };
               });
               

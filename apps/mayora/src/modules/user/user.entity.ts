@@ -13,6 +13,7 @@ import {
   BeforeUpdate,
   HasMany,
   HasOne,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { RoleModel, RoleProperties } from '@qbit-tech/libs-role';
 import { ProductionTargetModel } from '../productionTarget/productionTarget.entity';
@@ -167,7 +168,7 @@ export class UserModel extends Model {
   @HasMany(() => UserDetailModel, 'userId')
   machines: UserDetailModel[];
 
-  @HasOne(() => RoleModel, 'roleId')
+  @BelongsTo(() => RoleModel, 'roleId')
   role: RoleModel;
 
   @BeforeUpdate

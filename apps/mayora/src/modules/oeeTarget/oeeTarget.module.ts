@@ -5,11 +5,12 @@ import { OEETargetModel } from './oeeTarget.entity';
 import { oeeTargetService } from './oeeTarget.service';
 import { ConfigModule } from '@nestjs/config';
 import { OEETargetLogModel } from './oeeTargetLog.entity';
+import { UserModel } from '../user/user.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([OEETargetModel, OEETargetModel]),
-    SequelizeModule.forFeature([OEETargetLogModel, OEETargetLogModel]),
+    SequelizeModule.forFeature([OEETargetModel, UserModel]),
+    SequelizeModule.forFeature([OEETargetLogModel]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.ENV_PATH,

@@ -51,6 +51,4 @@ export class ProductionTargetModel extends Model {
   @BelongsTo(() => UserModel, 'updatedBy')
   updatedByUser: UserModel;
 
-  @BelongsTo(() => RoleModel, 'roleId')
-  role: RoleModel;
 }

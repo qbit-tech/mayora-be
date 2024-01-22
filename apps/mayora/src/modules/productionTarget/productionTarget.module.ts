@@ -5,11 +5,12 @@ import { ProductionTargetModel } from './productionTarget.entity';
 import { ProductionTargetService } from './productionTarget.service';
 import { ConfigModule } from '@nestjs/config';
 import { ProductionTargetLogModel } from './productionTargetLog.entity';
+import { UserModel } from '../user/user.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([ProductionTargetModel, ProductionTargetModel]),
-    SequelizeModule.forFeature([ProductionTargetLogModel, ProductionTargetLogModel]),
+    SequelizeModule.forFeature([ProductionTargetModel, UserModel]),
+    SequelizeModule.forFeature([ProductionTargetLogModel]),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.ENV_PATH,
