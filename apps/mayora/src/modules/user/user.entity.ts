@@ -14,6 +14,8 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { RoleProperties } from '@qbit-tech/libs-role';
+import { ProductionTargetModel } from '../productionTarget/productionTarget.entity';
+import { OEETargetModel } from '../oeeTarget/oeeTarget.entity';
 import { UserDetailModel } from '../userDetail/userDetail.entity';
 
 export enum Gender {
@@ -154,6 +156,12 @@ export class UserModel extends Model {
   @AllowNull
   @Column
   nickName?: string;
+
+  @HasMany(() => ProductionTargetModel, 'updatedBy')
+  productionTargets: ProductionTargetModel[];
+
+  @HasMany(() => OEETargetModel, 'updatedBy')
+  OEETargets: OEETargetModel[];
 
   @HasMany(() => UserDetailModel, 'userId')
   machines: UserDetailModel[];

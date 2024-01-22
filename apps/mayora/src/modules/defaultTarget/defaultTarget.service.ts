@@ -87,6 +87,9 @@ export class defaultTargetService {
                     'createdAt',
                     'updatedAt',
                 ],
+                order : [
+                    [ 'createdAt' , 'DESC' ]
+                ],
                 offset: params.offset,
                 limit: params.limit,
             });
@@ -101,7 +104,7 @@ export class defaultTargetService {
             throw new HttpException(
                 {
                     status: 'ERR_COMPANY_REQUEST',
-                    message: error.message,
+                    message: [error, error.messagge],
                     payload: null,
                 },
                 HttpStatus.BAD_REQUEST,
