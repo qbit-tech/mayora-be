@@ -3,7 +3,7 @@ import { AppRequest } from "@qbit/appContract/app.contract";
 import { IsNotEmpty } from "class-validator";
 
 export abstract class MachineApiContract {
-  // abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   // abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequest): Promise<CreateResponse>;
   // abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;

@@ -37,23 +37,23 @@ import {
 export class MachineController implements MachineApiContract {
   constructor(private companyService: MachineService) { }
 
-  // @Get()
-  // //@UseGuards(AuthPermissionGuard())
-  // async getCompanyList(
-  //   @Query() params: DefaultFindAllRequest,
-  // ): Promise<FindAllResponse> {
-  //   const paramsSend: FindAllRequest = {
-  //     limit: Number(params.limit) ?? 10,
-  //     offset: Number(params.offset) ?? 0,
-  //     order: 'desc',
-  //   };
+  @Get()
+  //@UseGuards(AuthPermissionGuard())
+  async getCompanyList(
+    @Query() params: DefaultFindAllRequest,
+  ): Promise<FindAllResponse> {
+    const paramsSend: FindAllRequest = {
+      limit: Number(params.limit) ?? 10,
+      offset: Number(params.offset) ?? 0,
+      order: 'desc',
+    };
 
-  //   return this.findAll(params);
-  // }
+    return this.findAll(params);
+  }
 
-  // async findAll(params: FindAllRequest): Promise<FindAllResponse> {
-  //   return await this.companyService.findAll(params);
-  // }
+  async findAll(params: FindAllRequest): Promise<FindAllResponse> {
+    return await this.companyService.findAll(params);
+  }
 
   // @Get(':id')
   // //@UseGuards(AuthPermissionGuard())//

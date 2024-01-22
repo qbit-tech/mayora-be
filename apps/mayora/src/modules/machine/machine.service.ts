@@ -21,46 +21,41 @@ export class MachineService {
     private readonly machineRepositories: typeof MachineModel,
   ) { }
 
-  // async findAll(params: FindAllRequest): Promise<FindAllResponse> {
-  //   try {
-  //     const where = {};
+  async findAll(params: FindAllRequest): Promise<FindAllResponse> {
+    try {
+      const where = {};
 
-  //     const result = await this.machineRepositories.findAll({
-  //       where,
-  //       attributes: [
-  //         'id',
-  //         'machineId',
-  //         'categoryId',
-  //         'startTime',
-  //         'endTime',
-  //         'remark',
-  //         'updatedBy',
-  //         'status',
-  //         'createdBy',
-  //         'createdAt',
-  //         'updatedAt',
-  //       ],
-  //       offset: params.offset,
-  //       limit: params.limit,
-  //     });
-  //     const count = await this.machineRepositories.count({ where });
-  //     return {
-  //       count: count,
-  //       next: '',
-  //       prev: '',
-  //       results: result.map(item => item.get()),
-  //     };
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       {
-  //         status: 'ERR_COMPANY_REQUEST',
-  //         message: error.message,
-  //         payload: null,
-  //       },
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-  // }
+      const result = await this.machineRepositories.findAll({
+        where,
+        attributes: [
+          'id',
+          'name',
+          'updatedBy',
+          'createdBy',
+          'createdAt',
+          'updatedAt',
+        ],
+        offset: params.offset,
+        limit: params.limit,
+      });
+      const count = await this.machineRepositories.count({ where });
+      return {
+        count: count,
+        next: '',
+        prev: '',
+        results: result.map(item => item.get()),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'ERR_COMPANY_REQUEST',
+          message: error.message,
+          payload: null,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 
   // async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
   //   try {
