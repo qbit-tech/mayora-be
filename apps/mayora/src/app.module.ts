@@ -107,7 +107,7 @@ export const rootImportedModules = [
     password: process.env.DB_PASS || '12345',
     database: process.env.DB_NAME || 'mayora',
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5433' || '5432'),
+    port: parseInt(process.env.DB_PORT || '5432'),
     // dialectOptions: {
     //   statement_timeout: 600000
     // },
