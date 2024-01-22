@@ -4,9 +4,10 @@ import { IsNotEmpty } from "class-validator";
 export abstract class CompanyApiContract {
   // abstract findAll(): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
+  abstract findDetailByIdShift(id: string, shift: string): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestManualCollection): Promise<CreateResponse>;
   abstract update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse>;
-  abstract remove(id: string): Promise<RemoveResponse>;
+  abstract remove(id: String): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 

@@ -55,16 +55,28 @@ export class TroubleController implements TroubleApiContract {
     return await this.companyService.findAll(params);
   }
 
+  @Get('/machine/:machieId')
+  //@UseGuards(AuthPermissionGuard())
+  async getTroubleListByMachie(
+    @Param('machieId') machieId: string,
+  ): Promise<FindAllResponse> {
+    return this.findAllByMachine(machieId);
+  }
+
+  async findAllByMachine(machineId: string): Promise<FindAllResponse> {
+    return await this.companyService.findAllByMachine(machineId);
+  }
+
   @Get(':id')
   //@UseGuards(AuthPermissionGuard())//
   async getDetailCompany(
     @Param('id') id: string,
   ): Promise<ICompanyListItem> {
-    return this.findOne({ id: id });
+    return this.findOneTrouble({ id: id });
   }
 
-  async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
-    return await this.companyService.findOne(params);
+  async findOneTrouble(params: FindOneRequest): Promise<ICompanyListItem> {
+    return await this.companyService.findOneTrouble(params);
   }
 
   @Post()

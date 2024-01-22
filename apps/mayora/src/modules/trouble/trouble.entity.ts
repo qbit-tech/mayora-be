@@ -15,6 +15,7 @@ import {
 } from 'sequelize-typescript';
 import { handleTimeZone } from '../../helpers/date';
 import { CategoryModel } from '../category/category.entity';
+import { MachineModel } from '../defaultTarget/defaultTargetLog.entity';
 
 export enum status {
   VALID = 'valid',
@@ -34,6 +35,9 @@ export class TroubleModel extends Model {
   @ApiProperty()
   @Column
   machineId: string;
+
+  @BelongsTo(() => MachineModel, 'machineId')
+  machine: MachineModel;
 
   @ApiProperty()
   @Column

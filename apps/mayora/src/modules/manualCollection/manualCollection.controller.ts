@@ -46,6 +46,19 @@ export class ManualCollectionController implements CompanyApiContract {
     return await this.companyService.findOne(params);
   }
 
+  @Get(':categoryId/:shift')
+  //@UseGuards(AuthPermissionGuard())//
+  async getDetailByIdShift(
+    @Param('categoryId') categoryId: string,
+    @Param('shift') shift: string,
+  ): Promise<ICompanyListItem> {
+    return this.findDetailByIdShift(categoryId, shift);
+  }
+
+  async findDetailByIdShift(id: string, shift: string): Promise<ICompanyListItem> {
+    return await this.companyService.findDetailByIdShift(id, shift);
+  }
+
   @Post()
   // //@UseGuards(AuthPermissionGuard())//
   async createCompany(

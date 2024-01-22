@@ -78,7 +78,6 @@ export class CategoryController implements CategoryApiContract {
     @Req() request: any,
     @Body() body: CreateRequestCategory,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
     console.log("hbgytu", request.user)
     return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
   }
@@ -88,7 +87,7 @@ export class CategoryController implements CategoryApiContract {
   }
 
   @Patch(':id')
-  @UseGuards(AuthPermissionGuard())
+  // @UseGuards(AuthPermissionGuard())
   async updateCompany(
     @Param('id') id: string,
     @Req() request: any,
@@ -97,7 +96,7 @@ export class CategoryController implements CategoryApiContract {
     // const localEmployee: IMe = request.user;
     return await this.update({
       ...body,
-      updatedBy: "ju489eikjnjhgytr",
+      updatedBy: request.userId,
     }, id);
   }
   async update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse> {
@@ -105,7 +104,7 @@ export class CategoryController implements CategoryApiContract {
   }
 
   @Delete(':id')
-  @UseGuards(AuthPermissionGuard())
+  // @UseGuards(AuthPermissionGuard())
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,

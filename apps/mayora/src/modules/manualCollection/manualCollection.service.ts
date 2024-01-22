@@ -60,6 +60,54 @@ export class ManualCollectionService {
     }
   }
 
+  async findDetailByIdShift(categoryId: string, shift: string): Promise<ICompanyListItem> {
+    try {
+      const result = await this.companyRepositories.findOne({
+        where: { categoryId: categoryId, shift: shift },
+        attributes: [
+          'id',
+          'machineId',
+          'categoryId',
+          'shift',
+          'value',
+          'remark',
+          'updatedBy',
+          'createdBy',
+          'createdAt',
+          'updatedAt',
+        ],
+        include: [
+          {
+            model: CategoryModel,
+            as: 'categoryParent',
+            attributes: [
+              'id',
+              'name',
+              'categoryParentId',
+              'categoryType',
+              'updatedBy',
+              'unit',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ]
+      });
+
+      return result ? result.get() : null;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'ERR_COMPANY_NOT_FOUND',
+          message: error.message,
+          payload: null,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
   async create(params: CreateRequestManualCollection): Promise<CreateResponse> {
     try {
       const category = await this.categoryService.findOne({ id: params.categoryId });
@@ -116,7 +164,6 @@ export class ManualCollectionService {
           HttpStatus.NOT_FOUND,
         );
       }
-
       const category = await this.categoryService.findOne({ id: params.categoryId });
 
       if (
