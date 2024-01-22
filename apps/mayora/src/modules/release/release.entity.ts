@@ -29,8 +29,8 @@ export class ReleaseModel extends Model {
   @Column
   time: Date;
 
-  @Column
-  shift: number;
+  // @Column
+  // shift: number;
 
   @CreatedAt
   createdAt: Date;
