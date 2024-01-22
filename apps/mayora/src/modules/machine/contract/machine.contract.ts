@@ -2,13 +2,12 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { AppRequest } from "@qbit/appContract/app.contract";
 import { IsNotEmpty } from "class-validator";
 
-export abstract class TroubleApiContract {
-  abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
-  abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract create(params: CreateRequestTrouble): Promise<CreateResponse>;
-  abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
+export abstract class MachineApiContract {
+  // abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  // abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
+  abstract create(params: CreateRequest): Promise<CreateResponse>;
+  // abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
   abstract remove(id: string): Promise<RemoveResponse>;
-  // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 
 export interface ICompanyListItem {
@@ -22,7 +21,6 @@ export interface ICompanyListItem {
   createdBy: string;
   updatedAt: string;
   createdAt: string;
-  status: string;
 }
 
 
@@ -54,23 +52,10 @@ export interface FindOneRequest {
   id: string;
 }
 
-export class CreateRequestTrouble {
-  @IsNotEmpty()
-  @ApiProperty({ example: 'active' })
-  readonly machineId: string;
-
+export class CreateRequest {
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: string;
-
-  @ApiPropertyOptional()
-  startTime?: Date;
-
-  @ApiPropertyOptional()
-  endTime?: Date;
-
-  @ApiPropertyOptional()
-  remark?: string;
+  readonly name: string;
 
   @ApiProperty()
   createdBy: string;
@@ -103,12 +88,6 @@ export class UpdateRequest {
 
   @ApiPropertyOptional()
   endTime?: Date;
-
-  @ApiPropertyOptional()
-  remark?: string;
-
-  @ApiPropertyOptional()
-  status?: string;
 
   @ApiProperty()
   updatedBy: string;

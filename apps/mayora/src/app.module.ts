@@ -21,6 +21,8 @@ import { CategoryParentModule } from './modules/categoryParent/categoryParent.mo
 import { ManualCollectionModule } from './modules/manualCollection/manualCollection.module';
 import { ReleaseModule } from './modules/release/release.module';
 import { TroubleModule } from './modules/trouble/trouble.module';
+import { MachineModule } from './modules/machine/machine.module';
+import { UserDetailModule } from './modules/userDetail/userDetail.module';
 import { ProductionTargetModule } from './modules/productionTarget/productionTarget.module';
 import { OeeTargetModule } from './modules/oeeTarget/oeeTarget.module';
 import { DefaultTargetModule } from './modules/defaultTarget/defaultTarget.module';
@@ -165,6 +167,8 @@ export const rootImportedModules = [
     ManualCollectionModule,
     ReleaseModule,
     TroubleModule,
+    MachineModule,
+    UserDetailModule
     ProductionTargetModule,
     OeeTargetModule,
     DefaultTargetModule

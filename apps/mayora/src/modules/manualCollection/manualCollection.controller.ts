@@ -30,7 +30,7 @@ import { AuthPermissionGuard } from '../../core/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Manual Collection')
-@Controller('manual-collection')
+@Controller('manual-collections')
 export class ManualCollectionController implements CompanyApiContract {
   constructor(private companyService: ManualCollectionService) { }
 

@@ -16,7 +16,7 @@ import {
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestTrouble,
   CreateResponse,
   UpdateRequest,
   UpdateResponse,
@@ -33,7 +33,7 @@ import {
 } from '@qbit-tech/libs-utils';
 
 @ApiTags('Trouble')
-@Controller('trouble')
+@Controller('troubles')
 export class TroubleController implements TroubleApiContract {
   constructor(private companyService: TroubleService) { }
 
@@ -71,13 +71,13 @@ export class TroubleController implements TroubleApiContract {
   // //@UseGuards(AuthPermissionGuard())//
   async createCompany(
     @Req() request: any,
-    @Body() body: CreateRequest,
+    @Body() body: CreateRequestTrouble,
   ): Promise<CreateResponse> {
     // const localEmployee: IMe = request.user;
     return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestTrouble): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 

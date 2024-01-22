@@ -9,6 +9,7 @@ import {
   cleanPhoneNumber,
   generateFullName,
 } from '@qbit-tech/libs-utils';
+import { UserDetailModel } from '../userDetail/userDetail.entity';
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,7 @@ export class UserService {
     @InjectModel(UserModel)
     private readonly userRepositories: typeof UserModel,
     private readonly roleService: RoleService,
-  ) {}
+  ) { }
 
   async findAll(params: {
     offset?: number;
@@ -300,7 +301,24 @@ export class UserService {
   async findOneByUserId(userId: string): Promise<UserProperties> {
     let result: any = await this.userRepositories.findOne({
       where: { userId },
+      include: [
+        {
+          model: UserDetailModel,
+          as: 'machines',
+          attributes: [
+            'id',
+            'userId',
+            'machineId',
+            'createdAt',
+            'updatedAt',
+            'createdBy',
+            'updatedBy'
+          ],
+        },
+      ],
     });
+
+    console.log("gfyuj", result)
 
     if (result && result.roleId) {
       const getRole = await this.roleService.findOne(result.roleId);

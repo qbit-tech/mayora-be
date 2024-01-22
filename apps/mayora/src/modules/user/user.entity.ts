@@ -14,6 +14,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { RoleProperties } from '@qbit-tech/libs-role';
+import { UserDetailModel } from '../userDetail/userDetail.entity';
 
 export enum Gender {
   MALE = 'male',
@@ -153,6 +154,9 @@ export class UserModel extends Model {
   @AllowNull
   @Column
   nickName?: string;
+
+  @HasMany(() => UserDetailModel, 'userId')
+  machines: UserDetailModel[];
 
   @BeforeUpdate
   @BeforeCreate
