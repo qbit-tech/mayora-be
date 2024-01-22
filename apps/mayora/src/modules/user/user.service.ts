@@ -10,6 +10,7 @@ import {
   generateFullName,
 } from '@qbit-tech/libs-utils';
 import { UserDetailModel } from '../userDetail/userDetail.entity';
+import { MachineModel } from '../machine/machine.entity';
 
 @Injectable()
 export class UserService {
@@ -313,6 +314,16 @@ export class UserService {
             'updatedAt',
             'createdBy',
             'updatedBy'
+          ],
+          include: [
+            {
+              model: MachineModel,
+              as: 'machine',
+              attributes: [
+                'id',
+                'name',
+              ],
+            },
           ],
         },
       ],
