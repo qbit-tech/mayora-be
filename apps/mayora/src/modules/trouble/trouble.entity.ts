@@ -15,7 +15,7 @@ import {
 } from 'sequelize-typescript';
 import { handleTimeZone } from '../../helpers/date';
 import { CategoryModel } from '../category/category.entity';
-import { MachineModel } from '../defaultTarget/defaultTargetLog.entity';
+import { MachineModel } from '../machine/machine.entity';
 
 export enum status {
   VALID = 'valid',
