@@ -81,57 +81,57 @@ export class ProductionTargetService {
             const result = await this.companyRepositories.findAll({
                 where: whereCondition,
                 attributes: [
-                  'id',
-                  'machineId',
-                  'target',
-                  'activeTarget',
-                  'createdBy',
-                  'updatedBy',
-                  'createdAt',
-                  'updatedAt',
+                    'id',
+                    'machineId',
+                    'target',
+                    'activeTarget',
+                    'createdBy',
+                    'updatedBy',
+                    'createdAt',
+                    'updatedAt',
                 ],
-                order : [
-                    [ 'createdAt' , 'DESC' ]
+                order: [
+                    ['createdAt', 'DESC']
                 ],
                 offset: params.offset,
                 limit: params.limit,
                 include: [{
                     model: UserModel,
                     attributes: ['userId', 'name', 'roleId'],
-                    as: 'updatedByUser',   
+                    as: 'updatedByUser',
                     include: [{
                         model: RoleModel,
                         attributes: ['roleName'],
-                        as: 'role',   
-                    }],             
+                        as: 'role',
+                    }],
                 }],
-              });
+            });
 
             // console.log("result",result[0].updatedByUser.role)
-              
+
 
             const count = await this.companyRepositories.count({ where: whereCondition, distinct: true });
 
             const mappedResult = result.map(item => {
                 const productionTarget = item.get();
                 const updatedByUser = productionTarget.updatedByUser ? productionTarget.updatedByUser.get() : null;
-              
+
                 // Exclude the createdByUser field and directly include its properties
                 delete productionTarget.updatedByUser;
-              
+
                 // Combine the properties into a new object
                 return {
-                  ...productionTarget,
-                  userId: updatedByUser ? updatedByUser.userId : null,
-                  name: updatedByUser ? updatedByUser.name : null,
-                  role: updatedByUser ? updatedByUser.role ? updatedByUser.role.roleName : null : null,
+                    ...productionTarget,
+                    userId: updatedByUser ? updatedByUser.userId : null,
+                    name: updatedByUser ? updatedByUser.name : null,
+                    role: updatedByUser ? updatedByUser.role ? updatedByUser.role.roleName : null : null,
                 };
-              });
-              
-              return {
+            });
+
+            return {
                 ...generateResultPagination(count, params),
                 results: mappedResult,
-              };
+            };
 
         } catch (error) {
             throw new HttpException(
@@ -186,7 +186,7 @@ export class ProductionTargetService {
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
-            console.log("1",result)
+            console.log("1", result)
             const resultLog = await ProductionTargetLogModel.create({
                 id: uuidv4(),
                 productionTargetId: generateId,
@@ -196,7 +196,7 @@ export class ProductionTargetService {
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
-            console.log("2",resultLog)
+            console.log("2", resultLog)
 
             return { isSuccess: result ? true : false };
         } catch (error) {
@@ -255,10 +255,13 @@ export class ProductionTargetService {
                 updatedBy: params.updatedBy,
             });
 
-            console.log("1",result)
-            console.log("2",resultLog)
+            console.log("1", result)
+            console.log("2", resultLog)
 
-            return { isSuccess: true };
+            return {
+                isSuccess: true,
+                id: generateId,
+            };
 
         } catch (error) {
             throw new HttpException(
@@ -271,7 +274,6 @@ export class ProductionTargetService {
             );
         }
     }
-
 
     async remove(id: string): Promise<RemoveResponse> {
         try {
@@ -305,6 +307,72 @@ export class ProductionTargetService {
         }
     }
 
+    async findAllLog(params: FindAllRequest): Promise<FindAllResponse> {
 
+        try {
+            const result = await ProductionTargetLogModel.findAll({
+                attributes: [
+                    'id',
+                    'target',
+                    'activeTarget',
+                    'createdBy',
+                    'updatedBy',
+                    'createdAt',
+                    'updatedAt',
+                ],
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+                offset: params.offset,
+                limit: params.limit,
+                include: [{
+                    model: UserModel,
+                    attributes: ['userId', 'name', 'roleId'],
+                    as: 'updatedByUser',
+                    include: [{
+                        model: RoleModel,
+                        attributes: ['roleName'],
+                        as: 'role',
+                    }],
+                }],
+            });
 
+            // console.log("result",result[0].updatedByUser.role)
+
+            const count = await ProductionTargetLogModel.count({ distinct: true });
+
+            const mappedResult = result.map(item => {
+                const productionTarget = item.get();
+                const updatedByUser = productionTarget.updatedByUser ? productionTarget.updatedByUser.get() : null;
+
+                // Exclude the createdByUser field and directly include its properties
+                delete productionTarget.updatedByUser;
+
+                // Combine the properties into a new object
+                return {
+                    ...productionTarget,
+                    userId: updatedByUser ? updatedByUser.userId : null,
+                    name: updatedByUser ? updatedByUser.name : null,
+                    role: updatedByUser ? updatedByUser.role ? updatedByUser.role.roleName : null : null,
+                };
+            });
+
+            return {
+                ...generateResultPagination(count, params),
+                results: mappedResult,
+            };
+
+        } catch (error) {
+
+            throw new HttpException(
+                {
+                    status: 'ERR_COMPANY_REQUEST',
+                    message: [error, error.message],
+                    payload: null,
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
 }
+

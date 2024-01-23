@@ -249,7 +249,10 @@ export class oeeTargetService {
             console.log("1",result)
             console.log("2",resultLog)
 
-            return { isSuccess: true };
+            return {
+                isSuccess: true,
+                id: generateId,
+            };
 
         } catch (error) {
             throw new HttpException(
@@ -262,7 +265,6 @@ export class oeeTargetService {
             );
         }
     }
-
 
     async remove(id: string): Promise<RemoveResponse> {
         try {
@@ -296,6 +298,71 @@ export class oeeTargetService {
         }
     }
 
+    async findAllLog(params: FindAllRequest): Promise<FindAllResponse> {
 
+        try {
+            const result = await OEETargetLogModel.findAll({
+                attributes: [
+                    'id',
+                    'target',
+                    'createdBy',
+                    'updatedBy',
+                    'createdAt',
+                    'updatedAt',
+                ],
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+                offset: params.offset,
+                limit: params.limit,
+                include: [{
+                    model: UserModel,
+                    attributes: ['userId', 'name', 'roleId'],
+                    as: 'updatedByUser',
+                    include: [{
+                        model: RoleModel,
+                        attributes: ['roleName'],
+                        as: 'role',
+                    }],
+                }],
+            });
+
+            // console.log("result",result[0].updatedByUser.role)
+
+            const count = await OEETargetLogModel.count({ distinct: true });
+
+            const mappedResult = result.map(item => {
+                const oeeTarget = item.get();
+                const updatedByUser = oeeTarget.updatedByUser ? oeeTarget.updatedByUser.get() : null;
+
+                // Exclude the createdByUser field and directly include its properties
+                delete oeeTarget.updatedByUser;
+
+                // Combine the properties into a new object
+                return {
+                    ...oeeTarget,
+                    userId: updatedByUser ? updatedByUser.userId : null,
+                    name: updatedByUser ? updatedByUser.name : null,
+                    role: updatedByUser ? updatedByUser.role ? updatedByUser.role.roleName : null : null,
+                };
+            });
+
+            return {
+                ...generateResultPagination(count, params),
+                results: mappedResult,
+            };
+
+        } catch (error) {
+
+            throw new HttpException(
+                {
+                    status: 'ERR_COMPANY_REQUEST',
+                    message: [error, error.message],
+                    payload: null,
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
 
 }

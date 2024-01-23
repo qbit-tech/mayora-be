@@ -59,7 +59,25 @@ export class ProductionTargetController {
     }
 
 
+    @Get('log')
+    // //@UseGuards(AuthPermissionGuard())
+    async getLogList(
+        @Query() query: FindAllRequest,
+    ): Promise<FindAllResponse> {
+        const params: FindAllRequest = {
+            keyword: query.keyword ? query.keyword : "",
+            limit: query.limit ? Number(query.limit) : 10,
+            offset: query.offset ? Number(query.offset) : 0,
+            machineId: query.machineId ? query.machineId : "",
+            createdAt: query.createdAt ? query.createdAt : null
+        };
 
+        return this.findAllLog(params);
+    }
+
+    async findAllLog(params: FindAllRequest): Promise<FindAllResponse> {
+        return await this.productionTargetService.findAllLog(params);
+    }
 
 
     @Get(':id')

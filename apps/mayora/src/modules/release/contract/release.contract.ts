@@ -12,7 +12,6 @@ export abstract class CompanyApiContract {
     machineId: string;
     amount  : number;
     time: Date;
-    shift: number;
     updatedAt: Date;
     createdAt: Date;
   }
@@ -52,7 +51,6 @@ export abstract class CompanyApiContract {
     machineId: string;
     amount  : number;
     time: Date;
-    shift: number;
     updatedBy: string;
     createdBy: string;
   }
@@ -66,7 +64,6 @@ export abstract class CompanyApiContract {
     machineId: string;
     amount: number;
     time: Date;
-    shift: number;
     createdBy: string;
     updatedBy: string;
   }
