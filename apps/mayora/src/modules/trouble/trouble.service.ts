@@ -13,6 +13,7 @@ import {
   RemoveResponse,
 } from './contract';
 import { v4 as uuidv4 } from 'uuid';
+import { CategoryModel } from '../category/category.entity';
 
 @Injectable()
 export class TroubleService {
@@ -62,7 +63,63 @@ export class TroubleService {
     }
   }
 
-  async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
+  async findAllByMachine(machineId: string): Promise<FindAllResponse> {
+    try {
+      const where = { machineId: machineId };
+
+      const result = await this.companyRepositories.findAll({
+        where,
+        attributes: [
+          'id',
+          'machineId',
+          'categoryId',
+          'startTime',
+          'endTime',
+          'remark',
+          'updatedBy',
+          'status',
+          'createdBy',
+          'createdAt',
+          'updatedAt',
+        ],
+        include: [
+          {
+            model: CategoryModel,
+            as: 'categoryParent',
+            attributes: [
+              'id',
+              'name',
+              'categoryParentId',
+              'categoryType',
+              'updatedBy',
+              'unit',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ]
+      });
+      const count = await this.companyRepositories.count({ where });
+      return {
+        count: count,
+        next: '',
+        prev: '',
+        results: result.map(item => item.get()),
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'ERR_COMPANY_REQUEST',
+          message: error.message,
+          payload: null,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findOneTrouble(params: FindOneRequest): Promise<ICompanyListItem> {
     try {
       const result = await this.companyRepositories.findOne({
         where: { id: params.id },
@@ -79,6 +136,23 @@ export class TroubleService {
           'createdAt',
           'updatedAt',
         ],
+        include: [
+          {
+            model: CategoryModel,
+            as: 'categoryParent',
+            attributes: [
+              'id',
+              'name',
+              'categoryParentId',
+              'categoryType',
+              'updatedBy',
+              'unit',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ]
       });
 
       return result ? result.get() : null;
@@ -100,7 +174,7 @@ export class TroubleService {
         id: uuidv4(),
         machineId: params.machineId,
         categoryId: params.categoryId,
-        statrTime: params.startTime,
+        startTime: params.startTime,
         endTime: params.endTime,
         remark: params.remark,
         createdBy: params.createdBy,

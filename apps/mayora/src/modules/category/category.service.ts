@@ -16,6 +16,7 @@ import {
 } from './contract';
 import { getLikeOp } from '../../helpers/db';
 import { v4 as uuidv4 } from 'uuid';
+import { ManualCollectionModel } from '../manualCollection/manualCollection.entity';
 
 @Injectable()
 export class CategoryService {
@@ -76,8 +77,26 @@ export class CategoryService {
           'unit',
           'createdBy',
           'createdAt',
-          'updatedAt',
+          'updatedAt'
         ],
+        include: [
+          {
+            model: ManualCollectionModel,
+            as: 'manualCollection',
+            attributes: [
+              'id',
+              'machineId',
+              'categoryId',
+              'shift',
+              'value',
+              'remark',
+              'updatedBy',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ]
       });
 
       return result ? result.get() : null;
@@ -95,7 +114,6 @@ export class CategoryService {
 
   async create(params: CreateRequestCategory): Promise<CreateResponse> {
     try {
-      console.log('categeiugrkj', params)
       const result = await this.companyRepositories.create({
         id: uuidv4(),
         name: params.name,
@@ -107,7 +125,6 @@ export class CategoryService {
 
       return { isSuccess: result ? true : false };
     } catch (error) {
-      console.log("eroererj", error)
       throw new HttpException(
         {
           status: 'ERR_COMPANY_REQUEST',
