@@ -11,9 +11,9 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'MstMachine',
+  tableName: 'TrxDefaultTargetLog',
 })
-export class MachineModel extends Model {
+export class DefaultTargetModelLog extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUIDV4,
@@ -21,10 +21,13 @@ export class MachineModel extends Model {
   id: string;
 
   @Column
-  name: string;
+  defaultTargetId: string;
 
   @Column
-  status  : string;
+  machineId: string;
+
+  @Column
+  target  : number;
 
   @CreatedAt
   createdAt: Date;

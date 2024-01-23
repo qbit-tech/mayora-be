@@ -45,5 +45,5 @@ export class OEETargetModel extends Model {
   updatedBy: string;
 
   @BelongsTo(() => UserModel, 'updatedBy')
-  createdByUser: UserModel;
+  updatedByUser: UserModel;
 }

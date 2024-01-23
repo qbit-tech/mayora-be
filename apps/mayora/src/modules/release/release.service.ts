@@ -81,7 +81,6 @@ export class ReleaseService {
           'machineId',
           'amount',
           'time',
-          'shift',
           'createdAt',
           'updatedAt',
         ],
@@ -118,7 +117,6 @@ export class ReleaseService {
           'machineId',
           'amount',
           'time',
-          'shift',
           'createdAt',
           'updatedAt',
         ],
@@ -141,10 +139,9 @@ export class ReleaseService {
     try {
       const result = await this.companyRepositories.create({
         id: uuidv4(),
-        machineId: 'hgyui87yui8765ertfghjui',
+        machineId: params.machineId,
         amount: params.amount,
         time: params.time,
-        shift: params.shift,
       });
 
       return { isSuccess: result ? true : false };
@@ -180,7 +177,6 @@ export class ReleaseService {
       release.machineId = params.machineId;
       release.amount = params.amount;
       release.time = params.time;
-      release.shift = params.shift;
       await release.save();
 
       return { isSuccess: true };

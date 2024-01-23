@@ -83,10 +83,10 @@ export class DefaultTargetController {
     // //@UseGuards(AuthPermissionGuard())//
     async createCompany(
         @Req() request: any,
-        @Body() body: Omit<CreateRequest, 'createdBy'>,
+        @Body() body: CreateRequest,
     ): Promise<CreateResponse> {
         // const localEmployee: IMe = request.user;
-        return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+        return await this.create({ ...body });
     }
     
     async create(params: CreateRequest): Promise<CreateResponse> {
@@ -107,7 +107,6 @@ export class DefaultTargetController {
     ): Promise<CreateResponse> {
         return await this.update({
             ...body,
-            updatedBy: "ju489eikjnjhgytr",
         }, param.id);
     }
 

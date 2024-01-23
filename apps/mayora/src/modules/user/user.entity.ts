@@ -12,8 +12,10 @@ import {
   BeforeCreate,
   BeforeUpdate,
   HasMany,
+  HasOne,
+  BelongsTo,
 } from 'sequelize-typescript';
-import { RoleProperties } from '@qbit-tech/libs-role';
+import { RoleModel, RoleProperties } from '@qbit-tech/libs-role';
 import { ProductionTargetModel } from '../productionTarget/productionTarget.entity';
 import { OEETargetModel } from '../oeeTarget/oeeTarget.entity';
 import { UserDetailModel } from '../userDetail/userDetail.entity';
@@ -165,6 +167,9 @@ export class UserModel extends Model {
 
   @HasMany(() => UserDetailModel, 'userId')
   machines: UserDetailModel[];
+
+  @BelongsTo(() => RoleModel, 'roleId')
+  role: RoleModel;
 
   @BeforeUpdate
   @BeforeCreate

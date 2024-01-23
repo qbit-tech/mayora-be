@@ -107,7 +107,6 @@ export class OeeTargetController {
     ): Promise<CreateResponse> {
         return await this.update({
             ...body,
-            updatedBy: "ju489eikjnjhgytr",
         }, param.id);
     }
 

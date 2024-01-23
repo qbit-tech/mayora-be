@@ -21,6 +21,8 @@ import { Op } from 'sequelize';
 import moment from 'moment';
 import { AuthPermissionGuard } from '../../core/auth.guard';
 import { UserModel } from '../user/user.entity';
+import { OEETargetLogModel } from './oeeTargetLog.entity';
+import { RoleModel } from '@qbit-tech/libs-role';
 
 @Injectable()
 export class oeeTargetService {
@@ -95,7 +97,12 @@ export class oeeTargetService {
                 include: [{
                     model: UserModel,
                     attributes: ['userId', 'name', 'roleId'],
-                    as: 'createdByUser',
+                    as: 'updatedByUser',
+                    include: [{
+                        model: RoleModel,
+                        attributes: ['roleName'],
+                        as: 'role',   
+                    }],    
                 }],
             });
 
@@ -103,17 +110,17 @@ export class oeeTargetService {
 
             const mappedResult = result.map(item => {
                 const productionTarget = item.get();
-                const createdByUser = productionTarget.createdByUser ? productionTarget.createdByUser.get() : null;
+                const updatedByUser = productionTarget.updatedByUser ? productionTarget.updatedByUser.get() : null;
 
-                // Exclude the createdByUser field and directly include its properties
-                delete productionTarget.createdByUser;
+                // Exclude the updatedByUser field and directly include its properties
+                delete productionTarget.updatedByUser;
 
                 // Combine the properties into a new object
                 return {
                     ...productionTarget,
-                    userId: createdByUser ? createdByUser.userId : null,
-                    name: createdByUser ? createdByUser.name : null,
-                    role: createdByUser ? createdByUser.roleId : null,
+                    userId: updatedByUser ? updatedByUser.userId : null,
+                    name: updatedByUser ? updatedByUser.name : null,
+                    role: updatedByUser ? updatedByUser.role ? updatedByUser.role.roleName : null : null,
                 };
             });
 
@@ -166,15 +173,24 @@ export class oeeTargetService {
 
     async create(params: CreateRequest): Promise<CreateResponse> {
         try {
-
+            const generateId = uuidv4();
             const result = await this.companyRepositories.create({
-                id: uuidv4(),
-                machineId: 'hgyui87yui8765ertfghjui',
+                id: generateId,
+                machineId: params.machineId,
                 target: params.target,
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
-            console.log("1", result)
+            console.log("1",result)
+            const resultLog = await OEETargetLogModel.create({
+                id: uuidv4(),
+                ORRTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+            console.log("2",resultLog)
 
             return { isSuccess: result ? true : false };
         } catch (error) {
@@ -206,9 +222,32 @@ export class oeeTargetService {
                 );
             }
 
-            OeeTarget.machineId = params.machineId;
-            OeeTarget.target = params.target;
-            await OeeTarget.save();
+            // OeeTarget.machineId = params.machineId;
+            // OeeTarget.target = params.target;
+            // await OeeTarget.save();
+
+            await OeeTarget.destroy();
+
+            const generateId = uuidv4();
+            const result = await this.companyRepositories.create({
+                id: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            const resultLog = await OEETargetLogModel.create({
+                id: uuidv4(),
+                ORRTargetId: generateId,
+                machineId: params.machineId,
+                target: params.target,
+                createdBy: params.createdBy,
+                updatedBy: params.updatedBy,
+            });
+
+            console.log("1",result)
+            console.log("2",resultLog)
 
             return { isSuccess: true };
 

@@ -11,7 +11,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { UserModel } from '../user/user.entity';
-import { RoleModel } from '../role/role.entity';
+import { RoleModel } from '@qbit-tech/libs-role';
 
 @Table({
   tableName: 'TrxProductionTarget',
@@ -49,6 +49,6 @@ export class ProductionTargetModel extends Model {
   updatedBy: string;
 
   @BelongsTo(() => UserModel, 'updatedBy')
-  createdByUser: UserModel;
+  updatedByUser: UserModel;
 
 }
