@@ -71,6 +71,7 @@ export abstract class CompanyApiContract {
   
   export interface UpdateResponse {
     isSuccess: boolean;
+    id: string;
   }
   
   export interface EditStatusProps {

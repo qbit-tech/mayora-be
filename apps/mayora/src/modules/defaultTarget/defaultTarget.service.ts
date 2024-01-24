@@ -88,8 +88,8 @@ export class defaultTargetService {
                     'createdAt',
                     'updatedAt',
                 ],
-                order : [
-                    [ 'createdAt' , 'DESC' ]
+                order: [
+                    ['createdAt', 'DESC']
                 ],
                 offset: params.offset,
                 limit: params.limit,
@@ -153,7 +153,7 @@ export class defaultTargetService {
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
-            console.log("1",result)
+            console.log("1", result)
 
             const resultLog = await DefaultTargetModelLog.create({
                 id: uuidv4(),
@@ -163,7 +163,7 @@ export class defaultTargetService {
                 createdBy: params.createdBy,
                 updatedBy: params.updatedBy,
             });
-            console.log("2",resultLog)
+            console.log("2", resultLog)
 
             return { isSuccess: result ? true : false };
         } catch (error) {
@@ -219,10 +219,13 @@ export class defaultTargetService {
                 updatedBy: params.updatedBy,
             });
 
-            console.log("1",result)
-            console.log("2",resultLog)
+            console.log("1", result)
+            console.log("2", resultLog)
 
-            return { isSuccess: true };
+            return {
+                isSuccess: true,
+                id: generateId,
+            };
 
         } catch (error) {
             throw new HttpException(
@@ -269,6 +272,46 @@ export class defaultTargetService {
         }
     }
 
+    async findAllLog(params: FindAllRequest): Promise<FindAllResponse> {
 
+        try {
+            const result = await DefaultTargetModelLog.findAll({
+                attributes: [
+                    'id',
+                    'target',
+                    'activeTarget',
+                    'createdBy',
+                    'updatedBy',
+                    'createdAt',
+                    'updatedAt',
+                ],
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+                offset: params.offset,
+                limit: params.limit,
+            });
+
+            // console.log("result",result[0].updatedByUser.role)
+
+            const count = await DefaultTargetModelLog.count({ distinct: true });
+
+            return {
+                ...generateResultPagination(count, params),
+                results: result.map(item => item.get()),
+            };
+        } catch (error) {
+
+            throw new HttpException(
+                {
+                    status: 'ERR_COMPANY_REQUEST',
+                    message: [error, error.message],
+                    payload: null,
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+    }
 
 }
