@@ -127,7 +127,7 @@ export class ManualCollectionService {
 
       const result = await this.companyRepositories.create({
         id: uuidv4(),
-        machineId: 'hgyui87yui8765ertfghjui',
+        machineId: params.machineId,
         categoryId: params.categoryId,
         createdBy: params.createdBy,
         value: params.value,

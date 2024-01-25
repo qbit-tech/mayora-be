@@ -269,6 +269,8 @@ export class CategoryParentService {
                       {
                         model: CategoryModel,
                         as: 'level5',
+                        where: { categoryType: 'manualcollection' },
+                        required: false,
                         order: [
                           ['createdAt', 'desc'],
                         ],
@@ -307,6 +309,8 @@ export class CategoryParentService {
                   {
                     model: CategoryModel,
                     as: 'level5',
+                    where: { categoryType: 'manualcollection' },
+                    required: false,
                     order: [
                       ['createdAt', 'desc'],
                     ],
@@ -345,6 +349,8 @@ export class CategoryParentService {
               {
                 model: CategoryModel,
                 as: 'level5',
+                where: { categoryType: 'manualcollection' },
+                required: false,
                 order: [
                   ['createdAt', 'desc'],
                 ],
@@ -383,6 +389,8 @@ export class CategoryParentService {
           {
             model: CategoryModel,
             as: 'level5',
+            where: { categoryType: 'manualcollection' },
+            required: false,
             order: [
               ['createdAt', 'desc'],
             ],
@@ -511,6 +519,8 @@ export class CategoryParentService {
                       {
                         model: CategoryModel,
                         as: 'level5',
+                        where: { categoryType: 'trouble' },
+                        required: false,
                         order: [
                           ['createdAt', 'desc'],
                         ],
@@ -525,31 +535,14 @@ export class CategoryParentService {
                           'createdAt',
                           'updatedAt',
                         ],
-                        include: [
-                          {
-                            model: TroubleModel,
-                            as: 'trouble',
-                            attributes: [
-                              'id',
-                              'machineId',
-                              'categoryId',
-                              'startTime',
-                              'endTime',
-                              'remark',
-                              'updatedBy',
-                              'status',
-                              'createdBy',
-                              'createdAt',
-                              'updatedAt',
-                            ],
-                          },
-                        ]
                       },
                     ],
                   },
                   {
                     model: CategoryModel,
                     as: 'level5',
+                    where: { categoryType: 'trouble' },
+                    required: false,
                     order: [
                       ['createdAt', 'desc'],
                     ],
@@ -564,31 +557,14 @@ export class CategoryParentService {
                       'createdAt',
                       'updatedAt',
                     ],
-                    include: [
-                      {
-                        model: TroubleModel,
-                        as: 'trouble',
-                        attributes: [
-                          'id',
-                          'machineId',
-                          'categoryId',
-                          'startTime',
-                          'endTime',
-                          'remark',
-                          'updatedBy',
-                          'status',
-                          'createdBy',
-                          'createdAt',
-                          'updatedAt',
-                        ],
-                      },
-                    ]
                   },
                 ],
               },
               {
                 model: CategoryModel,
                 as: 'level5',
+                where: { categoryType: 'trouble' },
+                required: false,
                 order: [
                   ['createdAt', 'desc'],
                 ],
@@ -603,31 +579,14 @@ export class CategoryParentService {
                   'createdAt',
                   'updatedAt',
                 ],
-                include: [
-                  {
-                    model: TroubleModel,
-                    as: 'trouble',
-                    attributes: [
-                      'id',
-                      'machineId',
-                      'categoryId',
-                      'startTime',
-                      'endTime',
-                      'remark',
-                      'updatedBy',
-                      'status',
-                      'createdBy',
-                      'createdAt',
-                      'updatedAt',
-                    ],
-                  },
-                ]
               },
             ],
           },
           {
             model: CategoryModel,
             as: 'level5',
+            where: { categoryType: 'trouble' },
+            required: false,
             order: [
               ['createdAt', 'desc'],
             ],
@@ -642,25 +601,6 @@ export class CategoryParentService {
               'createdAt',
               'updatedAt',
             ],
-            include: [
-              {
-                model: TroubleModel,
-                as: 'trouble',
-                attributes: [
-                  'id',
-                  'machineId',
-                  'categoryId',
-                  'startTime',
-                  'endTime',
-                  'remark',
-                  'updatedBy',
-                  'status',
-                  'createdBy',
-                  'createdAt',
-                  'updatedAt',
-                ],
-              },
-            ]
           },
         ],
         order: [
