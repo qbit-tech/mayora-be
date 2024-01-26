@@ -26,19 +26,20 @@ import {
   RemoveResponse,
 } from './contract';
 import { TroubleService } from './trouble.service';
-import { AuthPermissionGuard } from '../../core/auth.guard';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   DefaultFindAllRequest,
 } from '@qbit-tech/libs-utils';
+import { AuthPermissionGuard } from '@qbit-tech/libs-session';
 
 @ApiTags('Trouble')
 @Controller('troubles')
 export class TroubleController implements TroubleApiContract {
   constructor(private companyService: TroubleService) { }
 
+  @ApiBearerAuth()
   @Get()
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async getCompanyList(
     @Query() params: DefaultFindAllRequest,
   ): Promise<FindAllResponse> {
@@ -55,8 +56,9 @@ export class TroubleController implements TroubleApiContract {
     return await this.companyService.findAll(params);
   }
 
+  @ApiBearerAuth()
   @Get('/machine/:machieId')
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async getTroubleListByMachie(
     @Param('machieId') machieId: string,
   ): Promise<FindAllResponse> {
@@ -67,8 +69,9 @@ export class TroubleController implements TroubleApiContract {
     return await this.companyService.findAllByMachine(machineId);
   }
 
+  @ApiBearerAuth()
   @Get(':id')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async getDetailCompany(
     @Param('id') id: string,
   ): Promise<ICompanyListItem> {
@@ -79,39 +82,42 @@ export class TroubleController implements TroubleApiContract {
     return await this.companyService.findOneTrouble(params);
   }
 
+  @ApiBearerAuth()
   @Post()
-  // //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestTrouble,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+    const me: string = request.user.userId;
+    return await this.create({ ...body, createdBy: me });
   }
 
   async create(params: CreateRequestTrouble): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async updateCompany(
     @Param('id') id: string,
     @Req() request: any,
     @Body() body: UpdateRequest,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
+    const me: string = request.user.userId;
     return await this.update({
       ...body,
-      updatedBy: "ju489eikjnjhgytr",
+      updatedBy: me,
     }, id);
   }
   async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,

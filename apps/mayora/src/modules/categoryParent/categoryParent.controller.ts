@@ -26,17 +26,22 @@ import {
   RemoveResponse,
 } from './contract';
 import { CategoryParentService } from './categoryParent.service';
-import { AuthPermissionGuard } from '../../core/auth.guard';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  FEATURE_PERMISSIONS,
+  AuthPermissionGuard,
+  SessionService,
+} from '@qbit-tech/libs-session';
 
 @ApiTags('Category Parent')
 @Controller('category-parents')
 export class CategoryParentController implements CompanyApiContract {
   constructor(private companyService: CategoryParentService) { }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get list of category nested 3 level' })
   @Get()
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async getCompanyList(
   ): Promise<FindAllResponse> {
     return this.findAll();
@@ -46,9 +51,10 @@ export class CategoryParentController implements CompanyApiContract {
     return await this.companyService.findAll();
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get list of category nested 3 level with manual collection' })
   @Get('/manual-collection')
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async getManualCollectionList(
   ): Promise<FindAllResponse> {
     return this.findAllManualCollection();
@@ -58,9 +64,10 @@ export class CategoryParentController implements CompanyApiContract {
     return await this.companyService.findAllManualCollection();
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get list of category nested 3 level with trouble list' })
   @Get('/trouble')
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async getTrouble(
   ): Promise<FindAllResponse> {
     return this.findAllTrouble();
@@ -70,8 +77,9 @@ export class CategoryParentController implements CompanyApiContract {
     return await this.companyService.findAllTrouble();
   }
 
+  @ApiBearerAuth()
   @Get(':id')
-  //  @UseGuards(AuthPermissionGuard)
+  @UseGuards(AuthPermissionGuard())
   async getDetailCompany(
     @Param('id') id: string,
   ): Promise<ICompanyListItem> {
@@ -82,39 +90,42 @@ export class CategoryParentController implements CompanyApiContract {
     return await this.companyService.findOne(params);
   }
 
+  @ApiBearerAuth()
   @Post()
-  //  @UseGuards(AuthPermissionGuard)
+  @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestCategoryParent,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+    const me: string = request.user.userId;
+    return await this.create({ ...body, createdBy: me });
   }
 
   async create(params: CreateRequestCategoryParent): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
-  //  @UseGuards(AuthPermissionGuard)
+  @UseGuards(AuthPermissionGuard())
   async updateCompany(
     @Param('id') id: string,
     @Req() request: any,
     @Body() body: UpdateRequestCategoryParent,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
+    const me: string = request.user.userId;
     return await this.update({
       ...body,
-      updatedBy: "ju489eikjnjhgytr"
+      updatedBy: me
     }, id);
   }
   async update(params: UpdateRequestCategoryParent, id: string): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
-  //  @UseGuards(AuthPermissionGuard)
+  @UseGuards(AuthPermissionGuard())
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,

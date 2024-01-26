@@ -26,16 +26,17 @@ import {
   RemoveResponse,
 } from './contract';
 import { ManualCollectionService } from './manualCollection.service';
-import { AuthPermissionGuard } from '../../core/auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthPermissionGuard } from '@qbit-tech/libs-session';
 
 @ApiTags('Manual Collection')
 @Controller('manual-collections')
 export class ManualCollectionController implements CompanyApiContract {
   constructor(private companyService: ManualCollectionService) { }
 
+  @ApiBearerAuth()
   @Get(':id')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async getDetailCompany(
     @Param('id') id: string,
   ): Promise<ICompanyListItem> {
@@ -46,8 +47,9 @@ export class ManualCollectionController implements CompanyApiContract {
     return await this.companyService.findOne(params);
   }
 
+  @ApiBearerAuth()
   @Get(':categoryId/:shift')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async getDetailByIdShift(
     @Param('categoryId') categoryId: string,
     @Param('shift') shift: string,
@@ -59,39 +61,42 @@ export class ManualCollectionController implements CompanyApiContract {
     return await this.companyService.findDetailByIdShift(id, shift);
   }
 
+  @ApiBearerAuth()
   @Post()
-  // //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestManualCollection,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+    const me: string = request.user.userId;
+    return await this.create({ ...body, createdBy: me });
   }
 
   async create(params: CreateRequestManualCollection): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async updateCompany(
     @Param('id') id: string,
     @Req() request: any,
     @Body() body: UpdateRequestManualCollection,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
+    const me: string = request.user.userId;
     return await this.update({
       ...body,
-      updatedBy: "ju489eikjnjhgytr",
+      updatedBy: me,
     }, id);
   }
   async update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,

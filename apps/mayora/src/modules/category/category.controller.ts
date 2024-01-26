@@ -39,6 +39,7 @@ import { AppRequest } from '@qbit/appContract/app.contract';
 export class CategoryController implements CategoryApiContract {
   constructor(private companyService: CategoryService) { }
 
+  @ApiBearerAuth()
   @Get()
   @UseGuards(AuthPermissionGuard())
   async getCompanyList(
@@ -74,6 +75,9 @@ export class CategoryController implements CategoryApiContract {
 
   @ApiBearerAuth()
   @Get(':id/:machineId')
+  @UseGuards(
+    AuthPermissionGuard(),
+  )
   async getDetailByMachine(
     @Param('id') id: string,
     @Param('machineId') machineId: string,
@@ -87,38 +91,40 @@ export class CategoryController implements CategoryApiContract {
 
   @ApiBearerAuth()
   @Post()
-  // @UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestCategory,
   ): Promise<CreateResponse> {
-    console.log("hbgytu", request.user)
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+    const me: string = request.user.userId;
+    return await this.create({ ...body, createdBy: me });
   }
 
   async create(params: CreateRequestCategory): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
-  // @UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async updateCompany(
     @Param('id') id: string,
     @Req() request: any,
     @Body() body: UpdateRequestCategory,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
+    const me: string = request.user.userId;
     return await this.update({
       ...body,
-      updatedBy: request.userId,
+      updatedBy: me,
     }, id);
   }
   async update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
-  // @UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,

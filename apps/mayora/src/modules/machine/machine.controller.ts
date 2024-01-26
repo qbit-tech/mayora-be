@@ -26,19 +26,20 @@ import {
   RemoveResponse,
 } from './contract';
 import { MachineService } from './machine.service';
-import { AuthPermissionGuard } from '../../core/auth.guard';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   DefaultFindAllRequest,
 } from '@qbit-tech/libs-utils';
+import { AuthPermissionGuard } from '@qbit-tech/libs-session';
 
 @ApiTags('Machine')
 @Controller('machines')
 export class MachineController implements MachineApiContract {
   constructor(private companyService: MachineService) { }
 
+  @ApiBearerAuth()
   @Get()
-  //@UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async getCompanyList(
     @Query() params: DefaultFindAllRequest,
   ): Promise<FindAllResponse> {
@@ -67,14 +68,15 @@ export class MachineController implements MachineApiContract {
   //   return await this.companyService.findOne(params);
   // }
 
+  @ApiBearerAuth()
   @Post()
-  // //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequest,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+    const me: string = request.user.userId;
+    return await this.create({ ...body, createdBy: me });
   }
 
   async create(params: CreateRequest): Promise<CreateResponse> {
@@ -98,8 +100,9 @@ export class MachineController implements MachineApiContract {
   //   return await this.companyService.update(params, id);
   // }
 
+  @ApiBearerAuth()
   @Delete(':id')
-  //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async deleteItem(
     @Param('id') id: string,
     @Req() request: RemoveRequest,
