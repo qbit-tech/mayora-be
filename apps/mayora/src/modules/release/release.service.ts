@@ -28,49 +28,32 @@ export class ReleaseService {
   ) { }
 
   async findAll(params: FindAllRequest): Promise<FindAllResponse> {
+    if (!params.machineId) {
+      return null;
+    }
+
     try {
       let whereCondition;
       moment.locale('id')
-      if (params.machineId) {
-        whereCondition = {
-          [Op.and]: [
-            { machineId: params.machineId ? params.machineId : "" },
-            {
-              createdAt: params.createdAt ? {
+
+      whereCondition = {
+        [Op.and]: [
+          { machineId: params.machineId ? params.machineId : "" },
+          {
+            createdAt: params.createdAt ? {
+              [Op.between]: [
+                new Date(params.createdAt),
+                new Date(params.createdAt + 'T23:59:59.999Z'),
+              ]
+            } :
+              {
                 [Op.between]: [
-                  new Date(params.createdAt),
-                  new Date(params.createdAt + 'T23:59:59.999Z'),
+                  new Date('2021-01-01T00:00:00.000Z'),
+                  new Date(moment().utc().format())
                 ]
-              } :
-                {
-                  [Op.between]: [
-                    new Date('2021-01-01T00:00:00.000Z'),
-                    new Date(moment().utc().format())
-                  ]
-                }
-            }
-          ],
-        }
-      } else {
-        whereCondition = {
-          [Op.or]: [
-            { machineId: params.machineId ? params.machineId : "" },
-            {
-              createdAt: params.createdAt ? {
-                [Op.between]: [
-                  new Date(params.createdAt),
-                  new Date(params.createdAt + 'T23:59:59.999Z'),
-                ]
-              } :
-                {
-                  [Op.between]: [
-                    new Date('2021-01-01T00:00:00.000Z'),
-                    new Date(moment().utc().format())
-                  ]
-                }
-            }
-          ],
-        }
+              }
+          }
+        ],
       }
 
 
