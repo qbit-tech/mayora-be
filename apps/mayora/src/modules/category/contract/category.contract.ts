@@ -4,6 +4,7 @@ import { IsNotEmpty } from "class-validator";
 export abstract class CategoryApiContract {
   abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
+  abstract findOneByMachine(params: FindOneByMachineRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestCategory): Promise<CreateResponse>;
   abstract update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse>;
   abstract remove(id: string): Promise<RemoveResponse>;
@@ -49,6 +50,11 @@ export interface FindAllResponse {
 
 export interface FindOneRequest {
   id: string;
+}
+
+export interface FindOneByMachineRequest {
+  id: string;
+  machineId: string;
 }
 
 export class CreateRequestCategory {

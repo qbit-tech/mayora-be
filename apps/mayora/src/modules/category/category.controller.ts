@@ -24,6 +24,7 @@ import {
   ICompanyListItem,
   RemoveRequest,
   RemoveResponse,
+  FindOneByMachineRequest,
 } from './contract';
 import { CategoryService } from './category.service';
 import {
@@ -69,6 +70,19 @@ export class CategoryController implements CategoryApiContract {
 
   async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
     return await this.companyService.findOne(params);
+  }
+
+  @ApiBearerAuth()
+  @Get(':id/:machineId')
+  async getDetailByMachine(
+    @Param('id') id: string,
+    @Param('machineId') machineId: string,
+  ): Promise<ICompanyListItem> {
+    return this.findOneByMachine({ id: id, machineId: machineId });
+  }
+
+  async findOneByMachine(params: FindOneByMachineRequest): Promise<ICompanyListItem> {
+    return await this.companyService.findOneByMachine(params);
   }
 
   @ApiBearerAuth()

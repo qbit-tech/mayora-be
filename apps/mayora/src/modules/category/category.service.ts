@@ -13,6 +13,7 @@ import {
   ICompanyListItem,
   RemoveResponse,
   RemoveRequest,
+  FindOneByMachineRequest,
 } from './contract';
 import { getLikeOp } from '../../helpers/db';
 import { v4 as uuidv4 } from 'uuid';
@@ -83,6 +84,56 @@ export class CategoryService {
           {
             model: ManualCollectionModel,
             as: 'manualCollection',
+            attributes: [
+              'id',
+              'machineId',
+              'categoryId',
+              'shift',
+              'value',
+              'remark',
+              'updatedBy',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ]
+      });
+
+      return result ? result.get() : null;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'ERR_COMPANY_NOT_FOUND',
+          message: error.message,
+          payload: null,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  async findOneByMachine(params: FindOneByMachineRequest): Promise<ICompanyListItem> {
+    try {
+      const result = await this.companyRepositories.findOne({
+        where: { id: params.id },
+        attributes: [
+          'id',
+          'name',
+          'categoryParentId',
+          'categoryType',
+          'updatedBy',
+          'unit',
+          'createdBy',
+          'createdAt',
+          'updatedAt'
+        ],
+        include: [
+          {
+            model: ManualCollectionModel,
+            where: { machineId: params.machineId },
+            as: 'manualCollection',
+            required: false,
             attributes: [
               'id',
               'machineId',
