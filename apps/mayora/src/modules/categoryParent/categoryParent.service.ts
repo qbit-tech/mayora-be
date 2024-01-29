@@ -658,7 +658,6 @@ export class CategoryParentService {
   async create(params: CreateRequestCategoryParent): Promise<CreateResponse> {
     try {
       const result = await this.companyRepositories.create({
-        id: uuidv4(),
         name: params.name,
         categoryParentId: params.categoryParentId,
         categoryLevel: params.categoryLevel,
@@ -678,7 +677,7 @@ export class CategoryParentService {
     }
   }
 
-  async update(params: UpdateRequestCategoryParent, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestCategoryParent, id: number): Promise<UpdateResponse> {
     try {
       const category = await this.companyRepositories.findOne({
         where: { id: id },
@@ -715,7 +714,7 @@ export class CategoryParentService {
   }
 
   async remove(
-    id: string,
+    id: number,
   ): Promise<RemoveResponse> {
     try {
       const shipment = await this.companyRepositories.findOne({

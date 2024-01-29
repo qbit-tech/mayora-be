@@ -60,7 +60,7 @@ export class ManualCollectionService {
     }
   }
 
-  async findDetailByIdShift(categoryId: string, shift: string): Promise<ICompanyListItem> {
+  async findDetailByIdShift(categoryId: number, shift: number): Promise<ICompanyListItem> {
     try {
       const result = await this.companyRepositories.findOne({
         where: { categoryId: categoryId, shift: shift },
@@ -126,7 +126,6 @@ export class ManualCollectionService {
       }
 
       const result = await this.companyRepositories.create({
-        id: uuidv4(),
         machineId: params.machineId,
         categoryId: params.categoryId,
         createdBy: params.createdBy,
@@ -148,7 +147,7 @@ export class ManualCollectionService {
     }
   }
 
-  async update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestManualCollection, id: number): Promise<UpdateResponse> {
     try {
       const manualCollection = await this.companyRepositories.findOne({
         where: { id: id },
@@ -200,7 +199,7 @@ export class ManualCollectionService {
     }
   }
 
-  async remove(id: string): Promise<RemoveResponse> {
+  async remove(id: number): Promise<RemoveResponse> {
     try {
       const shipment = await this.companyRepositories.findOne({
         where: { id: id },

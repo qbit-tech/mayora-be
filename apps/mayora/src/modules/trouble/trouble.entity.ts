@@ -26,22 +26,21 @@ export enum status {
   tableName: 'TrxTrouble',
 })
 export class TroubleModel extends Model {
+  @AutoIncrement
   @PrimaryKey
-  @Column({
-    type: DataType.UUIDV4,
-  })
-  id: string;
+  @Column
+  id: number;
 
   @ApiProperty()
   @Column
-  machineId: string;
+  machineId: number;
 
   @BelongsTo(() => MachineModel, 'machineId')
   machine: MachineModel;
 
   @ApiProperty()
   @Column
-  categoryId: string;
+  categoryId: number;
 
   @BelongsTo(() => CategoryModel, 'categoryId')
   categoryParent: CategoryModel;

@@ -38,7 +38,7 @@ export class ManualCollectionController implements CompanyApiContract {
   @Get(':id')
   @UseGuards(AuthPermissionGuard())
   async getDetailCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
   ): Promise<ICompanyListItem> {
     return this.findOne({ id: id });
   }
@@ -51,13 +51,13 @@ export class ManualCollectionController implements CompanyApiContract {
   @Get(':categoryId/:shift')
   @UseGuards(AuthPermissionGuard())
   async getDetailByIdShift(
-    @Param('categoryId') categoryId: string,
-    @Param('shift') shift: string,
+    @Param('categoryId') categoryId: number,
+    @Param('shift') shift: number,
   ): Promise<ICompanyListItem> {
     return this.findDetailByIdShift(categoryId, shift);
   }
 
-  async findDetailByIdShift(id: string, shift: string): Promise<ICompanyListItem> {
+  async findDetailByIdShift(id: number, shift: number): Promise<ICompanyListItem> {
     return await this.companyService.findDetailByIdShift(id, shift);
   }
 
@@ -80,7 +80,7 @@ export class ManualCollectionController implements CompanyApiContract {
   @Patch(':id')
   @UseGuards(AuthPermissionGuard())
   async updateCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: any,
     @Body() body: UpdateRequestManualCollection,
   ): Promise<CreateResponse> {
@@ -90,7 +90,7 @@ export class ManualCollectionController implements CompanyApiContract {
       updatedBy: me,
     }, id);
   }
-  async update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestManualCollection, id: number): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
@@ -98,7 +98,7 @@ export class ManualCollectionController implements CompanyApiContract {
   @Delete(':id')
   @UseGuards(AuthPermissionGuard())
   async deleteItem(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
@@ -106,7 +106,7 @@ export class ManualCollectionController implements CompanyApiContract {
   }
 
   async remove(
-    id: string,
+    id: number,
   ): Promise<RemoveResponse> {
     return await this.companyService.remove(id);
   }

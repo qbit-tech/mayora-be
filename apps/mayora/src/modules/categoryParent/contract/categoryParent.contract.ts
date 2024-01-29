@@ -7,14 +7,14 @@ export abstract class CompanyApiContract {
   abstract findAllTrouble(): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestCategoryParent): Promise<CreateResponse>;
-  abstract update(params: UpdateRequestCategoryParent, id: string): Promise<UpdateResponse>;
-  abstract remove(id: string): Promise<RemoveResponse>;
+  abstract update(params: UpdateRequestCategoryParent, id: number): Promise<UpdateResponse>;
+  abstract remove(id: number): Promise<RemoveResponse>;
 }
 
 export interface ICompanyListItem {
-  id: string;
+  id: number;
   name: string;
-  categoryParentId: string;
+  categoryParentId: number;
   categoryLevel: string;
   updatedBy: string;
   createdBy: string;
@@ -48,7 +48,7 @@ export interface FindAllResponse {
 }
 
 export interface FindOneRequest {
-  id: string;
+  id: number;
 }
 
 export class CreateRequestCategoryParent {
@@ -57,7 +57,7 @@ export class CreateRequestCategoryParent {
   readonly name: string;
 
   @ApiPropertyOptional()
-  categoryParentId: string;
+  categoryParentId: number;
 
   @IsNotEmpty()
   @ApiProperty({ example: 'level1' })
@@ -77,7 +77,7 @@ export class UpdateRequestCategoryParent {
   name: string;
 
   @ApiPropertyOptional()
-  categoryParentId: string;
+  categoryParentId: number;
 
   @IsNotEmpty()
   @ApiProperty()
@@ -98,7 +98,7 @@ export interface EditStatusProps {
 }
 
 export interface RemoveRequest {
-  id: string;
+  id: number;
 }
 
 export interface RemoveResponse {

@@ -5,16 +5,17 @@ module.exports = {
     queryInterface.createTable('TrxManualCollection', {
       id: {
         allowNull: false,
-        primaryKey: true,
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
       },
       machineId: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       categoryId: {
         allowNull: false,
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
       },
       value: {
         allowNull: true,
@@ -22,7 +23,7 @@ module.exports = {
       },
       shift: {
         allowNull: true,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       remark: {
         allowNull: true,

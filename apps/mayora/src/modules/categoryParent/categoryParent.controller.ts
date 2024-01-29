@@ -81,7 +81,7 @@ export class CategoryParentController implements CompanyApiContract {
   @Get(':id')
   @UseGuards(AuthPermissionGuard())
   async getDetailCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
   ): Promise<ICompanyListItem> {
     return this.findOne({ id: id });
   }
@@ -109,7 +109,7 @@ export class CategoryParentController implements CompanyApiContract {
   @Patch(':id')
   @UseGuards(AuthPermissionGuard())
   async updateCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: any,
     @Body() body: UpdateRequestCategoryParent,
   ): Promise<CreateResponse> {
@@ -119,7 +119,7 @@ export class CategoryParentController implements CompanyApiContract {
       updatedBy: me
     }, id);
   }
-  async update(params: UpdateRequestCategoryParent, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestCategoryParent, id: number): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
@@ -127,7 +127,7 @@ export class CategoryParentController implements CompanyApiContract {
   @Delete(':id')
   @UseGuards(AuthPermissionGuard())
   async deleteItem(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
@@ -135,7 +135,7 @@ export class CategoryParentController implements CompanyApiContract {
   }
 
   async remove(
-    id: string,
+    id: number,
   ): Promise<RemoveResponse> {
     return await this.companyService.remove(id);
   }

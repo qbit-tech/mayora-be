@@ -97,7 +97,6 @@ export class UserDetailService {
   async create(params: CreateRequestDetailUser): Promise<CreateResponse> {
     try {
       const result = await this.userDetailRepositories.create({
-        id: uuidv4(),
         userId: params.userId,
         machineId: params.machineId,
         createdBy: params.createdBy,

@@ -64,7 +64,7 @@ export class CategoryController implements CategoryApiContract {
     AuthPermissionGuard(),
   )
   async getDetailCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
   ): Promise<ICompanyListItem> {
     return this.findOne({ id: id });
   }
@@ -79,8 +79,8 @@ export class CategoryController implements CategoryApiContract {
     AuthPermissionGuard(),
   )
   async getDetailByMachine(
-    @Param('id') id: string,
-    @Param('machineId') machineId: string,
+    @Param('id') id: number,
+    @Param('machineId') machineId: number,
   ): Promise<ICompanyListItem> {
     return this.findOneByMachine({ id: id, machineId: machineId });
   }
@@ -108,7 +108,7 @@ export class CategoryController implements CategoryApiContract {
   @Patch(':id')
   @UseGuards(AuthPermissionGuard())
   async updateCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: any,
     @Body() body: UpdateRequestCategory,
   ): Promise<CreateResponse> {
@@ -118,7 +118,7 @@ export class CategoryController implements CategoryApiContract {
       updatedBy: me,
     }, id);
   }
-  async update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestCategory, id: number): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
@@ -126,7 +126,7 @@ export class CategoryController implements CategoryApiContract {
   @Delete(':id')
   @UseGuards(AuthPermissionGuard())
   async deleteItem(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
@@ -134,7 +134,7 @@ export class CategoryController implements CategoryApiContract {
   }
 
   async remove(
-    id: string,
+    id: number,
   ): Promise<RemoveResponse> {
     return await this.companyService.remove(id);
   }

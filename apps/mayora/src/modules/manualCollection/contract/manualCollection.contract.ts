@@ -4,20 +4,20 @@ import { IsNotEmpty } from "class-validator";
 export abstract class CompanyApiContract {
   // abstract findAll(): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract findDetailByIdShift(id: string, shift: string): Promise<ICompanyListItem>;
+  abstract findDetailByIdShift(id: number, shift: number): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestManualCollection): Promise<CreateResponse>;
-  abstract update(params: UpdateRequestManualCollection, id: string): Promise<UpdateResponse>;
-  abstract remove(id: String): Promise<RemoveResponse>;
+  abstract update(params: UpdateRequestManualCollection, id: number): Promise<UpdateResponse>;
+  abstract remove(id: number): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 
 export interface ICompanyListItem {
-  id: string;
-  machineId: string;
-  categoryId: string;
+  id: number;
+  machineId: number;
+  categoryId: number;
   categoryType: string;
   value: string;
-  shift: string;
+  shift: number;
   remark: string;
   updatedAt: Date;
   createdAt: Date;
@@ -50,23 +50,23 @@ export interface FindAllResponse {
 }
 
 export interface FindOneRequest {
-  id: string;
+  id: number;
 }
 
 export class CreateRequestManualCollection {
   @IsNotEmpty()
   @ApiProperty()
-  machineId: string;
+  machineId: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: string;
+  categoryId: number;
 
   @ApiPropertyOptional()
   value: string;
 
   @ApiPropertyOptional()
-  shift: string;
+  shift: number;
 
   @ApiPropertyOptional()
   remark: string;
@@ -82,17 +82,17 @@ export interface CreateResponse {
 export class UpdateRequestManualCollection {
   @IsNotEmpty()
   @ApiProperty()
-  machineId: string;
+  machineId: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: string;
+  categoryId: number;
 
   @ApiPropertyOptional()
   value: string;
 
   @ApiPropertyOptional()
-  shift: string;
+  shift: number;
 
   @ApiPropertyOptional()
   remark: string;
@@ -112,7 +112,7 @@ export interface EditStatusProps {
 }
 
 export interface RemoveRequest {
-  id: string;
+  id: number;
 }
 
 export interface RemoveResponse {

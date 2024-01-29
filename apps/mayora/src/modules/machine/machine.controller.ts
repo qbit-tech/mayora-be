@@ -59,7 +59,7 @@ export class MachineController implements MachineApiContract {
   // @Get(':id')
   // //@UseGuards(AuthPermissionGuard())//
   // async getDetailCompany(
-  //   @Param('id') id: string,
+  //   @Param('id') id: number,
   // ): Promise<ICompanyListItem> {
   //   return this.findOne({ id: id });
   // }
@@ -86,7 +86,7 @@ export class MachineController implements MachineApiContract {
   // @Patch(':id')
   // //@UseGuards(AuthPermissionGuard())
   // async updateCompany(
-  //   @Param('id') id: string,
+  //   @Param('id') id: number,
   //   @Req() request: any,
   //   @Body() body: UpdateRequest,
   // ): Promise<CreateResponse> {
@@ -96,7 +96,7 @@ export class MachineController implements MachineApiContract {
   //     updatedBy: "ju489eikjnjhgytr",
   //   }, id);
   // }
-  // async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  // async update(params: UpdateRequest, id: number): Promise<UpdateResponse> {
   //   return await this.companyService.update(params, id);
   // }
 
@@ -104,7 +104,7 @@ export class MachineController implements MachineApiContract {
   @Delete(':id')
   @UseGuards(AuthPermissionGuard())
   async deleteItem(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
@@ -112,7 +112,7 @@ export class MachineController implements MachineApiContract {
   }
 
   async remove(
-    id: string,
+    id: number,
   ): Promise<RemoveResponse> {
     return await this.companyService.remove(id);
   }

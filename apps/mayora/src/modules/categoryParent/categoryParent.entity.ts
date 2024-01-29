@@ -20,15 +20,14 @@ import { CategoryModel } from '../category/category.entity';
   tableName: 'MstCategoryParent',
 })
 export class CategoryParentModel extends Model {
+  @AutoIncrement
   @PrimaryKey
-  @Column({
-    type: DataType.UUIDV4,
-  })
-  id: string;
+  @Column
+  id: number;
 
   @ForeignKey(() => CategoryParentModel)
   @Column
-  categoryParentId: string;
+  categoryParentId: number;
 
   @BelongsTo(() => CategoryParentModel, 'categoryParentId')
   categoryParent: CategoryParentModel;

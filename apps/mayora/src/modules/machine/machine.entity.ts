@@ -18,11 +18,10 @@ import { handleTimeZone } from '../../helpers/date';
   tableName: 'MstMachine',
 })
 export class MachineModel extends Model {
+  @AutoIncrement
   @PrimaryKey
-  @Column({
-    type: DataType.UUIDV4,
-  })
-  id: string;
+  @Column
+  id: number;
 
   @ApiProperty()
   @Column

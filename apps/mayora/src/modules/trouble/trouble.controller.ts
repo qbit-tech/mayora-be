@@ -60,12 +60,12 @@ export class TroubleController implements TroubleApiContract {
   @Get('/machine/:machieId')
   @UseGuards(AuthPermissionGuard())
   async getTroubleListByMachie(
-    @Param('machieId') machieId: string,
+    @Param('machieId') machieId: number,
   ): Promise<FindAllResponse> {
     return this.findAllByMachine(machieId);
   }
 
-  async findAllByMachine(machineId: string): Promise<FindAllResponse> {
+  async findAllByMachine(machineId: number): Promise<FindAllResponse> {
     return await this.companyService.findAllByMachine(machineId);
   }
 
@@ -73,7 +73,7 @@ export class TroubleController implements TroubleApiContract {
   @Get(':id')
   @UseGuards(AuthPermissionGuard())
   async getDetailCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
   ): Promise<ICompanyListItem> {
     return this.findOneTrouble({ id: id });
   }
@@ -101,7 +101,7 @@ export class TroubleController implements TroubleApiContract {
   @Patch(':id')
   @UseGuards(AuthPermissionGuard())
   async updateCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: any,
     @Body() body: UpdateRequest,
   ): Promise<CreateResponse> {
@@ -111,7 +111,7 @@ export class TroubleController implements TroubleApiContract {
       updatedBy: me,
     }, id);
   }
-  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequest, id: number): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
@@ -119,7 +119,7 @@ export class TroubleController implements TroubleApiContract {
   @Delete(':id')
   @UseGuards(AuthPermissionGuard())
   async deleteItem(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
@@ -127,7 +127,7 @@ export class TroubleController implements TroubleApiContract {
   }
 
   async remove(
-    id: string,
+    id: number,
   ): Promise<RemoveResponse> {
     return await this.companyService.remove(id);
   }

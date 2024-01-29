@@ -22,14 +22,13 @@ import { TroubleModel } from '../trouble/trouble.entity';
   tableName: 'MstCategory',
 })
 export class CategoryModel extends Model {
+  @AutoIncrement
   @PrimaryKey
-  @Column({
-    type: DataType.UUIDV4,
-  })
-  id: string;
+  @Column
+  id: number;
 
   @Column
-  categoryParentId: string;
+  categoryParentId: number;
 
   @BelongsTo(() => CategoryParentModel, 'categoryParentId')
   categoryParent: CategoryParentModel;

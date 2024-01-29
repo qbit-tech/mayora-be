@@ -18,17 +18,16 @@ import { CategoryModel } from '../category/category.entity';
   tableName: 'TrxManualCollection',
 })
 export class ManualCollectionModel extends Model {
+  @AutoIncrement
   @PrimaryKey
-  @Column({
-    type: DataType.UUIDV4,
-  })
-  id: string;
+  @Column
+  id: number;
 
   @Column
-  machineId: string;
+  machineId: number;
 
   @Column
-  categoryId: string;
+  categoryId: number;
 
   @BelongsTo(() => CategoryModel, 'categoryId')
   categoryParent: CategoryModel;
@@ -37,7 +36,7 @@ export class ManualCollectionModel extends Model {
   value: string;
 
   @Column
-  shift: string;
+  shift: number;
 
   @Column
   remark: string;
