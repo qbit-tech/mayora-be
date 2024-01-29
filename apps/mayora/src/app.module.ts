@@ -26,6 +26,7 @@ import { UserDetailModule } from './modules/userDetail/userDetail.module';
 import { ProductionTargetModule } from './modules/productionTarget/productionTarget.module';
 import { OeeTargetModule } from './modules/oeeTarget/oeeTarget.module';
 import { DefaultTargetModule } from './modules/defaultTarget/defaultTarget.module';
+import { StartupModule } from './modules/startup/startup.module';
 
 const notificationOptions = [
   {
@@ -171,7 +172,8 @@ export const rootImportedModules = [
     UserDetailModule,
     ProductionTargetModule,
     OeeTargetModule,
-    DefaultTargetModule
+    DefaultTargetModule,
+    StartupModule
   ],
   controllers: [AppController],
 })
