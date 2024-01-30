@@ -65,7 +65,7 @@ export class ReleaseController {
   @Get(':id')
   //@UseGuards(AuthPermissionGuard())
   async getDetailCompany(
-    @Param() param: { id: num },
+    @Param() param: { id: string },
   ): Promise<ICompanyListItem> {
     return this.findOne({ id: param.id });
   }
