@@ -6,8 +6,9 @@ module.exports = {
     await queryInterface.createTable('MstUserDetail', {
       id: {
         allowNull: false,
-        primaryKey: true,
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
       },
       userId: {
         allowNull: false,
@@ -15,7 +16,7 @@ module.exports = {
       },
       machineId: {
         allowNull: false,
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -37,8 +38,9 @@ module.exports = {
     await queryInterface.createTable('MstMachine', {
       id: {
         allowNull: false,
-        type: Sequelize.STRING(255),
-        primaryKey: true,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
       },
       name: {
         allowNull: false,

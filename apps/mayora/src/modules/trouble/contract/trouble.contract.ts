@@ -4,19 +4,19 @@ import { IsNotEmpty } from "class-validator";
 
 export abstract class TroubleApiContract {
   abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
-  abstract findAllByMachine(machineId: string): Promise<FindAllResponse>;
+  abstract findAllByMachine(machineId: number): Promise<FindAllResponse>;
   abstract findOneTrouble(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestTrouble): Promise<CreateResponse>;
-  abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
-  abstract remove(id: string): Promise<RemoveResponse>;
+  abstract update(params: UpdateRequest, id: number): Promise<UpdateResponse>;
+  abstract remove(id: number): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 
 export interface ICompanyListItem {
-  id: string;
+  id: number;
   remark: string;
-  machineId: string;
-  categoryId: string;
+  machineId: number;
+  categoryId: number;
   startTime: string;
   endTime: string;
   updatedBy: string;
@@ -52,17 +52,17 @@ export interface FindAllResponse {
 }
 
 export interface FindOneRequest {
-  id: string;
+  id: number;
 }
 
 export class CreateRequestTrouble {
   @IsNotEmpty()
   @ApiProperty({ example: 'active' })
-  readonly machineId: string;
+  readonly machineId: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: string;
+  categoryId: number;
 
   @ApiPropertyOptional()
   startTime?: Date;
@@ -82,9 +82,9 @@ export interface CreateResponse {
 }
 
 // export interface UpdateRequest {
-//   id: string;
+//   id: number;
 //   name: string;
-//   categoryParentId: string;
+//   categoryParentId: number;
 //   categoryType: string;
 //   updatedBy: string;
 //   status: string;
@@ -93,11 +93,11 @@ export interface CreateResponse {
 export class UpdateRequest {
   @IsNotEmpty()
   @ApiProperty({ example: 'active' })
-  readonly machineId: string;
+  readonly machineId: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: string;
+  categoryId: number;
 
   @ApiPropertyOptional()
   startTime?: Date;
@@ -126,7 +126,7 @@ export interface EditStatusProps {
 }
 
 export interface RemoveRequest {
-  id: string;
+  id: number;
 }
 
 export interface RemoveResponse {

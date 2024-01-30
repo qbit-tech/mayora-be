@@ -41,7 +41,7 @@ export class AuthController {
     private readonly authv3Service: AuthService,
     private readonly sessionService: SessionService,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
   @ApiOperation({ summary: 'New admin using email authenticator' })
   @ApiBearerAuth()
@@ -57,9 +57,8 @@ export class AuthController {
     this.logger.verbose('Body: ' + JSON.stringify(body));
 
     try {
-      const fullName = `${body.firstName} ${
-        body.middleName ? body.middleName : '.'
-      } ${body.lastName ? body.lastName : '.'}`;
+      const fullName = `${body.firstName} ${body.middleName ? body.middleName : '.'
+        } ${body.lastName ? body.lastName : '.'}`;
       const name = fullName.replace(/[^a-zA-Z ]/g, '');
       const randomPassword = await crypt({ length: 10 });
 
@@ -119,15 +118,18 @@ export class AuthController {
   // @ApiOkResponse({ type: SignInResponse })
   async signIn(@Body() req: SignInRequest): Promise<any> {
     try {
+      console.log("masukk")
       const authenticateLogin = await this.authv3Service.authenticate({
         method: EAuthMethod.emailPassword,
         username: req.email,
         password: req.password,
       });
+      console.log("masukkauthenticateLogin", authenticateLogin)
 
       const user = await this.userService.findOneByUserId(
         authenticateLogin.userId,
       );
+      console.log("inisusernaya", user)
 
       const signInResult = await this.sessionService.generateLoginToken(
         {

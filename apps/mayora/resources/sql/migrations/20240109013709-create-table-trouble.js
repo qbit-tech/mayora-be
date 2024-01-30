@@ -5,16 +5,17 @@ module.exports = {
     queryInterface.createTable('TrxTrouble', {
       id: {
         allowNull: false,
-        primaryKey: true,
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
       },
       machineId: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       categoryId: {
         allowNull: false,
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
       },
       startTime: {
         allowNull: true,

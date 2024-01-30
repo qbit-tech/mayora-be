@@ -39,6 +39,7 @@ import { AppRequest } from '@qbit/appContract/app.contract';
 export class CategoryController implements CategoryApiContract {
   constructor(private companyService: CategoryService) { }
 
+  @ApiBearerAuth()
   @Get()
   @UseGuards(AuthPermissionGuard())
   async getCompanyList(
@@ -63,7 +64,7 @@ export class CategoryController implements CategoryApiContract {
     AuthPermissionGuard(),
   )
   async getDetailCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
   ): Promise<ICompanyListItem> {
     return this.findOne({ id: id });
   }
@@ -74,9 +75,12 @@ export class CategoryController implements CategoryApiContract {
 
   @ApiBearerAuth()
   @Get(':id/:machineId')
+  @UseGuards(
+    AuthPermissionGuard(),
+  )
   async getDetailByMachine(
-    @Param('id') id: string,
-    @Param('machineId') machineId: string,
+    @Param('id') id: number,
+    @Param('machineId') machineId: number,
   ): Promise<ICompanyListItem> {
     return this.findOneByMachine({ id: id, machineId: machineId });
   }
@@ -87,40 +91,42 @@ export class CategoryController implements CategoryApiContract {
 
   @ApiBearerAuth()
   @Post()
-  // @UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestCategory,
   ): Promise<CreateResponse> {
-    console.log("hbgytu", request.user)
-    return await this.create({ ...body, createdBy: "djhuy8eufdjachgy8" });
+    const me: string = request.user.userId;
+    return await this.create({ ...body, createdBy: me });
   }
 
   async create(params: CreateRequestCategory): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
-  // @UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async updateCompany(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: any,
     @Body() body: UpdateRequestCategory,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
+    const me: string = request.user.userId;
     return await this.update({
       ...body,
-      updatedBy: request.userId,
+      updatedBy: me,
     }, id);
   }
-  async update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequestCategory, id: number): Promise<UpdateResponse> {
     return await this.companyService.update(params, id);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
-  // @UseGuards(AuthPermissionGuard())
+  @UseGuards(AuthPermissionGuard())
   async deleteItem(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Req() request: RemoveRequest,
     @Body() body: RemoveRequest,
   ): Promise<CreateResponse> {
@@ -128,7 +134,7 @@ export class CategoryController implements CategoryApiContract {
   }
 
   async remove(
-    id: string,
+    id: number,
   ): Promise<RemoveResponse> {
     return await this.companyService.remove(id);
   }

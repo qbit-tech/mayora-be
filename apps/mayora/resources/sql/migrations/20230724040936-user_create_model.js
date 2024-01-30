@@ -53,12 +53,13 @@ module.exports = {
       city: {
         type: Sequelize.STRING,
       },
-      profilePic: {
-        type: Sequelize.STRING,
-      },
       status: {
         type: Sequelize.DataTypes.STRING,
         default: 'active',
+      },
+      roleId: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: true,
       },
       updatedAt: {
         type: Sequelize.DATE,

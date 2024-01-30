@@ -6,15 +6,15 @@ export abstract class UserDetailApiContract {
   // abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
   // abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestDetailUser): Promise<CreateResponse>;
-  // abstract update(params: UpdateRequest, id: string): Promise<UpdateResponse>;
-  // abstract remove(userId: string, machineId:string): Promise<RemoveResponse>;
+  // abstract update(params: UpdateRequest, id: number): Promise<UpdateResponse>;
+  // abstract remove(userId: number, machineId:string): Promise<RemoveResponse>;
 }
 
 export interface ICompanyListItem {
-  id: string;
+  id: number;
   remark: string;
-  machineId: string;
-  categoryId: string;
+  machineId: number;
+  categoryId: number;
   startTime: string;
   endTime: string;
   updatedBy: string;
@@ -49,7 +49,7 @@ export interface FindAllResponse {
 }
 
 export interface FindOneRequest {
-  id: string;
+  id: number;
 }
 
 export class CreateRequestDetailUser {
@@ -59,7 +59,7 @@ export class CreateRequestDetailUser {
 
   @IsNotEmpty()
   @ApiProperty()
-  machineId: string;
+  machineId: number;
 
   @ApiProperty()
   createdBy: string;
@@ -73,9 +73,9 @@ export interface CreateResponse {
 }
 
 // export interface UpdateRequest {
-//   id: string;
+//   id: number;
 //   name: string;
-//   categoryParentId: string;
+//   categoryParentId: number;
 //   categoryType: string;
 //   updatedBy: string;
 //   status: string;
@@ -84,11 +84,11 @@ export interface CreateResponse {
 export class UpdateRequest {
   @IsNotEmpty()
   @ApiProperty({ example: 'active' })
-  readonly machineId: string;
+  readonly machineId: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: string;
+  categoryId: number;
 
   @ApiPropertyOptional()
   startTime?: Date;
@@ -111,7 +111,7 @@ export interface EditStatusProps {
 }
 
 export interface RemoveRequest {
-  id: string;
+  id: number;
 }
 
 export interface RemoveResponse {

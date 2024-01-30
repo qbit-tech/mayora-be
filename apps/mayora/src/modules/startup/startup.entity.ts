@@ -1,5 +1,6 @@
 import {
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -9,19 +10,22 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { MachineModel } from '../machine/machine.entity';
 
 @Table({
   tableName: 'TrxStartup',
 })
 export class StartupModel extends Model {
+  @AutoIncrement
   @PrimaryKey
-  @Column({
-    type: DataType.UUIDV4,
-  })
-  id: string;
+  @Column
+  id: number;
 
   @Column
-  machineId: string;
+  machineId: number;
+
+  @BelongsTo(() => MachineModel, 'machineId')
+  machine: MachineModel;
 
   @Column
   startTime: Date;

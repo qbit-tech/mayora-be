@@ -21,9 +21,10 @@ import { UserModel } from '../user/user.entity';
 })
 
 export class UserDetailModel extends Model {
+  @AutoIncrement
   @PrimaryKey
   @Column
-  id: string;
+  id: number;
 
   @Column
   @ApiProperty()
@@ -34,7 +35,7 @@ export class UserDetailModel extends Model {
 
   @ApiProperty()
   @Column
-  machineId: string;
+  machineId: number;
 
   @BelongsTo(() => MachineModel, 'machineId')
   machine: MachineModel;

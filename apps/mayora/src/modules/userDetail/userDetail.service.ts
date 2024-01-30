@@ -96,15 +96,12 @@ export class UserDetailService {
 
   async create(params: CreateRequestDetailUser): Promise<CreateResponse> {
     try {
-      console.log('hjdshjsf', params)
       const result = await this.userDetailRepositories.create({
-        id: uuidv4(),
         userId: params.userId,
         machineId: params.machineId,
         createdBy: params.createdBy,
         updatedBy: params.updatedBy,
       });
-      console.log("resultjktm", result)
 
       return { isSuccess: result ? true : false };
     } catch (error) {

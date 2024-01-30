@@ -12,40 +12,42 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  MachineApiContract,
+  StatusMachineApiContract,
   FindAllRequest,
   FindAllResponse,
   FindOneRequest,
-  CreateRequest,
+  CreateRequestStatusMachine,
   CreateResponse,
-  UpdateRequest,
+  UpdateRequestStatusMachine,
   UpdateResponse,
   EditStatusProps,
   ICompanyListItem,
   RemoveRequest,
   RemoveResponse,
+  FindOneByMachineRequest,
 } from './contract';
-import { MachineService } from './machine.service';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { StatusMachineService } from './statusMachine.service';
 import {
-  DefaultFindAllRequest,
-} from '@qbit-tech/libs-utils';
-import { AuthPermissionGuard } from '@qbit-tech/libs-session';
+  AuthPermissionGuard, FEATURE_PERMISSIONS,
+} from '@qbit-tech/libs-session';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { DefaultFindAllRequest } from '@qbit-tech/libs-utils';
+import { AppRequest } from '@qbit/appContract/app.contract';
 
-@ApiTags('Machine')
-@Controller('machines')
-export class MachineController implements MachineApiContract {
-  constructor(private companyService: MachineService) { }
+@ApiTags('Status Machine')
+@Controller('status-machine')
+export class StatusMachineController implements StatusMachineApiContract {
+  constructor(private companyService: StatusMachineService) { }
 
   @ApiBearerAuth()
   @Get()
   @UseGuards(AuthPermissionGuard())
   async getCompanyList(
-    @Query() params: DefaultFindAllRequest,
+    @Query() query: DefaultFindAllRequest,
   ): Promise<FindAllResponse> {
-    const paramsSend: FindAllRequest = {
-      limit: Number(params.limit) ?? 10,
-      offset: Number(params.offset) ?? 0,
+    const params: FindAllRequest = {
+      limit: Number(query.limit) ?? 10,
+      offset: Number(query.offset) ?? 0,
       order: 'desc',
     };
 
@@ -56,8 +58,11 @@ export class MachineController implements MachineApiContract {
     return await this.companyService.findAll(params);
   }
 
+  // @ApiBearerAuth()
   // @Get(':id')
-  // //@UseGuards(AuthPermissionGuard())//
+  // @UseGuards(
+  //   AuthPermissionGuard(),
+  // )
   // async getDetailCompany(
   //   @Param('id') id: number,
   // ): Promise<ICompanyListItem> {
@@ -73,30 +78,31 @@ export class MachineController implements MachineApiContract {
   @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
-    @Body() body: CreateRequest,
+    @Body() body: CreateRequestStatusMachine,
   ): Promise<CreateResponse> {
     const me: string = request.user.userId;
     return await this.create({ ...body, createdBy: me });
   }
 
-  async create(params: CreateRequest): Promise<CreateResponse> {
+  async create(params: CreateRequestStatusMachine): Promise<CreateResponse> {
     return await this.companyService.create(params);
   }
 
+  // @ApiBearerAuth()
   // @Patch(':id')
-  // //@UseGuards(AuthPermissionGuard())
+  // @UseGuards(AuthPermissionGuard())
   // async updateCompany(
   //   @Param('id') id: number,
   //   @Req() request: any,
-  //   @Body() body: UpdateRequest,
+  //   @Body() body: UpdateRequestStatusMachine,
   // ): Promise<CreateResponse> {
-  //   // const localEmployee: IMe = request.user;
+  //   const me: string = request.user.userId;
   //   return await this.update({
   //     ...body,
-  //     updatedBy: "ju489eikjnjhgytr",
+  //     updatedBy: me,
   //   }, id);
   // }
-  // async update(params: UpdateRequest, id: number): Promise<UpdateResponse> {
+  // async update(params: UpdateRequestStatusMachine, id: number): Promise<UpdateResponse> {
   //   return await this.companyService.update(params, id);
   // }
 

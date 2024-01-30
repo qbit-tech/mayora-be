@@ -63,7 +63,7 @@ export class TroubleService {
     }
   }
 
-  async findAllByMachine(machineId: string): Promise<FindAllResponse> {
+  async findAllByMachine(machineId: number): Promise<FindAllResponse> {
     try {
       const where = { machineId: machineId };
 
@@ -171,7 +171,6 @@ export class TroubleService {
   async create(params: CreateRequestTrouble): Promise<CreateResponse> {
     try {
       const result = await this.companyRepositories.create({
-        id: uuidv4(),
         machineId: params.machineId,
         categoryId: params.categoryId,
         startTime: params.startTime,
@@ -194,7 +193,7 @@ export class TroubleService {
     }
   }
 
-  async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  async update(params: UpdateRequest, id: number): Promise<UpdateResponse> {
     try {
       const trouble = await this.companyRepositories.findOne({
         where: { id: id },
@@ -233,7 +232,7 @@ export class TroubleService {
     }
   }
 
-  async remove(id: string): Promise<RemoveResponse> {
+  async remove(id: number): Promise<RemoveResponse> {
     try {
       const shipment = await this.companyRepositories.findOne({
         where: { id: id },

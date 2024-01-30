@@ -92,7 +92,6 @@ export class MachineService {
   async create(params: CreateRequest): Promise<CreateResponse> {
     try {
       const result = await this.machineRepositories.create({
-        id: uuidv4(),
         name: params.name,
         createdBy: params.createdBy,
       });
@@ -110,7 +109,7 @@ export class MachineService {
     }
   }
 
-  // async update(params: UpdateRequest, id: string): Promise<UpdateResponse> {
+  // async update(params: UpdateRequest, id: number): Promise<UpdateResponse> {
   //   try {
   //     const trouble = await this.machineRepositories.findOne({
   //       where: { id: id },
@@ -149,7 +148,7 @@ export class MachineService {
   //   }
   // }
 
-  async remove(id: string): Promise<RemoveResponse> {
+  async remove(id: number): Promise<RemoveResponse> {
     try {
       const shipment = await this.machineRepositories.findOne({
         where: { id: id },

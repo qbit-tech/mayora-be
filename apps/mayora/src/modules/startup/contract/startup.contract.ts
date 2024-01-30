@@ -1,27 +1,24 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export abstract class CompanyApiContract {
-  // abstract findAll(): Promise<FindAllResponse>;
-  abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
-  abstract findDetailByIdShift(id: number, shift: number): Promise<ICompanyListItem>;
-  abstract create(params: CreateRequestManualCollection): Promise<CreateResponse>;
-  abstract update(params: UpdateRequestManualCollection, id: number): Promise<UpdateResponse>;
+export abstract class StartupApiContract {
+  abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  // abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
+  abstract create(params: CreateRequestStartup): Promise<CreateResponse>;
+  // abstract update(params: UpdateRequestStartup, id: number): Promise<UpdateResponse>;
   abstract remove(id: number): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 
 export interface ICompanyListItem {
   id: number;
+  startTime: string;
+  endTime: string;
   machineId: number;
-  categoryId: number;
-  categoryType: string;
-  value: string;
-  shift: number;
-  remark: string;
+  updatedBy: string;
+  createdBy: string;
   updatedAt: Date;
   createdAt: Date;
-  status: string;
 }
 
 
@@ -53,23 +50,23 @@ export interface FindOneRequest {
   id: number;
 }
 
-export class CreateRequestManualCollection {
+export interface FindOneByMachineRequest {
+  id: number;
+  machineId: number;
+}
+
+export class CreateRequestStartup {
+  @IsNotEmpty()
+  @ApiProperty()
+  startTime?: Date;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  endTime?: Date;
+
   @IsNotEmpty()
   @ApiProperty()
   machineId: number;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  categoryId: number;
-
-  @ApiPropertyOptional()
-  value: string;
-
-  @ApiPropertyOptional()
-  shift: number;
-
-  @ApiPropertyOptional()
-  remark: string;
 
   @ApiProperty()
   createdBy: string;
@@ -79,26 +76,25 @@ export interface CreateResponse {
   isSuccess: boolean;
 }
 
-export class UpdateRequestManualCollection {
+export class UpdateRequestStartup {
+  @IsNotEmpty()
+  @ApiProperty({ example: 'Trial Product (NDP)' })
+  name: string;
+
   @IsNotEmpty()
   @ApiProperty()
-  machineId: number;
+  categoryParentId: number;
 
   @IsNotEmpty()
+  @ApiProperty({ example: 'manualcollection' })
+  categoryType: string;
+
   @ApiProperty()
-  categoryId: number;
-
-  @ApiPropertyOptional()
-  value: string;
-
-  @ApiPropertyOptional()
-  shift: number;
-
-  @ApiPropertyOptional()
-  remark: string;
-
-  @ApiPropertyOptional()
   updatedBy: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  unit: string;
 }
 
 export interface UpdateResponse {

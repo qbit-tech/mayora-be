@@ -6,15 +6,15 @@ export abstract class CategoryApiContract {
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract findOneByMachine(params: FindOneByMachineRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestCategory): Promise<CreateResponse>;
-  abstract update(params: UpdateRequestCategory, id: string): Promise<UpdateResponse>;
-  abstract remove(id: string): Promise<RemoveResponse>;
+  abstract update(params: UpdateRequestCategory, id: number): Promise<UpdateResponse>;
+  abstract remove(id: number): Promise<RemoveResponse>;
   // abstract changeStatus(params: EditStatusProps): Promise<UpdateResponse>;
 }
 
 export interface ICompanyListItem {
-  id: string;
+  id: number;
   name: string;
-  categoryParentId: string;
+  categoryParentId: number;
   categoryType: string;
   updatedBy: string;
   createdBy: string;
@@ -49,12 +49,12 @@ export interface FindAllResponse {
 }
 
 export interface FindOneRequest {
-  id: string;
+  id: number;
 }
 
 export interface FindOneByMachineRequest {
-  id: string;
-  machineId: string;
+  id: number;
+  machineId: number;
 }
 
 export class CreateRequestCategory {
@@ -64,7 +64,7 @@ export class CreateRequestCategory {
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryParentId: string;
+  categoryParentId: number;
 
   @IsNotEmpty()
   @ApiProperty()
@@ -89,7 +89,7 @@ export class UpdateRequestCategory {
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryParentId: string;
+  categoryParentId: number;
 
   @IsNotEmpty()
   @ApiProperty({ example: 'manualcollection' })
@@ -114,7 +114,7 @@ export interface EditStatusProps {
 }
 
 export interface RemoveRequest {
-  id: string;
+  id: number;
 }
 
 export interface RemoveResponse {

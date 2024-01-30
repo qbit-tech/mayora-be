@@ -9,22 +9,22 @@ module.exports = {
     // Make category parent level 1
     await queryInterface.bulkInsert('MstCategoryParent', [
       {
-        id: 'NotOperatingDayPlannedDownTime',
+        id: 1,
         name: 'Not Operating Day and Planned Down Time',
         categoryLevel: 'level1'
       },
       {
-        id: 'DownTimeLosses',
+        id: 2,
         name: 'Down Time Losses',
         categoryLevel: 'level1'
       },
       {
-        id: 'SpeedLosses',
+        id: 3,
         name: 'Speed Losses',
         categoryLevel: 'level1'
       },
       {
-        id: 'DefectReworkLosses',
+        id: 4,
         name: 'Defect & Rework Losses',
         categoryLevel: 'level1'
       },
@@ -33,27 +33,27 @@ module.exports = {
     // Make category parent level 2
     await queryInterface.bulkInsert('MstCategoryParent', [
       {
-        id: 'NotOperatingDay',
+        id: 5,
         name: 'Not Operatin Day',
-        categoryParentId: 'NotOperatingDayPlannedDownTime',
+        categoryParentId: 1,
         categoryLevel: 'level2'
       },
       {
-        id: 'PlannedDownTime',
+        id: 6,
         name: 'Planned Down Time',
-        categoryParentId: 'NotOperatingDayPlannedDownTime',
+        categoryParentId: 1,
         categoryLevel: 'level2'
       },
       {
-        id: 'LateStartEarlyStop',
+        id: 7,
         name: 'Late Start/Early Stop',
-        categoryParentId: 'DownTimeLosses',
+        categoryParentId: 2,
         categoryLevel: 'level2'
       },
       {
-        id: 'TechnicalBreakDown',
+        id: 8,
         name: 'Technical Break Down',
-        categoryParentId: 'DownTimeLosses',
+        categoryParentId: 2,
         categoryLevel: 'level2'
       },
     ], {});
@@ -61,9 +61,9 @@ module.exports = {
     // Make category parent level 3
     await queryInterface.bulkInsert('MstCategoryParent', [
       {
-        id: 'Mechanical',
-        name: 'Mechanical',
-        categoryParentId: 'TechnicalBreakDown',
+        id: 9,
+        name: 'Mechanincal',
+        categoryParentId: 8,
         categoryLevel: 'level3'
       },
     ], {});
@@ -71,27 +71,27 @@ module.exports = {
     // Make category parent level 4
     await queryInterface.bulkInsert('MstCategoryParent', [
       {
-        id: 'Reception',
+        id: 10,
         name: 'Reception',
-        categoryParentId: 'Mechanical',
+        categoryParentId: 9,
         categoryLevel: 'level4'
       },
       {
-        id: 'Bufferglucose',
+        id: 11,
         name: 'Buffer glucose',
-        categoryParentId: 'Mechanical',
+        categoryParentId: 9,
         categoryLevel: 'level4'
       },
       {
-        id: 'Melting',
+        id: 12,
         name: 'Melting',
-        categoryParentId: 'Mechanical',
+        categoryParentId: 9,
         categoryLevel: 'level4'
       },
       {
-        id: 'Scanima',
+        id: 13,
         name: 'Scanima',
-        categoryParentId: 'Mechanical',
+        categoryParentId: 9,
         categoryLevel: 'level4'
       },
     ], {});
@@ -99,65 +99,65 @@ module.exports = {
     // Make category level 5 (Category)
     await queryInterface.bulkInsert('MstCategory', [
       {
-        id: 'LiburharibesarNasional',
+        id: 1,
         name: 'Libur hari besar/Nasional',
-        categoryParentId: 'NotOperatingDay',
+        categoryParentId: 5,
         unit: 'kg',
         categoryType: 'manualcollection'
       },
       {
-        id: 'NoDemand',
+        id: 2,
         name: 'No Demand',
-        categoryParentId: 'NotOperatingDay',
+        categoryParentId: 5,
         unit: 'kg',
         categoryType: 'manualcollection'
       },
       {
-        id: 'Trialproduct(NDP)',
+        id: 3,
         name: 'Trial product (NDP)',
-        categoryParentId: 'PlannedDownTime',
+        categoryParentId: 6,
         unit: 'min',
         categoryType: 'trouble'
       },
       {
-        id: 'Preventivemaintenance',
+        id: 4,
         name: 'Preventive maintenance',
-        categoryParentId: 'PlannedDownTime',
+        categoryParentId: 6,
         unit: 'kg',
         categoryType: 'manualcollection'
       },
       {
-        id: 'CIP',
+        id: 5,
         name: 'CIP',
-        categoryParentId: 'PlannedDownTime',
+        categoryParentId: 6,
         unit: 'min',
         categoryType: 'trouble'
       },
       {
-        id: 'Terlambatstopproduksi',
+        id: 6,
         name: 'Terlambat stop produksi',
-        categoryParentId: 'LateStartEarlyStop',
+        categoryParentId: 7,
         unit: 'min',
         categoryType: 'trouble'
       },
       {
-        id: 'Valvelonglinebocor',
+        id: 7,
         name: 'Valve long line bocor',
-        categoryParentId: 'Reception',
+        categoryParentId: 10,
         unit: 'min',
         categoryType: 'trouble'
       },
       {
-        id: 'Troublepompasirkulasioil',
+        id: 8,
         name: 'Trouble pompa sirkulasi oil',
-        categoryParentId: 'Reception',
+        categoryParentId: 10,
         unit: 'kg',
         categoryType: 'manualcollection'
       },
       {
-        id: 'Troublepompasirkulasiglucose',
+        id: 9,
         name: 'Trouble pompa sirkulasi glucose',
-        categoryParentId: 'Reception',
+        categoryParentId: 10,
         unit: 'kg',
         categoryType: 'manualcollection'
       },

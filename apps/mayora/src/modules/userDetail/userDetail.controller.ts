@@ -26,11 +26,11 @@ import {
   RemoveResponse,
 } from './contract';
 import { UserDetailService } from './userDetail.service';
-import { AuthPermissionGuard } from '../../core/auth.guard';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   DefaultFindAllRequest,
 } from '@qbit-tech/libs-utils';
+import { AuthPermissionGuard } from '@qbit-tech/libs-session';
 
 @ApiTags('User Detail')
 @Controller('user-details')
@@ -67,14 +67,15 @@ export class UserDetailController implements UserDetailApiContract {
   //   return await this.companyService.findOne(params);
   // }
 
+  @ApiBearerAuth()
   @Post()
-  // //@UseGuards(AuthPermissionGuard())//
+  @UseGuards(AuthPermissionGuard())
   async createCompany(
     @Req() request: any,
     @Body() body: CreateRequestDetailUser,
   ): Promise<CreateResponse> {
-    // const localEmployee: IMe = request.user;
-    return await this.create({ ...body });
+    const me: string = request.user.userId;
+    return await this.create({ ...body, createdBy: me });
   }
 
   async create(params: CreateRequestDetailUser): Promise<CreateResponse> {

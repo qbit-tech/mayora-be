@@ -5,13 +5,13 @@ module.exports = {
     queryInterface.createTable('MstCategoryParent', {
       id: {
         allowNull: false,
-        type: Sequelize.STRING(255),
-        primaryKey: true,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
       },
       categoryParentId: {
-        allowNull: false,
-        type: Sequelize.STRING(100),
-        unique: true,
+        allowNull: true,
+        type: Sequelize.INTEGER,
       },
       name: {
         allowNull: true,
@@ -23,11 +23,11 @@ module.exports = {
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: true
       },
       updatedBy: {
         type: Sequelize.STRING(255),

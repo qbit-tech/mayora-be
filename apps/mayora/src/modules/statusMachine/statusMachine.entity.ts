@@ -14,10 +14,9 @@ import {
   tableName: 'TrxStatusMachine',
 })
 export class StatusMachineModel extends Model {
+  @AutoIncrement
   @PrimaryKey
-  @Column({
-    type: DataType.UUIDV4,
-  })
+  @Column
   id: string;
 
   @Column
