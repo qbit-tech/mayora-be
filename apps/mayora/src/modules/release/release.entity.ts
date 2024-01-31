@@ -11,14 +11,15 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'Releases',
+  tableName: 'TrxReleases',
 })
 export class ReleaseModel extends Model {
   @PrimaryKey
+  @AutoIncrement
   @Column({
-    type: DataType.UUIDV4,
+    type: DataType.INTEGER,
   })
-  id: string;
+  id: number;
 
   @Column
   machineId: string;

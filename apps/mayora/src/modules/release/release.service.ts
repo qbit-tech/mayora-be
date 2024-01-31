@@ -89,7 +89,7 @@ export class ReleaseService {
     }
   }
 
-  async findOne(params: FindOneRequest): Promise<ReleaseModel> {
+  async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
     try {
       const result = await this.companyRepositories.findOne({
         where: {
@@ -120,8 +120,8 @@ export class ReleaseService {
 
   async create(params: CreateRequest): Promise<CreateResponse> {
     try {
+      console.log(params)
       const result = await this.companyRepositories.create({
-        id: uuidv4(),
         machineId: params.machineId,
         amount: params.amount,
         time: params.time,
@@ -132,7 +132,7 @@ export class ReleaseService {
       throw new HttpException(
         {
           status: 'ERR_COMPANY_REQUEST',
-          message: error.message,
+          message: error,
           payload: null,
         },
         HttpStatus.BAD_REQUEST,
