@@ -118,18 +118,15 @@ export class AuthController {
   // @ApiOkResponse({ type: SignInResponse })
   async signIn(@Body() req: SignInRequest): Promise<any> {
     try {
-      console.log("masukk")
       const authenticateLogin = await this.authv3Service.authenticate({
         method: EAuthMethod.emailPassword,
         username: req.email,
         password: req.password,
       });
-      console.log("masukkauthenticateLogin", authenticateLogin)
 
       const user = await this.userService.findOneByUserId(
         authenticateLogin.userId,
       );
-      console.log("inisusernaya", user)
 
       const signInResult = await this.sessionService.generateLoginToken(
         {

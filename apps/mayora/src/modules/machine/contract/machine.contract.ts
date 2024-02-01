@@ -4,6 +4,7 @@ import { IsNotEmpty } from "class-validator";
 
 export abstract class MachineApiContract {
   abstract findAll(params: FindAllRequest): Promise<FindAllResponse>;
+  abstract getProductionStatus(machineId: number, date: string): Promise<FindAllResponse>;
   // abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequest): Promise<CreateResponse>;
   // abstract update(params: UpdateRequest, id: number): Promise<UpdateResponse>;

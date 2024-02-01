@@ -56,6 +56,20 @@ export class MachineController implements MachineApiContract {
     return await this.companyService.findAll(params);
   }
 
+  @ApiBearerAuth()
+  @Get('/production/:machineId/:date')
+  @UseGuards(AuthPermissionGuard())
+  async getProductionStatus(
+    @Param('machineId') machineId: number,
+    @Param('date') date: string,
+  ): Promise<FindAllResponse> {
+    return this.getProduction(machineId, date);
+  }
+
+  async getProduction(machineId: number, date: string): Promise<FindAllResponse> {
+    return await this.companyService.getProduction(machineId, date);
+  }
+
   // @Get(':id')
   // //@UseGuards(AuthPermissionGuard())//
   // async getDetailCompany(

@@ -7,12 +7,16 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
 import { handleTimeZone } from '../../helpers/date';
+import { StartupModel } from '../startup/startup.entity';
+import { StatusMachineModel } from '../statusMachine/statusMachine.entity';
+import { TroubleModel } from '../trouble/trouble.entity';
 
 @Table({
   tableName: 'MstMachine',
@@ -49,6 +53,15 @@ export class MachineModel extends Model {
 
   @Column
   updatedBy: string;
+
+  @HasMany(() => TroubleModel, 'machineId')
+  trouble: TroubleModel[];
+
+  @HasMany(() => StartupModel, 'machineId')
+  startup: StartupModel[];
+
+  @HasMany(() => StatusMachineModel, 'machineId')
+  statusMachine: StatusMachineModel[];
 
   @BeforeCreate
   static beforeCreateHook(instance: MachineModel) {

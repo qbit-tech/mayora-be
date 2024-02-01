@@ -19,6 +19,7 @@ import { RoleModel, RoleProperties } from '@qbit-tech/libs-role';
 import { ProductionTargetModel } from '../productionTarget/productionTarget.entity';
 import { OEETargetModel } from '../oeeTarget/oeeTarget.entity';
 import { UserDetailModel } from '../userDetail/userDetail.entity';
+import { TroubleModel } from '../trouble/trouble.entity';
 
 export enum Gender {
   MALE = 'male',

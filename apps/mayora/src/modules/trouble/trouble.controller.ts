@@ -57,16 +57,17 @@ export class TroubleController implements TroubleApiContract {
   }
 
   @ApiBearerAuth()
-  @Get('/machine/:machieId')
+  @Get('/production/:machineId/:date')
   @UseGuards(AuthPermissionGuard())
   async getTroubleListByMachie(
-    @Param('machieId') machieId: number,
+    @Param('machineId') machineId: number,
+    @Param('date') date: string,
   ): Promise<FindAllResponse> {
-    return this.findAllByMachine(machieId);
+    return this.findAllByMachine(machineId, date);
   }
 
-  async findAllByMachine(machineId: number): Promise<FindAllResponse> {
-    return await this.companyService.findAllByMachine(machineId);
+  async findAllByMachine(machineId: number, date: string): Promise<FindAllResponse> {
+    return await this.companyService.findAllByMachine(machineId, date);
   }
 
   @ApiBearerAuth()
