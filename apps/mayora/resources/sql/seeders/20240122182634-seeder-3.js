@@ -2123,147 +2123,147 @@ module.exports = {
         "categoryType": "trouble"
       },
       {
-        "id": 231,
+        "id": 405,
         "name": "Trouble screw kecil",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 232,
+        "id": 406,
         "name": "Trouble weigher",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 233,
+        "id": 407,
         "name": "Trouble motor vacuum",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 234,
+        "id": 408,
         "name": "Trouble bag arm",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 235,
+        "id": 409,
         "name": "Trouble long arm",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 236,
+        "id": 410,
         "name": "Trouble penjepit zak (bag clamp)",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 237,
+        "id": 411,
         "name": "Trouble translator",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 238,
+        "id": 412,
         "name": "Bag placer lepas (trouble magazine)",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 239,
+        "id": 413,
         "name": "Trouble rantai bag placer",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 240,
+        "id": 414,
         "name": "Trouble rantai bag cleaning",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 241,
+        "id": 415,
         "name": "Trouble rantai bag sealing",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 242,
+        "id": 416,
         "name": "Trouble motor sewing",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 243,
+        "id": 417,
         "name": "Trouble couple motor sewing",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 244,
+        "id": 418,
         "name": "Trouble welding/sealing",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 245,
+        "id": 419,
         "name": "Trouble sewing",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 246,
+        "id": 420,
         "name": "Jarum patah",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 247,
+        "id": 421,
         "name": "Trouble motor dust collector",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 248,
+        "id": 422,
         "name": "Trouble motor conveyor packing",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 249,
+        "id": 423,
         "name": "Penggantian belt conveyor packing",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 250,
+        "id": 424,
         "name": "Trouble metal detector",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 251,
+        "id": 425,
         "name": "Mesin coding rusak",
         "categoryParentId": 58,
         "unit": "kg",
@@ -2277,28 +2277,28 @@ module.exports = {
         "categoryType": "trouble"
       },
       {
-        "id": 399,
+        "id": 400,
         "name": "Trouble pompa return CIP",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 228,
+        "id": 401,
         "name": "Trouble valve CIP",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 229,
+        "id": 402,
         "name": "PHE CIP kitchen bocor/rusak",
         "categoryParentId": 58,
         "unit": "kg",
         "categoryType": "trouble"
       },
       {
-        "id": 230,
+        "id": 403,
         "name": "Jalur CIP bocor",
         "categoryParentId": 58,
         "unit": "kg",
@@ -2809,7 +2809,7 @@ module.exports = {
         "categoryType": "trouble"
       },
       {
-        "id": 303,
+        "id": 426,
         "name": "Trip Motor Shifter",
         "categoryParentId": 76,
         "unit": "kg",
