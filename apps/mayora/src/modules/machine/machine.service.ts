@@ -13,6 +13,13 @@ import {
   RemoveResponse,
 } from './contract';
 import { v4 as uuidv4 } from 'uuid';
+import { Op } from 'sequelize';
+import sequelize from 'sequelize';
+import { TroubleModel } from '../trouble/trouble.entity';
+import { CategoryModel } from '../category/category.entity';
+import { StartupModel } from '../startup/startup.entity';
+import { StatusMachineModel } from '../statusMachine/statusMachine.entity';
+import { UserModel } from '../user/user.entity';
 
 @Injectable()
 export class MachineService {
@@ -57,37 +64,114 @@ export class MachineService {
     }
   }
 
-  // async findOne(params: FindOneRequest): Promise<ICompanyListItem> {
-  //   try {
-  //     const result = await this.machineRepositories.findOne({
-  //       where: { id: params.id },
-  //       attributes: [
-  //         'id',
-  //         'machineId',
-  //         'categoryId',
-  //         'startTime',
-  //         'endTime',
-  //         'remark',
-  //         'updatedBy',
-  //         'status',
-  //         'createdBy',
-  //         'createdAt',
-  //         'updatedAt',
-  //       ],
-  //     });
+  async getProduction(machineId: number, date: string): Promise<FindAllResponse> {
+    try {
+      const createdAt = {
+        [Op.between]: [
+          sequelize.literal(`'${date} 00:00:00.000+07'::timestamptz`),
+          sequelize.literal(`'${date} 23:59:59.999+07'::timestamptz`)
+        ]
+      }
+      const where = {
+        id: machineId,
+      };
 
-  //     return result ? result.get() : null;
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       {
-  //         status: 'ERR_COMPANY_NOT_FOUND',
-  //         message: error.message,
-  //         payload: null,
-  //       },
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   }
-  // }
+      const result = await this.machineRepositories.findOne({
+        where,
+        attributes: [
+          'id',
+          'name',
+        ],
+        include: [
+          {
+            model: TroubleModel,
+            where: { createdAt: createdAt },
+            as: 'trouble',
+            required: false,
+            attributes: [
+              'id',
+              'machineId',
+              'categoryId',
+              'startTime',
+              'endTime',
+              'remark',
+              'updatedBy',
+              'status',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+            include: [
+              {
+                model: UserModel,
+                as: 'user',
+                attributes: [
+                  'userId',
+                  'name',
+                ],
+              },
+              {
+                model: CategoryModel,
+                as: 'categoryParent',
+                attributes: [
+                  'id',
+                  'name',
+                  'categoryParentId',
+                  'categoryType',
+                  'updatedBy',
+                  'unit',
+                  'createdBy',
+                  'createdAt',
+                  'updatedAt',
+                ],
+              },
+            ]
+          },
+          {
+            model: StartupModel,
+            as: 'startup',
+            where: { createdAt: createdAt },
+            required: false,
+            attributes: [
+              'id',
+              'startTime',
+              'endTime',
+              'machineId',
+              'updatedBy',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+          {
+            model: StatusMachineModel,
+            as: 'statusMachine',
+            where: { createdAt: createdAt },
+            required: false,
+            attributes: [
+              'id',
+              'status',
+              'machineId',
+              'updatedBy',
+              'createdBy',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+        ]
+      });
+      return result ? result.get() : null;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'ERR_COMPANY_REQUEST',
+          message: error.message,
+          payload: null,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 
   async create(params: CreateRequest): Promise<CreateResponse> {
     try {

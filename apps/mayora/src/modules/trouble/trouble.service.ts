@@ -14,6 +14,8 @@ import {
 } from './contract';
 import { v4 as uuidv4 } from 'uuid';
 import { CategoryModel } from '../category/category.entity';
+import { Op } from 'sequelize';
+import sequelize from 'sequelize';
 
 @Injectable()
 export class TroubleService {
@@ -63,9 +65,18 @@ export class TroubleService {
     }
   }
 
-  async findAllByMachine(machineId: number): Promise<FindAllResponse> {
+  async findAllByMachine(machineId: number, date: string): Promise<FindAllResponse> {
     try {
-      const where = { machineId: machineId };
+      const createdAt = {
+        [Op.between]: [
+          sequelize.literal(`'${date} 00:00:00.000+07'::timestamptz`),
+          sequelize.literal(`'${date} 23:59:59.999+07'::timestamptz`)
+        ]
+      }
+      const where = {
+        machineId: machineId,
+        createdAt: createdAt
+      };
 
       const result = await this.companyRepositories.findAll({
         where,

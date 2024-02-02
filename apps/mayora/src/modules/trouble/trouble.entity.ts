@@ -16,6 +16,7 @@ import {
 import { handleTimeZone } from '../../helpers/date';
 import { CategoryModel } from '../category/category.entity';
 import { MachineModel } from '../machine/machine.entity';
+import { UserModel } from '../user/user.entity';
 
 export enum status {
   VALID = 'valid',
@@ -79,6 +80,9 @@ export class TroubleModel extends Model {
 
   @Column
   createdBy: string;
+
+  @BelongsTo(() => UserModel, 'createdBy')
+  user: UserModel;
 
   @Column
   updatedBy: string;
