@@ -53,15 +53,16 @@ export class CategoryParentController implements CompanyApiContract {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get list of category nested 3 level with manual collection' })
-  @Get('/manual-collection')
+  @Get('/manual-collection/:date')
   @UseGuards(AuthPermissionGuard())
   async getManualCollectionList(
+    @Param('date') date: string,
   ): Promise<FindAllResponse> {
-    return this.findAllManualCollection();
+    return this.findAllManualCollection(date);
   }
 
-  async findAllManualCollection(): Promise<FindAllResponse> {
-    return await this.companyService.findAllManualCollection();
+  async findAllManualCollection(date: string): Promise<FindAllResponse> {
+    return await this.companyService.findAllManualCollection(date);
   }
 
   @ApiBearerAuth()

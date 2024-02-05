@@ -3,7 +3,7 @@ import { IsNotEmpty } from "class-validator";
 
 export abstract class CompanyApiContract {
   abstract findAll(): Promise<FindAllResponse>;
-  abstract findAllManualCollection(): Promise<FindAllResponse>;
+  abstract findAllManualCollection(date: string): Promise<FindAllResponse>;
   abstract findAllTrouble(): Promise<FindAllResponse>;
   abstract findOne(params: FindOneRequest): Promise<ICompanyListItem>;
   abstract create(params: CreateRequestCategoryParent): Promise<CreateResponse>;

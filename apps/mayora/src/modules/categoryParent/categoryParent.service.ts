@@ -20,6 +20,7 @@ import { CategoryModel } from '../category/category.entity';
 import { ManualCollectionModel } from '../manualCollection/manualCollection.entity';
 import { Op } from 'sequelize';
 import { TroubleModel } from '../trouble/trouble.entity';
+import sequelize from 'sequelize';
 
 @Injectable()
 export class CategoryParentService {
@@ -198,9 +199,16 @@ export class CategoryParentService {
     }
   }
 
-  async findAllManualCollection(): Promise<FindAllResponse> {
+  async findAllManualCollection(date: string): Promise<FindAllResponse> {
     try {
       const where = { categoryLevel: 'level1' };
+
+      const createdAt = {
+        [Op.between]: [
+          sequelize.literal(`'${date} 00:00:00.000+07'::timestamptz`),
+          sequelize.literal(`'${date} 23:59:59.999+07'::timestamptz`)
+        ]
+      }
 
       const result = await this.companyRepositories.findAll({
         where,
@@ -289,6 +297,8 @@ export class CategoryParentService {
                           {
                             model: ManualCollectionModel,
                             as: 'manualCollection',
+                            where: { createdAt: createdAt },
+                            required: false,
                             attributes: [
                               'id',
                               'machineId',
@@ -329,6 +339,8 @@ export class CategoryParentService {
                       {
                         model: ManualCollectionModel,
                         as: 'manualCollection',
+                        where: { createdAt: createdAt },
+                        required: false,
                         attributes: [
                           'id',
                           'machineId',
@@ -369,6 +381,8 @@ export class CategoryParentService {
                   {
                     model: ManualCollectionModel,
                     as: 'manualCollection',
+                    required: false,
+                    where: { createdAt: createdAt },
                     attributes: [
                       'id',
                       'machineId',
@@ -409,6 +423,8 @@ export class CategoryParentService {
               {
                 model: ManualCollectionModel,
                 as: 'manualCollection',
+                where: { createdAt: createdAt },
+                required: false,
                 attributes: [
                   'id',
                   'machineId',
